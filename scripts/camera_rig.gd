@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
-@export var move_speed := 10.0
-@export var jump_velocity := 13.5
+@export var move_speed := 5.0
+@export var jump_velocity := 9.5
 @export var mouse_sensitivity := 0.002
 @export var min_pitch := -89.0
 @export var max_pitch := 89.0
