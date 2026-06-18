@@ -68,7 +68,24 @@ func _try_place():
 	if result:
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
-			block_manager.place_block(grid_pos)
+			if not _overlaps_player(grid_pos):
+				block_manager.place_block(grid_pos)
+
+func _overlaps_player(grid_pos: Vector3i) -> bool:
+	var p = $"../CameraRig".global_position
+	var bx = float(grid_pos.x) + 0.5
+	var bz = float(grid_pos.z) + 0.5
+	var by = float(grid_pos.y) + 0.5
+	# XZ: distance between centers < sum of radii (0.4 + 0.5 = 0.9)
+	var dx = abs(p.x - bx)
+	var dz = abs(p.z - bz)
+	if dx >= 0.9 or dz >= 0.9:
+		return false
+	# Y: capsule half-height 1.0 + radius 0.4 = 1.4, block half 0.5
+	var dy = abs(p.y - by)
+	if dy < 1.4 + 0.5:
+		return true
+	return false
 
 func _try_break():
 	var result = _raycast()
