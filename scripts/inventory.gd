@@ -89,6 +89,8 @@ func set_slot_color(index: int, color: Color):
     color_changed.emit(index, color)
 
 func get_selected_color() -> Color:
+    if selected_slot < 0 or selected_slot >= SLOT_COUNT:
+        return Color.RED
     return inventory_colors[selected_slot]
 
 func get_inventory_colors() -> Array[Color]:

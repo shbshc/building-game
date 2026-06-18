@@ -8,6 +8,8 @@ const DRAG_THRESHOLD := 5.0
 @onready var block_manager: Node3D = $"../Blocks"
 @onready var highlight: MeshInstance3D = $"../SelectionHighlight"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
+@onready var camera_rig: Node3D = $"../CameraRig"
+@onready var inventory = $"../UI/InventoryBar"
 
 func _ready():
     highlight.visible = false
@@ -18,6 +20,7 @@ func _input(event):
         return
     
     if event is InputEventMouseButton:
+        # Left click
         if event.button_index == MOUSE_BUTTON_LEFT:
             if event.pressed:
                 mouse_pressed = true
@@ -28,16 +31,30 @@ func _input(event):
                 mouse_pressed = false
                 if not mouse_moved:
                     _handle_left_click()
+                camera_rig.stop_drag()
+        
+        # Right click - delete block
         elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
             _handle_right_click()
+        
+        # Middle click - deselect
+        elif event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
+            inventory.selected_slot = -1
+            inventory._update_selection_highlight()
+            highlight.visible = false
+            get_viewport().set_input_as_handled()
     
     if event is InputEventMouseMotion:
         if mouse_pressed:
             if event.position.distance_to(mouse_start_pos) > DRAG_THRESHOLD:
-                mouse_moved = true
-        _update_highlight()
+                if not mouse_moved:
+                    mouse_moved = true
+                    camera_rig.start_drag(mouse_start_pos)
+                camera_rig.do_drag(event.position)
 
 func _handle_left_click():
+    if inventory.selected_slot < 0:
+        return
     var result = _raycast()
     if result:
         var grid_pos = _world_to_grid(result.position, result.normal)
@@ -66,7 +83,7 @@ func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
 
 func _update_highlight():
     var result = _raycast()
-    if result:
+    if result and inventory.selected_slot >= 0:
         var grid_pos = _world_to_grid(result.position, result.normal)
         if grid_pos != null and block_manager.can_place_at(grid_pos):
             highlight.visible = true
