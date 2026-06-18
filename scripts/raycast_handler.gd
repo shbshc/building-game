@@ -76,8 +76,8 @@ func _is_player_cell(gp: Vector3i) -> bool:
 	var px = int(floor(p.x))
 	var py = int(floor(p.y - 1.3))
 	var pz = int(floor(p.z))
-	if gp.y == py or gp.y == py + 1:
-		if gp.x == px and gp.z == pz:
+	if gp.x == px and gp.z == pz:
+		if gp.y >= py and gp.y <= py + 2:
 			return true
 	return false
 
