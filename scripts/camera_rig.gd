@@ -8,6 +8,7 @@ extends Node3D
 var yaw := 0.0
 var pitch := 0.0
 var mouse_captured := true
+var scroll_cooldown := 0.0
 
 @onready var camera: Camera3D = $Camera3D
 @onready var inventory = $"../UI/UIContainer/InventoryBar"
@@ -21,6 +22,8 @@ func _ready():
     Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _process(delta):
+    if scroll_cooldown > 0:
+        scroll_cooldown -= delta
     if Input.is_action_just_pressed("toggle_mouse"):
         _toggle_mouse()
     
@@ -45,12 +48,14 @@ func _process(delta):
 
 func _input(event):
     if event is InputEventMouseButton:
-        if mouse_captured:
+        if mouse_captured and scroll_cooldown <= 0:
             if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+                scroll_cooldown = 0.1
                 inventory.selected_slot = (inventory.selected_slot + 1) % inventory.SLOT_COUNT
                 inventory._update_selection_highlight()
                 inventory.slot_selected.emit(inventory.selected_slot)
             elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+                scroll_cooldown = 0.1
                 inventory.selected_slot = (inventory.selected_slot - 1 + inventory.SLOT_COUNT) % inventory.SLOT_COUNT
                 inventory._update_selection_highlight()
                 inventory.slot_selected.emit(inventory.selected_slot)
