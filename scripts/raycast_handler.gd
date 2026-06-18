@@ -1,4 +1,4 @@
-ï»¿extends Node3D
+extends Node3D
 
 var mouse_pressed := false
 var mouse_moved := false
@@ -13,7 +13,7 @@ func _ready():
     highlight.visible = false
 
 func _input(event):
-    # å¦‚æžœé¼ æ ‡åœ¨ UI ä¸Šï¼Œä¸å¤„ç† 3D äº¤äº’
+    # Èç¹ûÊó±êÔÚ UI ÉÏ£¬²»´¦Àí 3D ½»»¥
     if _is_mouse_over_ui():
         highlight.visible = false
         return
@@ -37,14 +37,14 @@ func _input(event):
         if mouse_pressed:
             if event.position.distance_to(mouse_start_pos) > DRAG_THRESHOLD:
                 mouse_moved = true
-        # æ›´æ–°é€‰ä¸­é«˜äº®ä½ç½®
+        # ¸üÐÂÑ¡ÖÐ¸ßÁÁÎ»ÖÃ
         _update_highlight()
 
 func _handle_left_click():
     var result = _raycast()
     if result:
         var grid_pos = _world_to_grid(result.position, result.normal)
-        if grid_pos != null:
+        if grid_pos != null and block_manager.can_place_at(grid_pos):
             block_manager.place_block(grid_pos)
 
 func _handle_right_click():
@@ -64,7 +64,7 @@ func _raycast() -> Dictionary:
     return space_state.intersect_ray(query)
 
 func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
-    # æ ¹æ®æ³•çº¿æ–¹å‘åç§»åˆ°ç›¸é‚»æ ¼å­
+    # ¸ù¾Ý·¨Ïß·½ÏòÆ«ÒÆµ½ÏàÁÚ¸ñ×Ó
     var place_pos = hit_pos + hit_normal * 0.5
     return Vector3i(round(place_pos.x), round(place_pos.y), round(place_pos.z))
 
@@ -81,7 +81,7 @@ func _update_highlight():
         highlight.visible = false
 
 func _is_mouse_over_ui() -> bool:
-    # ç®€æ˜“ç‰ˆï¼šå¦‚æžœé¼ æ ‡åœ¨åº•éƒ¨ 60pxï¼ˆç‰©å“æ åŒºåŸŸï¼‰ï¼Œè·³è¿‡
+    # ¼òÒ×°æ£ºÈç¹ûÊó±êÔÚµ×²¿ 60px£¨ÎïÆ·À¸ÇøÓò£©£¬Ìø¹ý
     var mouse_y = get_viewport().get_mouse_position().y
     var viewport_height = get_viewport().get_visible_rect().size.y
     return mouse_y > viewport_height - 60

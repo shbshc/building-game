@@ -1,4 +1,4 @@
-﻿extends Node
+extends Node
 
 const SAVE_PATH := "user://save.json"
 
@@ -51,10 +51,9 @@ func load(block_manager, inventory_bar, ground_node) -> bool:
     
     block_manager.clear_all()
     for b in data.get("blocks", []):
-        block_manager.place_block(
-            Vector3i(b["x"], b["y"], b["z"]),
-            Color(b["color"][0], b["color"][1], b["color"][2])
-        )
+        var c = Color(b["color"][0], b["color"][1], b["color"][2])
+        block_manager.selected_color = c
+        block_manager.place_block(Vector3i(b["x"], b["y"], b["z"]))
     
     var inv = data.get("inventory", [])
     for i in min(inv.size(), inventory_bar.SLOT_COUNT):
