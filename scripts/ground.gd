@@ -4,7 +4,6 @@ extends MeshInstance3D
 @export var grid_color := Color(0.4, 0.4, 0.4)
 
 func _ready():
-    position.y = -0.5
     mesh = PlaneMesh.new()
     mesh.size = Vector2(100, 100)
     mesh.orientation = PlaneMesh.FACE_Y

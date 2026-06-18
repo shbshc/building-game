@@ -91,7 +91,7 @@ func _try_break():
 		var parent = result.collider.get_parent()
 		if parent is MeshInstance3D:
 			var pos = parent.position
-			var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y), int(pos.z - 0.5))
+			var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
 			block_manager.remove_block(grid_pos)
 
 func _raycast() -> Dictionary:
@@ -112,7 +112,7 @@ func _update_highlight():
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
 			highlight.visible = true
-			highlight.position = Vector3(grid_pos) + Vector3(0.5, 0, 0.5)
+			highlight.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
 		else:
 			highlight.visible = false
 	else:
