@@ -89,7 +89,7 @@ func _raycast() -> Dictionary:
 
 func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
 	var place_pos = hit_pos + hit_normal * 0.5
-	return Vector3i(floor(place_pos.x), round(place_pos.y), floor(place_pos.z))
+	return Vector3i(floor(place_pos.x), floor(place_pos.y), floor(place_pos.z))
 
 func _update_highlight():
 	var result = _raycast()
