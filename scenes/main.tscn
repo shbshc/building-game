@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -63,16 +63,15 @@ offset_bottom = 40.0
 
 [node name="SaveButton" type="Button" parent="UI/TopBar"]
 layout_mode = 2
-text = "娣囨繂鐡?
+text = "Save"
 offset_right = 80.0
 offset_bottom = 40.0
 
 [node name="LoadButton" type="Button" parent="UI/TopBar"]
 layout_mode = 2
-text = "閸旂姾娴?
+text = "Load"
 offset_right = 80.0
 offset_bottom = 40.0
 
 [node name="InventoryBar" type="Control" parent="UI"]
 script = ExtResource("6_inventory")
-

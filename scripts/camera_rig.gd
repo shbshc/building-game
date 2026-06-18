@@ -30,18 +30,14 @@ func _process(delta):
     var yaw_diff = target_yaw - yaw_angle
     if abs(yaw_diff) > 0.01:
         yaw_angle += sign(yaw_diff) * min(abs(yaw_diff), rotation_speed * delta)
-    
     var pitch_diff = target_pitch - pitch_angle
     if abs(pitch_diff) > 0.01:
         pitch_angle += sign(pitch_diff) * min(abs(pitch_diff), rotation_speed * delta)
-    
     var ortho_diff = target_ortho - ortho_size
     if abs(ortho_diff) > 0.01:
         ortho_size += ortho_diff * zoom_speed * delta
-    
     camera.size = ortho_size
     update_camera_transform()
-    
     if Input.is_action_just_pressed("rotate_left"):
         target_yaw -= 90.0
         target_yaw = fposmod(target_yaw, 360.0)
@@ -61,7 +57,6 @@ func _input(event):
         elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
             target_ortho = clamp(target_ortho + 1.0, min_ortho, max_ortho)
             get_viewport().set_input_as_handled()
-        
         if event.button_index == MOUSE_BUTTON_MIDDLE:
             if event.pressed:
                 is_dragging = true
@@ -69,7 +64,6 @@ func _input(event):
                 drag_start_pos = global_position
             else:
                 is_dragging = false
-    
     if event is InputEventMouseMotion and is_dragging:
         var delta_pos = event.position - drag_start
         var right = global_transform.basis.x

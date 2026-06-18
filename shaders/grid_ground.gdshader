@@ -12,7 +12,6 @@ void fragment() {
     float line = min(grid.x, grid.y);
     float grid_line = 1.0 - min(line, 1.0);
     
-    // 粗线：每 10 格一条主格线
     vec2 coord10 = UV * grid_size / 10.0;
     vec2 grid10 = abs(fract(coord10 - 0.5) - 0.5) / fwidth(coord10);
     float line10 = min(grid10.x, grid10.y);

@@ -13,7 +13,6 @@ func _ready():
     highlight.visible = false
 
 func _input(event):
-    # 如果鼠标在 UI 上，不处理 3D 交互
     if _is_mouse_over_ui():
         highlight.visible = false
         return
@@ -29,7 +28,6 @@ func _input(event):
                 mouse_pressed = false
                 if not mouse_moved:
                     _handle_left_click()
-        
         elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
             _handle_right_click()
     
@@ -37,7 +35,6 @@ func _input(event):
         if mouse_pressed:
             if event.position.distance_to(mouse_start_pos) > DRAG_THRESHOLD:
                 mouse_moved = true
-        # 更新选中高亮位置
         _update_highlight()
 
 func _handle_left_click():
@@ -64,7 +61,6 @@ func _raycast() -> Dictionary:
     return space_state.intersect_ray(query)
 
 func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
-    # 根据法线方向偏移到相邻格子
     var place_pos = hit_pos + hit_normal * 0.5
     return Vector3i(round(place_pos.x), round(place_pos.y), round(place_pos.z))
 
@@ -81,7 +77,6 @@ func _update_highlight():
         highlight.visible = false
 
 func _is_mouse_over_ui() -> bool:
-    # 简易版：如果鼠标在底部 60px（物品栏区域），跳过
     var mouse_y = get_viewport().get_mouse_position().y
     var viewport_height = get_viewport().get_visible_rect().size.y
     return mouse_y > viewport_height - 60

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/color_picker_popup.gd" id="1_cpp"]
 
 [node name="ColorPickerPopup" type="PopupPanel"]
-title = "闁瀚ㄦ０婊嗗"
+title = "Select Color"
 script = ExtResource("1_cpp")
 
 [node name="VBox" type="VBoxContainer" parent="."]
@@ -44,8 +44,8 @@ max_value = 255.0
 
 [node name="Confirm" type="Button" parent="VBox"]
 layout_mode = 2
-text = "绾喛顓?
+text = "OK"
 
 [node name="Cancel" type="Button" parent="VBox"]
 layout_mode = 2
-text = "閸欐牗绉?
+text = "Cancel"
