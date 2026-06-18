@@ -73,13 +73,14 @@ func _try_place():
 
 func _would_crush_player(grid_pos: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position
-	var bx = float(grid_pos.x)
-	var by = float(grid_pos.y)
-	var bz = float(grid_pos.z)
-	if p.x > bx - 0.5 and p.x < bx + 1.5:
-		if p.y > by - 0.5 and p.y < by + 1.5:
-			if p.z > bz - 0.5 and p.z < bz + 1.5:
-				return true
+	var bx = float(grid_pos.x) + 0.5
+	var by = float(grid_pos.y) + 0.5
+	var bz = float(grid_pos.z) + 0.5
+	var dx = abs(p.x - bx)
+	var dz = abs(p.z - bz)
+	if dx < 0.9 and dz < 0.9:
+		if p.y + 1.3 > grid_pos.y and p.y - 1.3 < grid_pos.y + 1:
+			return true
 	return false
 
 func _try_break():
