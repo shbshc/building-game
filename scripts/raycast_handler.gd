@@ -20,7 +20,6 @@ func _input(event):
         return
     
     if event is InputEventMouseButton:
-        # Left click
         if event.button_index == MOUSE_BUTTON_LEFT:
             if event.pressed:
                 mouse_pressed = true
@@ -31,26 +30,21 @@ func _input(event):
                 mouse_pressed = false
                 if not mouse_moved:
                     _handle_left_click()
-                camera_rig.stop_drag()
         
-        # Right click - delete block
         elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
             _handle_right_click()
         
-        # Middle click - deselect
-        elif event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
-            inventory.selected_slot = -1
-            inventory._update_selection_highlight()
-            highlight.visible = false
-            get_viewport().set_input_as_handled()
+        elif event.button_index == MOUSE_BUTTON_MIDDLE:
+            if event.pressed:
+                camera_rig.start_drag(event.position)
+            else:
+                camera_rig.stop_drag()
     
     if event is InputEventMouseMotion:
         if mouse_pressed:
             if event.position.distance_to(mouse_start_pos) > DRAG_THRESHOLD:
-                if not mouse_moved:
-                    mouse_moved = true
-                    camera_rig.start_drag(mouse_start_pos)
-                camera_rig.do_drag(event.position)
+                mouse_moved = true
+        _update_highlight()
 
 func _handle_left_click():
     if inventory.selected_slot < 0:

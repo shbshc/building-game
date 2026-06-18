@@ -10,7 +10,6 @@ extends Node3D
 @export var max_pitch := 60.0
 @export var rotate_speed := 60.0
 @export var zoom_speed := 10.0
-@export var pan_sensitivity := 200.0
 
 var target_pitch := 35.264
 var target_ortho := 15.0
@@ -26,13 +25,11 @@ func _ready():
     update_camera_transform()
 
 func _process(delta):
-    # Smooth rotation
     if Input.is_action_pressed("rotate_left"):
         yaw_angle -= rotate_speed * delta
     if Input.is_action_pressed("rotate_right"):
         yaw_angle += rotate_speed * delta
     
-    # Smooth pitch
     if Input.is_action_pressed("pitch_up"):
         target_pitch = clamp(target_pitch - 30.0 * delta, min_pitch, max_pitch)
     if Input.is_action_pressed("pitch_down"):
@@ -42,7 +39,6 @@ func _process(delta):
     if abs(pitch_diff) > 0.01:
         pitch_angle += sign(pitch_diff) * min(abs(pitch_diff), rotate_speed * delta)
     
-    # Smooth zoom
     var ortho_diff = target_ortho - ortho_size
     if abs(ortho_diff) > 0.01:
         ortho_size += ortho_diff * zoom_speed * delta
@@ -58,6 +54,15 @@ func _input(event):
         elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
             target_ortho = clamp(target_ortho + 1.0, min_ortho, max_ortho)
             get_viewport().set_input_as_handled()
+    
+    if event is InputEventMouseMotion and is_dragging:
+        var delta_pos = event.position - drag_start
+        drag_start = event.position
+        var yaw_rad = deg_to_rad(yaw_angle)
+        var screen_right = Vector3(cos(yaw_rad), 0, -sin(yaw_rad))
+        var screen_down = Vector3(sin(yaw_rad), 0, cos(yaw_rad))
+        var scale = ortho_size / 1000.0
+        global_position += (-screen_right * delta_pos.x - screen_down * delta_pos.y) * scale
 
 func start_drag(pos: Vector2):
     is_dragging = true
@@ -66,17 +71,6 @@ func start_drag(pos: Vector2):
 
 func stop_drag():
     is_dragging = false
-
-func do_drag(pos: Vector2):
-    if not is_dragging:
-        return
-    var delta_pos = pos - drag_start
-    var yaw_rad = deg_to_rad(yaw_angle)
-    # Screen-aligned movement vectors
-    var screen_right = Vector3(cos(yaw_rad), 0, -sin(yaw_rad))
-    var screen_down = Vector3(sin(yaw_rad), 0, cos(yaw_rad))
-    var scale_factor = ortho_size / pan_sensitivity
-    global_position = drag_start_pos + (-screen_right * delta_pos.x + screen_down * delta_pos.y) * scale_factor
 
 func update_camera_transform():
     var yaw_rad = deg_to_rad(yaw_angle)

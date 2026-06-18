@@ -24,12 +24,8 @@ func _build_ui():
     var hbox := HBoxContainer.new()
     hbox.alignment = BoxContainer.ALIGNMENT_CENTER
     hbox.add_theme_constant_override("separation", 4)
+    hbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
     add_child(hbox)
-    anchor_left = 0.5
-    anchor_right = 0.5
-    anchor_bottom = 1.0
-    offset_bottom = -8
-    offset_left = -SLOT_COUNT * 28
     for i in SLOT_COUNT:
         var btn := Button.new()
         btn.custom_minimum_size = Vector2(48, 48)
