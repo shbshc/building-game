@@ -4,6 +4,7 @@
 
 [node name="GroundColorPopup" type="PopupPanel"]
 title = "Ground Settings"
+size = Vector2i(300, 400)
 script = ExtResource("1_gcp")
 
 [node name="VBox" type="VBoxContainer" parent="."]
@@ -14,14 +15,14 @@ anchor_bottom = 1.0
 
 [node name="GroundLabel" type="Label" parent="VBox"]
 layout_mode = 2
-text = "Ground"
+text = "Ground Color"
 
 [node name="GroundPicker" type="ColorPicker" parent="VBox"]
 layout_mode = 2
 
 [node name="GridLabel" type="Label" parent="VBox"]
 layout_mode = 2
-text = "Grid"
+text = "Grid Color"
 
 [node name="GridPicker" type="ColorPicker" parent="VBox"]
 layout_mode = 2

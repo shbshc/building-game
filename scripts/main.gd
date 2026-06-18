@@ -4,6 +4,7 @@ extends Node3D
 @onready var inventory_bar = $UI/UIContainer/InventoryBar
 @onready var save_manager = $SaveManager
 @onready var ground = $Ground
+@onready var camera_rig = $CameraRig
 
 var color_picker_popup: PopupPanel
 var ground_color_popup: PopupPanel
@@ -43,10 +44,13 @@ func _position_buttons():
     var margin = 8
     var btn_w = 70
     var btn_h = 34
-    var btns = [save_btn, load_btn, ground_btn]
-    for i in range(btns.size()):
-        btns[i].position = Vector2(margin + i * (btn_w + 4), margin)
-        btns[i].size = Vector2(btn_w, btn_h)
+    [save_btn, load_btn, ground_btn].map(func(b): b.position = Vector2.ZERO)
+    save_btn.position = Vector2(margin, margin)
+    save_btn.size = Vector2(btn_w, btn_h)
+    load_btn.position = Vector2(margin + btn_w + 4, margin)
+    load_btn.size = Vector2(btn_w, btn_h)
+    ground_btn.position = Vector2(margin + (btn_w + 4) * 2, margin)
+    ground_btn.size = Vector2(btn_w, btn_h)
 
 func _on_window_resize():
     _position_buttons()
