@@ -68,7 +68,19 @@ func _try_place():
 	if result:
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
-			block_manager.place_block(grid_pos)
+			if not _would_crush_player(grid_pos):
+				block_manager.place_block(grid_pos)
+
+func _would_crush_player(grid_pos: Vector3i) -> bool:
+	var p = $"../CameraRig".global_position
+	var bx = float(grid_pos.x)
+	var by = float(grid_pos.y)
+	var bz = float(grid_pos.z)
+	if p.x > bx - 0.5 and p.x < bx + 1.5:
+		if p.y > by - 0.5 and p.y < by + 1.5:
+			if p.z > bz - 0.5 and p.z < bz + 1.5:
+				return true
+	return false
 
 func _try_break():
 	var result = _raycast()
