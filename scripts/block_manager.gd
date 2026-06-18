@@ -26,7 +26,7 @@ func place_block(grid_pos: Vector3i) -> bool:
         return false
     var mesh := MeshInstance3D.new()
     mesh.mesh = BoxMesh.new()
-    mesh.position = Vector3(grid_pos)
+    mesh.position = Vector3(grid_pos) + Vector3(0.5, 0, 0.5)
     var mat := StandardMaterial3D.new()
     mat.albedo_color = selected_color
     mesh.material_override = mat

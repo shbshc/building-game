@@ -60,7 +60,8 @@ func _handle_right_click():
     if result and result.collider:
         var parent = result.collider.get_parent()
         if parent is MeshInstance3D:
-            var grid_pos = Vector3i(parent.position)
+            var pos = parent.position
+            var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y), int(pos.z - 0.5))
             block_manager.remove_block(grid_pos)
 
 func _raycast() -> Dictionary:
@@ -73,7 +74,7 @@ func _raycast() -> Dictionary:
 
 func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
     var place_pos = hit_pos + hit_normal * 0.5
-    return Vector3i(round(place_pos.x), round(place_pos.y), round(place_pos.z))
+    return Vector3i(floor(place_pos.x), round(place_pos.y), floor(place_pos.z))
 
 func _update_highlight():
     var result = _raycast()
@@ -81,7 +82,7 @@ func _update_highlight():
         var grid_pos = _world_to_grid(result.position, result.normal)
         if grid_pos != null and block_manager.can_place_at(grid_pos):
             highlight.visible = true
-            highlight.position = Vector3(grid_pos)
+            highlight.position = Vector3(grid_pos) + Vector3(0.5, 0, 0.5)
         else:
             highlight.visible = false
     else:

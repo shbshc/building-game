@@ -22,9 +22,9 @@ func _ready():
     inventory_bar.slot_right_clicked.connect(_on_slot_right_clicked)
     color_picker_popup.color_confirmed.connect(_on_color_confirmed)
     
-    $UI/TopBar/SaveButton.pressed.connect(_on_save_pressed)
-    $UI/TopBar/LoadButton.pressed.connect(_on_load_pressed)
-    $UI/TopBar/GroundColorButton.pressed.connect(_on_ground_color_pressed)
+    $UI/TopBar/SaveBtn.pressed.connect(_on_save_pressed)
+    $UI/TopBar/LoadBtn.pressed.connect(_on_load_pressed)
+    $UI/TopBar/GroundBtn.pressed.connect(_on_ground_color_pressed)
     
     block_manager.selected_color = inventory_bar.get_selected_color()
 
