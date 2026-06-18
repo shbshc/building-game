@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 @export var move_speed := 10.0
-@export var jump_velocity := 13.5
+@export var jump_velocity := 18.0
 @export var mouse_sensitivity := 0.002
 @export var min_pitch := -89.0
 @export var max_pitch := 89.0
@@ -32,7 +32,8 @@ func _process(delta):
 		_toggle_mouse()
 	
 	if mouse_captured:
-		if Input.is_action_just_pressed("move_up"):
+		var space_just = Input.is_action_just_pressed("move_up")
+		if space_just:
 			var now = Time.get_ticks_msec() / 1000.0
 			if now - last_space_time < DOUBLE_TAP_TIME:
 				is_flying = !is_flying
@@ -75,7 +76,7 @@ func _process(delta):
 			
 			if not is_on_floor():
 				velocity.y -= gravity * delta
-			if Input.is_action_just_pressed("move_up") and is_on_floor():
+			if space_just and is_on_floor():
 				velocity.y = jump_velocity
 	
 	move_and_slide()
