@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -56,7 +56,14 @@ script = ExtResource("7_save_manager")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="InventoryBar" type="Control" parent="UI"]
+[node name="UIContainer" type="Control" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+
+[node name="InventoryBar" type="Control" parent="UI/UIContainer"]
 layout_mode = 1
 anchors_preset = 12
 anchor_left = 0.5
