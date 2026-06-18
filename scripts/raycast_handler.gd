@@ -75,15 +75,15 @@ func _overlaps_player(grid_pos: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position
 	var bx = float(grid_pos.x) + 0.5
 	var bz = float(grid_pos.z) + 0.5
-	var by = float(grid_pos.y) + 0.5
-	# XZ: circle distance check
 	var dx = p.x - bx
 	var dz = p.z - bz
-	if dx*dx + dz*dz >= 0.81:  # 0.9^2
+	if dx*dx + dz*dz >= 0.64:
 		return false
-	# Y: capsule half-height 1.0 + block half 0.5 = 1.5
-	var dy = abs(p.y - by)
-	return dy < 1.5
+	var block_feet = float(grid_pos.y)
+	var block_head = float(grid_pos.y) + 1.0
+	var player_feet = p.y - 1.0
+	var player_head = p.y + 1.0
+	return player_head > block_feet and player_feet < block_head
 
 func _try_break():
 	var result = _raycast()
