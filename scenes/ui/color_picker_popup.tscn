@@ -1,0 +1,51 @@
+﻿[gd_scene load_steps=2 format=3 uid="uid://c1p2q3r4s5t6u7v8w9x0y1"]
+
+[ext_resource type="Script" path="res://scripts/color_picker_popup.gd" id="1_cpp"]
+
+[node name="ColorPickerPopup" type="PopupPanel"]
+title = "选择颜色"
+script = ExtResource("1_cpp")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ColorPicker" type="ColorPicker" parent="VBox"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="RLabel" type="Label" parent="VBox/HBox"]
+layout_mode = 2
+text = "R"
+
+[node name="RSpin" type="SpinBox" parent="VBox/HBox"]
+layout_mode = 2
+max_value = 255.0
+
+[node name="GLabel" type="Label" parent="VBox/HBox"]
+layout_mode = 2
+text = "G"
+
+[node name="GSpin" type="SpinBox" parent="VBox/HBox"]
+layout_mode = 2
+max_value = 255.0
+
+[node name="BLabel" type="Label" parent="VBox/HBox"]
+layout_mode = 2
+text = "B"
+
+[node name="BSpin" type="SpinBox" parent="VBox/HBox"]
+layout_mode = 2
+max_value = 255.0
+
+[node name="Confirm" type="Button" parent="VBox"]
+layout_mode = 2
+text = "确认"
+
+[node name="Cancel" type="Button" parent="VBox"]
+layout_mode = 2
+text = "取消"

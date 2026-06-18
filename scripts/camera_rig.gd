@@ -1,0 +1,100 @@
+extends Node3D
+
+@export var pitch_angle := 35.264   # 等距俯角
+@export var yaw_angle := 45.0       # 水平旋转角
+@export var distance := 30.0        # 摄像机距离
+@export var ortho_size := 15.0      # 正交大小
+@export var min_ortho := 5.0
+@export var max_ortho := 40.0
+@export var min_pitch := 10.0
+@export var max_pitch := 60.0
+@export var rotation_speed := 90.0  # 度/秒
+@export var zoom_speed := 10.0      # 缩放平滑速度
+@export var pan_sensitivity := 200.0 # 平移灵敏度
+
+var target_yaw := 45.0
+var target_pitch := 35.264
+var target_ortho := 15.0
+var is_dragging := false
+var drag_start := Vector2.ZERO
+var drag_start_pos := Vector3.ZERO
+
+@onready var camera: Camera3D = $Camera3D
+
+func _ready():
+    camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+    camera.size = ortho_size
+    update_camera_transform()
+
+func _process(delta):
+    # 平滑旋转
+    var yaw_diff = target_yaw - yaw_angle
+    if abs(yaw_diff) > 0.01:
+        yaw_angle += sign(yaw_diff) * min(abs(yaw_diff), rotation_speed * delta)
+    
+    # 平滑俯仰
+    var pitch_diff = target_pitch - pitch_angle
+    if abs(pitch_diff) > 0.01:
+        pitch_angle += sign(pitch_diff) * min(abs(pitch_diff), rotation_speed * delta)
+    
+    # 平滑缩放
+    var ortho_diff = target_ortho - ortho_size
+    if abs(ortho_diff) > 0.01:
+        ortho_size += ortho_diff * zoom_speed * delta
+    
+    camera.size = ortho_size
+    update_camera_transform()
+    
+    # 键盘输入
+    if Input.is_action_just_pressed("rotate_left"):
+        target_yaw -= 90.0
+        target_yaw = fposmod(target_yaw, 360.0)
+    if Input.is_action_just_pressed("rotate_right"):
+        target_yaw += 90.0
+        target_yaw = fposmod(target_yaw, 360.0)
+    if Input.is_action_pressed("pitch_up"):
+        target_pitch = clamp(target_pitch - 30.0 * delta, min_pitch, max_pitch)
+    if Input.is_action_pressed("pitch_down"):
+        target_pitch = clamp(target_pitch + 30.0 * delta, min_pitch, max_pitch)
+
+func _input(event):
+    # 滚轮缩放
+    if event is InputEventMouseButton:
+        if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+            target_ortho = clamp(target_ortho - 1.0, min_ortho, max_ortho)
+            get_viewport().set_input_as_handled()
+        elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+            target_ortho = clamp(target_ortho + 1.0, min_ortho, max_ortho)
+            get_viewport().set_input_as_handled()
+        
+        # 中键拖拽
+        if event.button_index == MOUSE_BUTTON_MIDDLE:
+            if event.pressed:
+                is_dragging = true
+                drag_start = event.position
+                drag_start_pos = global_position
+            else:
+                is_dragging = false
+    
+    # 中键拖拽移动
+    if event is InputEventMouseMotion and is_dragging:
+        var delta_pos = event.position - drag_start
+        var right = global_transform.basis.x
+        var forward = global_transform.basis.z
+        forward.y = 0
+        right.y = 0
+        var scale_factor = ortho_size / pan_sensitivity
+        global_position = drag_start_pos + (-right * delta_pos.x - forward * delta_pos.y) * scale_factor
+
+func update_camera_transform():
+    var yaw_rad = deg_to_rad(yaw_angle)
+    var pitch_rad = deg_to_rad(pitch_angle)
+    
+    # 摄像机在球坐标上的位置
+    var cam_pos := Vector3(
+        distance * cos(pitch_rad) * sin(yaw_rad),
+        distance * sin(pitch_rad),
+        distance * cos(pitch_rad) * cos(yaw_rad)
+    )
+    camera.position = cam_pos
+    camera.look_at(global_position)

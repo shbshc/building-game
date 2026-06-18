@@ -1,0 +1,78 @@
+﻿[gd_scene load_steps=11 format=3 uid="uid://d1e2f3a4b5c6d7e8f9g0h1"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
+[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_camera_rig"]
+[ext_resource type="Script" path="res://scripts/block_manager.gd" id="4_block_manager"]
+[ext_resource type="Script" path="res://scripts/raycast_handler.gd" id="5_raycast"]
+[ext_resource type="Script" path="res://scripts/inventory.gd" id="6_inventory"]
+[ext_resource type="Script" path="res://scripts/save_manager.gd" id="7_save_manager"]
+
+[sub_resource type="Environment" id="env_default"]
+background_mode = 1
+background_color = Color(0.529412, 0.807843, 0.921569, 1)
+ambient_light_color = Color(0.25098, 0.25098, 0.25098, 1)
+ambient_light_energy = 0.3
+
+[sub_resource type="BoxMesh" id="highlight_mesh"]
+size = Vector3(1.05, 1.05, 1.05)
+
+[sub_resource type="StandardMaterial3D" id="highlight_mat"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.3)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.785398, -0.785398, 0)
+light_energy = 0.8
+light_color = Color(1, 1, 1, 1)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env_default")
+
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("3_camera_rig")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+
+[node name="Blocks" type="Node3D" parent="."]
+script = ExtResource("4_block_manager")
+
+[node name="SelectionHighlight" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("highlight_mesh")
+material_override = SubResource("highlight_mat")
+
+[node name="RayCastHandler" type="Node3D" parent="."]
+script = ExtResource("5_raycast")
+
+[node name="SaveManager" type="Node" parent="."]
+script = ExtResource("7_save_manager")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="TopBar" type="HBoxContainer" parent="UI"]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 40.0
+
+[node name="SaveButton" type="Button" parent="UI/TopBar"]
+layout_mode = 2
+text = "保存"
+offset_right = 80.0
+offset_bottom = 40.0
+
+[node name="LoadButton" type="Button" parent="UI/TopBar"]
+layout_mode = 2
+text = "加载"
+offset_right = 80.0
+offset_bottom = 40.0
+
+[node name="InventoryBar" type="Control" parent="UI"]
+script = ExtResource("6_inventory")
+
