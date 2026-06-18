@@ -46,11 +46,11 @@ func _process(delta):
 func _input(event):
     if event is InputEventMouseButton:
         if mouse_captured:
-            if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+            if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
                 inventory.selected_slot = (inventory.selected_slot + 1) % inventory.SLOT_COUNT
                 inventory._update_selection_highlight()
                 inventory.slot_selected.emit(inventory.selected_slot)
-            elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+            elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
                 inventory.selected_slot = (inventory.selected_slot - 1 + inventory.SLOT_COUNT) % inventory.SLOT_COUNT
                 inventory._update_selection_highlight()
                 inventory.slot_selected.emit(inventory.selected_slot)
