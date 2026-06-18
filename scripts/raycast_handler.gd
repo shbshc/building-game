@@ -9,13 +9,27 @@ var middle_start_pos := Vector2.ZERO
 const DRAG_THRESHOLD := 5.0
 
 @onready var block_manager: Node3D = $"../Blocks"
-@onready var highlight: MeshInstance3D = $"../SelectionHighlight"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
 @onready var camera_rig: Node3D = $"../CameraRig"
 @onready var inventory = $"../UI/UIContainer/InventoryBar"
 
+var highlight: MeshInstance3D
+
 func _ready():
+    _create_highlight()
     highlight.visible = false
+
+func _create_highlight():
+    highlight = MeshInstance3D.new()
+    highlight.name = "Highlight"
+    var box := BoxMesh.new()
+    box.size = Vector3(1.05, 1.05, 1.05)
+    highlight.mesh = box
+    var mat := StandardMaterial3D.new()
+    mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    mat.albedo_color = Color(1, 1, 1, 0.3)
+    highlight.material_override = mat
+    add_child(highlight)
 
 func _input(event):
     if _is_mouse_over_ui():

@@ -4,32 +4,16 @@ extends Node3D
 @onready var inventory_bar = $UI/UIContainer/InventoryBar
 @onready var save_manager = $SaveManager
 @onready var ground = $Ground
-@onready var camera_rig = $CameraRig
 
-var highlight: MeshInstance3D
 var color_picker_popup: PopupPanel
 var ground_color_popup: PopupPanel
 
 func _ready():
     print("=== Game started ===")
-    _create_highlight()
     _setup_ui()
     _create_popups()
     _connect_signals()
     block_manager.selected_color = inventory_bar.get_selected_color()
-
-func _create_highlight():
-    highlight = MeshInstance3D.new()
-    highlight.name = "SelectionHighlight"
-    highlight.visible = false
-    var box := BoxMesh.new()
-    box.size = Vector3(1.05, 1.05, 1.05)
-    highlight.mesh = box
-    var mat := StandardMaterial3D.new()
-    mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-    mat.albedo_color = Color(1, 1, 1, 0.3)
-    highlight.material_override = mat
-    add_child(highlight)
 
 func _setup_ui():
     var ui_root = $UI/UIContainer
