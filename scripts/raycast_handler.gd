@@ -6,8 +6,10 @@ extends Node3D
 
 var highlight: MeshInstance3D
 var place_timer: float = 0.0
-var mouse_held: bool = false
-const PLACE_INTERVAL := 0.5
+var break_timer: float = 0.0
+var mouse_left_held: bool = false
+var mouse_right_held: bool = false
+const ACTION_INTERVAL := 0.5
 
 func _ready():
     _create_highlight()
@@ -25,11 +27,16 @@ func _create_highlight():
     add_child(highlight)
 
 func _process(delta):
-    if mouse_held:
+    if mouse_left_held:
         place_timer -= delta
         if place_timer <= 0:
-            place_timer = PLACE_INTERVAL
+            place_timer = ACTION_INTERVAL
             _try_place()
+    if mouse_right_held:
+        break_timer -= delta
+        if break_timer <= 0:
+            break_timer = ACTION_INTERVAL
+            _try_break()
 
 func _input(event):
     var cam_rig = $"../CameraRig"
@@ -40,13 +47,16 @@ func _input(event):
     if event is InputEventMouseButton:
         if event.button_index == MOUSE_BUTTON_LEFT:
             if event.pressed:
-                mouse_held = true
+                mouse_left_held = true
                 place_timer = 0.0
             else:
-                mouse_held = false
-        
-        elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-            _handle_right_click()
+                mouse_left_held = false
+        elif event.button_index == MOUSE_BUTTON_RIGHT:
+            if event.pressed:
+                mouse_right_held = true
+                break_timer = 0.0
+            else:
+                mouse_right_held = false
     
     if event is InputEventMouseMotion:
         _update_highlight()
@@ -60,7 +70,7 @@ func _try_place():
         if grid_pos != null and block_manager.can_place_at(grid_pos):
             block_manager.place_block(grid_pos)
 
-func _handle_right_click():
+func _try_break():
     var result = _raycast()
     if result and result.collider:
         var parent = result.collider.get_parent()
