@@ -1,7 +1,7 @@
-﻿extends Node3D
+extends Node3D
 
 var blocks := {}  # Dictionary: Vector3i -> {color: Color, node: MeshInstance3D}
-var selected_color := Color(1.0, 0.2, 0.2)  # 默认红色
+var selected_color := Color(1.0, 0.2, 0.2)  # Ĭ�Ϻ�ɫ
 
 func can_place_at(grid_pos: Vector3i) -> bool:
     if blocks.has(grid_pos):
@@ -21,7 +21,7 @@ func can_place_at(grid_pos: Vector3i) -> bool:
             return true
     return false
 
-func place_block(grid_pos: Vector3i, color: Color = selected_color) -> bool:
+func place_block(grid_pos: Vector3i, color: Color = Color(1.0, 0.2, 0.2)) -> bool:
     if not can_place_at(grid_pos):
         return false
     
