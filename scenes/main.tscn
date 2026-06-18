@@ -10,7 +10,7 @@
 
 [sub_resource type="CapsuleShape3D" id="player_shape"]
 radius = 0.5
-height = 1.8
+height = 2.0
 
 [sub_resource type="Environment" id="env_default"]
 background_mode = 1
@@ -40,6 +40,7 @@ script = ExtResource("3_camera_rig")
 shape = SubResource("player_shape")
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 fov = 75.0
 fov = 75.0
 
