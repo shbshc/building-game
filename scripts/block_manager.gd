@@ -33,6 +33,7 @@ func place_block(grid_pos: Vector3i) -> bool:
     var body := StaticBody3D.new()
     var col := CollisionShape3D.new()
     col.shape = BoxShape3D.new()
+    col.shape.size = Vector3(1, 1, 1)
     body.add_child(col)
     mesh.add_child(body)
     add_child(mesh)
