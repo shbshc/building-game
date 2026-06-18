@@ -14,34 +14,42 @@ func _ready():
     _create_popups()
     _connect_signals()
     block_manager.selected_color = inventory_bar.get_selected_color()
+    get_tree().root.size_changed.connect(_on_window_resize)
 
 func _setup_ui():
     var ui_root = $UI/UIContainer
-    var save_btn = _make_button("Save", Vector2(8, 6))
+    
+    var save_btn = Button.new()
+    save_btn.text = "Save"
     save_btn.pressed.connect(_on_save_pressed)
     ui_root.add_child(save_btn)
     
-    var load_btn = _make_button("Load", Vector2(82, 6))
+    var load_btn = Button.new()
+    load_btn.text = "Load"
     load_btn.pressed.connect(_on_load_pressed)
     ui_root.add_child(load_btn)
     
-    var ground_btn = _make_button("Ground", Vector2(156, 6))
+    var ground_btn = Button.new()
+    ground_btn.text = "Ground"
     ground_btn.pressed.connect(_on_ground_color_pressed)
     ui_root.add_child(ground_btn)
+    
+    _position_buttons()
 
-func _make_button(txt: String, pos: Vector2) -> Button:
-    var btn := Button.new()
-    btn.text = txt
-    btn.position = pos
-    btn.size = Vector2(70, 34)
-    var s := StyleBoxFlat.new()
-    s.bg_color = Color(0.15, 0.15, 0.15, 0.85)
-    s.corner_radius_top_left = 4
-    s.corner_radius_top_right = 4
-    s.corner_radius_bottom_left = 4
-    s.corner_radius_bottom_right = 4
-    btn.add_theme_stylebox_override("normal", s)
-    return btn
+func _position_buttons():
+    var viewport_size = get_viewport().get_visible_rect().size
+    var margin = 8
+    var btn_w = 70
+    var btn_h = 34
+    
+    var btns = [$UI/UIContainer/Save, $UI/UIContainer/Load, $UI/UIContainer/Ground]
+    for i in range(btns.size()):
+        var btn = btns[i]
+        btn.position = Vector2(margin + i * (btn_w + 4), margin)
+        btn.size = Vector2(btn_w, btn_h)
+
+func _on_window_resize():
+    _position_buttons()
 
 func _create_popups():
     color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()

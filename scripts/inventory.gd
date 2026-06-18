@@ -19,22 +19,29 @@ func _ready():
     for i in SLOT_COUNT:
         inventory_colors[i] = defaults[i]
     _build_ui()
+    get_tree().root.size_changed.connect(_on_resize)
 
 func _build_ui():
     var hbox := HBoxContainer.new()
+    hbox.name = "HBox"
     hbox.alignment = BoxContainer.ALIGNMENT_CENTER
     hbox.add_theme_constant_override("separation", 4)
-    hbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
     add_child(hbox)
     for i in SLOT_COUNT:
         var btn := Button.new()
-        btn.custom_minimum_size = Vector2(48, 48)
         btn.name = "Slot%d" % i
-        _update_slot_style(btn, i)
         btn.pressed.connect(_on_slot_pressed.bind(i))
         btn.gui_input.connect(_on_slot_gui_input.bind(i))
         hbox.add_child(btn)
         slot_buttons.append(btn)
+    _on_resize()
+    _update_selection_highlight()
+
+func _on_resize():
+    var vp_size = get_viewport().get_visible_rect().size
+    var slot_size = min(48, int((vp_size.x - 60) / SLOT_COUNT))
+    for btn in slot_buttons:
+        btn.custom_minimum_size = Vector2(slot_size, slot_size)
     _update_selection_highlight()
 
 func _update_slot_style(btn: Button, index: int):
