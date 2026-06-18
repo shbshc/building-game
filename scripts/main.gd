@@ -11,10 +11,12 @@ var ground_color_popup: PopupPanel
 var save_btn: Button
 var load_btn: Button
 var ground_btn: Button
+var crosshair: ColorRect
 
 func _ready():
     print("=== Game started ===")
     _setup_ui()
+    _create_crosshair()
     _create_popups()
     _connect_signals()
     block_manager.selected_color = inventory_bar.get_selected_color()
@@ -40,11 +42,31 @@ func _setup_ui():
     
     _position_buttons()
 
+func _create_crosshair():
+    crosshair = ColorRect.new()
+    crosshair.color = Color.WHITE
+    crosshair.size = Vector2(2, 20)
+    crosshair.position = Vector2.ZERO
+    $UI/UIContainer.add_child(crosshair)
+    
+    var cross_h := ColorRect.new()
+    cross_h.color = Color.WHITE
+    cross_h.size = Vector2(20, 2)
+    $UI/UIContainer.add_child(cross_h)
+    
+    _position_crosshair()
+
+func _position_crosshair():
+    var vp_size = get_viewport().get_visible_rect().size
+    var cx = vp_size.x / 2
+    var cy = vp_size.y / 2
+    crosshair.position = Vector2(cx - 1, cy - 10)
+    crosshair.get_parent().get_child(crosshair.get_index() + 1).position = Vector2(cx - 10, cy - 1)
+
 func _position_buttons():
     var margin = 8
     var btn_w = 70
     var btn_h = 34
-    [save_btn, load_btn, ground_btn].map(func(b): b.position = Vector2.ZERO)
     save_btn.position = Vector2(margin, margin)
     save_btn.size = Vector2(btn_w, btn_h)
     load_btn.position = Vector2(margin + btn_w + 4, margin)
@@ -54,6 +76,7 @@ func _position_buttons():
 
 func _on_window_resize():
     _position_buttons()
+    _position_crosshair()
 
 func _create_popups():
     color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()

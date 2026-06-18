@@ -10,6 +10,7 @@ var pitch := 0.0
 var mouse_captured := true
 
 @onready var camera: Camera3D = $Camera3D
+@onready var inventory = $"../UI/UIContainer/InventoryBar"
 
 func _ready():
     camera.projection = Camera3D.PROJECTION_PERSPECTIVE
@@ -42,6 +43,21 @@ func _process(delta):
             global_position += global_transform.basis * input_dir * move_speed * delta
 
 func _input(event):
+    if event is InputEventMouseButton:
+        if mouse_captured:
+            if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+                if inventory.selected_slot < 9:
+                    inventory.selected_slot += 1
+                else:
+                    inventory.selected_slot = 0
+                inventory._update_selection_highlight()
+            elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+                if inventory.selected_slot > 0:
+                    inventory.selected_slot -= 1
+                else:
+                    inventory.selected_slot = 9
+                inventory._update_selection_highlight()
+    
     if mouse_captured and event is InputEventMouseMotion:
         yaw -= event.relative.x * mouse_sensitivity
         pitch -= event.relative.y * mouse_sensitivity
