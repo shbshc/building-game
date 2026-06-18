@@ -4,21 +4,35 @@ extends Node3D
 @onready var inventory_bar = $UI/UIContainer/InventoryBar
 @onready var save_manager = $SaveManager
 @onready var ground = $Ground
+@onready var camera_rig = $CameraRig
 
+var highlight: MeshInstance3D
 var color_picker_popup: PopupPanel
 var ground_color_popup: PopupPanel
 
 func _ready():
     print("=== Game started ===")
+    _create_highlight()
     _setup_ui()
     _create_popups()
     _connect_signals()
     block_manager.selected_color = inventory_bar.get_selected_color()
 
+func _create_highlight():
+    highlight = MeshInstance3D.new()
+    highlight.name = "SelectionHighlight"
+    highlight.visible = false
+    var box := BoxMesh.new()
+    box.size = Vector3(1.05, 1.05, 1.05)
+    highlight.mesh = box
+    var mat := StandardMaterial3D.new()
+    mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    mat.albedo_color = Color(1, 1, 1, 0.3)
+    highlight.material_override = mat
+    add_child(highlight)
+
 func _setup_ui():
     var ui_root = $UI/UIContainer
-    
-    # Create buttons with visible flat style
     var save_btn = _make_button("Save", Vector2(8, 6))
     save_btn.pressed.connect(_on_save_pressed)
     ui_root.add_child(save_btn)
@@ -31,44 +45,23 @@ func _setup_ui():
     ground_btn.pressed.connect(_on_ground_color_pressed)
     ui_root.add_child(ground_btn)
 
-func _make_button(text: String, pos: Vector2) -> Button:
+func _make_button(txt: String, pos: Vector2) -> Button:
     var btn := Button.new()
-    btn.text = text
+    btn.text = txt
     btn.position = pos
     btn.size = Vector2(70, 34)
-    btn.flat = true
-    
-    # Create visible style
-    var normal_style := StyleBoxFlat.new()
-    normal_style.bg_color = Color(0.2, 0.2, 0.2, 0.8)
-    normal_style.corner_radius_top_left = 4
-    normal_style.corner_radius_top_right = 4
-    normal_style.corner_radius_bottom_left = 4
-    normal_style.corner_radius_bottom_right = 4
-    btn.add_theme_stylebox_override("normal", normal_style)
-    
-    var hover_style := StyleBoxFlat.new()
-    hover_style.bg_color = Color(0.3, 0.3, 0.3, 0.9)
-    hover_style.corner_radius_top_left = 4
-    hover_style.corner_radius_top_right = 4
-    hover_style.corner_radius_bottom_left = 4
-    hover_style.corner_radius_bottom_right = 4
-    btn.add_theme_stylebox_override("hover", hover_style)
-    
-    var pressed_style := StyleBoxFlat.new()
-    pressed_style.bg_color = Color(0.5, 0.5, 0.5, 0.9)
-    pressed_style.corner_radius_top_left = 4
-    pressed_style.corner_radius_top_right = 4
-    pressed_style.corner_radius_bottom_left = 4
-    pressed_style.corner_radius_bottom_right = 4
-    btn.add_theme_stylebox_override("pressed", pressed_style)
-    
+    var s := StyleBoxFlat.new()
+    s.bg_color = Color(0.15, 0.15, 0.15, 0.85)
+    s.corner_radius_top_left = 4
+    s.corner_radius_top_right = 4
+    s.corner_radius_bottom_left = 4
+    s.corner_radius_bottom_right = 4
+    btn.add_theme_stylebox_override("normal", s)
     return btn
 
 func _create_popups():
     color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()
     $UI/UIContainer.add_child(color_picker_popup)
-    
     ground_color_popup = preload("res://scenes/ui/ground_color_popup.tscn").instantiate()
     $UI/UIContainer.add_child(ground_color_popup)
 
@@ -91,16 +84,14 @@ func _on_color_confirmed(color: Color):
     block_manager.selected_color = color
 
 func _on_save_pressed():
-    print("SAVE pressed")
+    print("SAVE")
     DirAccess.make_dir_absolute("user://")
-    var ok = save_manager.save(block_manager, inventory_bar, ground)
-    print("Save: ", ok)
+    print(save_manager.save(block_manager, inventory_bar, ground))
 
 func _on_load_pressed():
-    print("LOAD pressed")
-    var ok = save_manager.load(block_manager, inventory_bar, ground)
-    print("Load: ", ok)
+    print("LOAD")
+    print(save_manager.load(block_manager, inventory_bar, ground))
 
 func _on_ground_color_pressed():
-    print("GROUND pressed")
+    print("GROUND")
     ground_color_popup.open_with_colors(ground, ground.ground_color, ground.grid_color)

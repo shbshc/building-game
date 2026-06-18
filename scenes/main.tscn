@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -13,13 +13,6 @@ background_mode = 1
 background_color = Color(0.529412, 0.807843, 0.921569, 1)
 ambient_light_color = Color(0.25098, 0.25098, 0.25098, 1)
 ambient_light_energy = 0.3
-
-[sub_resource type="BoxMesh" id="highlight_mesh"]
-size = Vector3(1.05, 1.05, 1.05)
-
-[sub_resource type="StandardMaterial3D" id="highlight_mat"]
-transparency = 1
-albedo_color = Color(1, 1, 1, 0.3)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -42,11 +35,6 @@ script = ExtResource("3_camera_rig")
 
 [node name="Blocks" type="Node3D" parent="."]
 script = ExtResource("4_block_manager")
-
-[node name="SelectionHighlight" type="MeshInstance3D" parent="."]
-visible = false
-mesh = SubResource("highlight_mesh")
-material_override = SubResource("highlight_mat")
 
 [node name="RayCastHandler" type="Node3D" parent="."]
 script = ExtResource("5_raycast")

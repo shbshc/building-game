@@ -3,11 +3,9 @@ extends Node3D
 var mouse_pressed := false
 var mouse_moved := false
 var mouse_start_pos := Vector2.ZERO
-
 var middle_pressed := false
 var middle_moved := false
 var middle_start_pos := Vector2.ZERO
-
 const DRAG_THRESHOLD := 5.0
 
 @onready var block_manager: Node3D = $"../Blocks"
@@ -34,10 +32,8 @@ func _input(event):
                 mouse_pressed = false
                 if not mouse_moved:
                     _handle_left_click()
-        
         elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
             _handle_right_click()
-        
         elif event.button_index == MOUSE_BUTTON_MIDDLE:
             if event.pressed:
                 middle_pressed = true
@@ -54,7 +50,6 @@ func _input(event):
         if mouse_pressed:
             if event.position.distance_to(mouse_start_pos) > DRAG_THRESHOLD:
                 mouse_moved = true
-        
         if middle_pressed:
             if event.position.distance_to(middle_start_pos) > DRAG_THRESHOLD:
                 if not middle_moved:
@@ -66,7 +61,6 @@ func _input(event):
                 var screen_down = Vector3(sin(yaw_rad), 0, cos(yaw_rad))
                 var scale = camera_rig.ortho_size / 1000.0
                 camera_rig.global_position += (-screen_right * delta_pos.x - screen_down * delta_pos.y) * scale
-        
         _update_highlight()
 
 func _handle_left_click():
