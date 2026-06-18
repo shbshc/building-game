@@ -17,26 +17,53 @@ func _ready():
 
 func _setup_ui():
     var ui_root = $UI/UIContainer
-    var save_btn := Button.new()
-    save_btn.text = "Save"
-    save_btn.position = Vector2(8, 6)
-    save_btn.size = Vector2(70, 34)
+    
+    # Create buttons with visible flat style
+    var save_btn = _make_button("Save", Vector2(8, 6))
     save_btn.pressed.connect(_on_save_pressed)
     ui_root.add_child(save_btn)
     
-    var load_btn := Button.new()
-    load_btn.text = "Load"
-    load_btn.position = Vector2(82, 6)
-    load_btn.size = Vector2(70, 34)
+    var load_btn = _make_button("Load", Vector2(82, 6))
     load_btn.pressed.connect(_on_load_pressed)
     ui_root.add_child(load_btn)
     
-    var ground_btn := Button.new()
-    ground_btn.text = "Ground"
-    ground_btn.position = Vector2(156, 6)
-    ground_btn.size = Vector2(70, 34)
+    var ground_btn = _make_button("Ground", Vector2(156, 6))
     ground_btn.pressed.connect(_on_ground_color_pressed)
     ui_root.add_child(ground_btn)
+
+func _make_button(text: String, pos: Vector2) -> Button:
+    var btn := Button.new()
+    btn.text = text
+    btn.position = pos
+    btn.size = Vector2(70, 34)
+    btn.flat = true
+    
+    # Create visible style
+    var normal_style := StyleBoxFlat.new()
+    normal_style.bg_color = Color(0.2, 0.2, 0.2, 0.8)
+    normal_style.corner_radius_top_left = 4
+    normal_style.corner_radius_top_right = 4
+    normal_style.corner_radius_bottom_left = 4
+    normal_style.corner_radius_bottom_right = 4
+    btn.add_theme_stylebox_override("normal", normal_style)
+    
+    var hover_style := StyleBoxFlat.new()
+    hover_style.bg_color = Color(0.3, 0.3, 0.3, 0.9)
+    hover_style.corner_radius_top_left = 4
+    hover_style.corner_radius_top_right = 4
+    hover_style.corner_radius_bottom_left = 4
+    hover_style.corner_radius_bottom_right = 4
+    btn.add_theme_stylebox_override("hover", hover_style)
+    
+    var pressed_style := StyleBoxFlat.new()
+    pressed_style.bg_color = Color(0.5, 0.5, 0.5, 0.9)
+    pressed_style.corner_radius_top_left = 4
+    pressed_style.corner_radius_top_right = 4
+    pressed_style.corner_radius_bottom_left = 4
+    pressed_style.corner_radius_bottom_right = 4
+    btn.add_theme_stylebox_override("pressed", pressed_style)
+    
+    return btn
 
 func _create_popups():
     color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()
@@ -64,16 +91,16 @@ func _on_color_confirmed(color: Color):
     block_manager.selected_color = color
 
 func _on_save_pressed():
-    print("SAVE")
+    print("SAVE pressed")
     DirAccess.make_dir_absolute("user://")
     var ok = save_manager.save(block_manager, inventory_bar, ground)
-    print("Save result: ", ok)
+    print("Save: ", ok)
 
 func _on_load_pressed():
-    print("LOAD")
+    print("LOAD pressed")
     var ok = save_manager.load(block_manager, inventory_bar, ground)
-    print("Load result: ", ok, " blocks: ", block_manager.blocks.size())
+    print("Load: ", ok)
 
 func _on_ground_color_pressed():
-    print("GROUND popup")
+    print("GROUND pressed")
     ground_color_popup.open_with_colors(ground, ground.ground_color, ground.grid_color)

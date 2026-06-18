@@ -30,7 +30,6 @@ func _input(event):
                 mouse_pressed = true
                 mouse_moved = false
                 mouse_start_pos = event.position
-                get_viewport().set_input_as_handled()
             else:
                 mouse_pressed = false
                 if not mouse_moved:
@@ -44,7 +43,6 @@ func _input(event):
                 middle_pressed = true
                 middle_moved = false
                 middle_start_pos = event.position
-                get_viewport().set_input_as_handled()
             else:
                 middle_pressed = false
                 if not middle_moved:
@@ -116,4 +114,4 @@ func _update_highlight():
 func _is_mouse_over_ui() -> bool:
     var mouse_y = get_viewport().get_mouse_position().y
     var viewport_height = get_viewport().get_visible_rect().size.y
-    return mouse_y > viewport_height - 60
+    return mouse_y > viewport_height - 60 or mouse_y < 40
