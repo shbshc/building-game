@@ -8,7 +8,6 @@ const DRAG_THRESHOLD := 5.0
 @onready var block_manager: Node3D = $"../Blocks"
 @onready var highlight: MeshInstance3D = $"../SelectionHighlight"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
-@onready var camera_rig: Node3D = $"../CameraRig"
 @onready var inventory = $"../UI/InventoryBar"
 
 func _ready():
@@ -34,11 +33,11 @@ func _input(event):
         elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
             _handle_right_click()
         
-        elif event.button_index == MOUSE_BUTTON_MIDDLE:
-            if event.pressed:
-                camera_rig.start_drag(event.position)
-            else:
-                camera_rig.stop_drag()
+        elif event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
+            inventory.selected_slot = -1
+            inventory._update_selection_highlight()
+            highlight.visible = false
+            get_viewport().set_input_as_handled()
     
     if event is InputEventMouseMotion:
         if mouse_pressed:

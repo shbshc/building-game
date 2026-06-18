@@ -56,37 +56,27 @@ script = ExtResource("7_save_manager")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="TopBar" type="Control" parent="UI"]
+[node name="TopBar" type="HBoxContainer" parent="UI"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-anchor_top = 0.0
-anchor_bottom = 0.0
 offset_left = -250.0
-offset_right = -10.0
+offset_right = -5.0
 offset_top = 5.0
 offset_bottom = 45.0
 
 [node name="SaveBtn" type="Button" parent="UI/TopBar"]
-layout_mode = 0
+layout_mode = 2
 text = "Save"
-offset_right = 70.0
-offset_bottom = 38.0
 
 [node name="LoadBtn" type="Button" parent="UI/TopBar"]
-layout_mode = 0
+layout_mode = 2
 text = "Load"
-offset_left = 75.0
-offset_right = 145.0
-offset_bottom = 38.0
 
 [node name="GroundBtn" type="Button" parent="UI/TopBar"]
-layout_mode = 0
+layout_mode = 2
 text = "Ground"
-offset_left = 150.0
-offset_right = 230.0
-offset_bottom = 38.0
 
 [node name="InventoryBar" type="Control" parent="UI"]
 layout_mode = 1
