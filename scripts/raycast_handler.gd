@@ -68,22 +68,7 @@ func _try_place():
 	if result:
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
-			if not _overlaps_player(grid_pos):
-				block_manager.place_block(grid_pos)
-
-func _overlaps_player(grid_pos: Vector3i) -> bool:
-	var p = $"../CameraRig".global_position
-	var bx = float(grid_pos.x) + 0.5
-	var bz = float(grid_pos.z) + 0.5
-	var dx = p.x - bx
-	var dz = p.z - bz
-	if dx*dx + dz*dz > 0.81:
-		return false
-	var player_feet = p.y - 1.3
-	var player_head = p.y + 1.3
-	var block_feet = float(grid_pos.y)
-	var block_head = float(grid_pos.y) + 1.0
-	return player_head > block_feet and player_feet < block_head
+			block_manager.place_block(grid_pos)
 
 func _try_break():
 	var result = _raycast()
