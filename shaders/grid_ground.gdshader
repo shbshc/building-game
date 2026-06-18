@@ -1,4 +1,4 @@
-﻿shader_type spatial;
+shader_type spatial;
 render_mode unshaded;
 
 uniform vec4 ground_color : source_color = vec4(0.85, 0.85, 0.85, 1.0);

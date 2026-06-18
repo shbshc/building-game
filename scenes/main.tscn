@@ -1,4 +1,4 @@
-﻿[gd_scene load_steps=11 format=3 uid="uid://d1e2f3a4b5c6d7e8f9g0h1"]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -63,13 +63,13 @@ offset_bottom = 40.0
 
 [node name="SaveButton" type="Button" parent="UI/TopBar"]
 layout_mode = 2
-text = "保存"
+text = "娣囨繂鐡?
 offset_right = 80.0
 offset_bottom = 40.0
 
 [node name="LoadButton" type="Button" parent="UI/TopBar"]
 layout_mode = 2
-text = "加载"
+text = "閸旂姾娴?
 offset_right = 80.0
 offset_bottom = 40.0
 

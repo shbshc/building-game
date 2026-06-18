@@ -1,9 +1,9 @@
-﻿[gd_scene load_steps=2 format=3 uid="uid://c1p2q3r4s5t6u7v8w9x0y1"]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scripts/color_picker_popup.gd" id="1_cpp"]
 
 [node name="ColorPickerPopup" type="PopupPanel"]
-title = "选择颜色"
+title = "闁瀚ㄦ０婊嗗"
 script = ExtResource("1_cpp")
 
 [node name="VBox" type="VBoxContainer" parent="."]
@@ -44,8 +44,8 @@ max_value = 255.0
 
 [node name="Confirm" type="Button" parent="VBox"]
 layout_mode = 2
-text = "确认"
+text = "绾喛顓?
 
 [node name="Cancel" type="Button" parent="VBox"]
 layout_mode = 2
-text = "取消"
+text = "閸欐牗绉?

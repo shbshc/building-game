@@ -1,4 +1,4 @@
-﻿extends MeshInstance3D
+extends MeshInstance3D
 
 @export var ground_color := Color(0.85, 0.85, 0.85)
 @export var grid_color := Color(0.4, 0.4, 0.4)

@@ -1,4 +1,4 @@
-﻿extends PopupPanel
+extends PopupPanel
 
 signal color_confirmed(color: Color)
 

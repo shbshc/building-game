@@ -1,4 +1,4 @@
-﻿extends Control
+extends Control
 
 var inventory_colors: Array[Color] = []
 var selected_slot := 0
