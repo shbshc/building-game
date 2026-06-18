@@ -7,6 +7,9 @@ extends Node3D
 
 var color_picker_popup: PopupPanel
 var ground_color_popup: PopupPanel
+var save_btn: Button
+var load_btn: Button
+var ground_btn: Button
 
 func _ready():
     print("=== Game started ===")
@@ -19,17 +22,17 @@ func _ready():
 func _setup_ui():
     var ui_root = $UI/UIContainer
     
-    var save_btn = Button.new()
+    save_btn = Button.new()
     save_btn.text = "Save"
     save_btn.pressed.connect(_on_save_pressed)
     ui_root.add_child(save_btn)
     
-    var load_btn = Button.new()
+    load_btn = Button.new()
     load_btn.text = "Load"
     load_btn.pressed.connect(_on_load_pressed)
     ui_root.add_child(load_btn)
     
-    var ground_btn = Button.new()
+    ground_btn = Button.new()
     ground_btn.text = "Ground"
     ground_btn.pressed.connect(_on_ground_color_pressed)
     ui_root.add_child(ground_btn)
@@ -37,16 +40,13 @@ func _setup_ui():
     _position_buttons()
 
 func _position_buttons():
-    var viewport_size = get_viewport().get_visible_rect().size
     var margin = 8
     var btn_w = 70
     var btn_h = 34
-    
-    var btns = [$UI/UIContainer/Save, $UI/UIContainer/Load, $UI/UIContainer/Ground]
+    var btns = [save_btn, load_btn, ground_btn]
     for i in range(btns.size()):
-        var btn = btns[i]
-        btn.position = Vector2(margin + i * (btn_w + 4), margin)
-        btn.size = Vector2(btn_w, btn_h)
+        btns[i].position = Vector2(margin + i * (btn_w + 4), margin)
+        btns[i].size = Vector2(btn_w, btn_h)
 
 func _on_window_resize():
     _position_buttons()
