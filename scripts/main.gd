@@ -7,16 +7,25 @@ extends Node3D
 @onready var raycast_handler = $RayCastHandler
 
 var color_picker_popup: PopupPanel
+var ground_color_popup: PopupPanel
 
 func _ready():
     print("Building game started")
+    
     color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()
     $UI.add_child(color_picker_popup)
+    
+    ground_color_popup = preload("res://scenes/ui/ground_color_popup.tscn").instantiate()
+    $UI.add_child(ground_color_popup)
+    
     inventory_bar.slot_selected.connect(_on_slot_selected)
     inventory_bar.slot_right_clicked.connect(_on_slot_right_clicked)
     color_picker_popup.color_confirmed.connect(_on_color_confirmed)
+    
     $UI/TopBar/SaveButton.pressed.connect(_on_save_pressed)
     $UI/TopBar/LoadButton.pressed.connect(_on_load_pressed)
+    $UI/TopBar/GroundColorButton.pressed.connect(_on_ground_color_pressed)
+    
     block_manager.selected_color = inventory_bar.get_selected_color()
 
 func _on_slot_selected(index: int):
@@ -44,3 +53,6 @@ func _on_load_pressed():
         print("Loaded OK")
     else:
         print("Load failed")
+
+func _on_ground_color_pressed():
+    ground_color_popup.open_with_colors(ground, ground.ground_color, ground.grid_color)

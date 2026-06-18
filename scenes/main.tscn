@@ -58,7 +58,7 @@ script = ExtResource("7_save_manager")
 
 [node name="TopBar" type="HBoxContainer" parent="UI"]
 layout_mode = 0
-offset_right = 300.0
+offset_right = 400.0
 offset_bottom = 40.0
 
 [node name="SaveButton" type="Button" parent="UI/TopBar"]
@@ -70,6 +70,12 @@ offset_bottom = 40.0
 [node name="LoadButton" type="Button" parent="UI/TopBar"]
 layout_mode = 2
 text = "Load"
+offset_right = 80.0
+offset_bottom = 40.0
+
+[node name="GroundColorButton" type="Button" parent="UI/TopBar"]
+layout_mode = 2
+text = "Ground"
 offset_right = 80.0
 offset_bottom = 40.0
 
