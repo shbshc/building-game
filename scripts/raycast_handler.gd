@@ -76,16 +76,14 @@ func _overlaps_player(grid_pos: Vector3i) -> bool:
 	var bx = float(grid_pos.x) + 0.5
 	var bz = float(grid_pos.z) + 0.5
 	var by = float(grid_pos.y) + 0.5
-	# XZ: distance between centers < sum of radii (0.4 + 0.5 = 0.9)
-	var dx = abs(p.x - bx)
-	var dz = abs(p.z - bz)
-	if dx >= 0.9 or dz >= 0.9:
+	# XZ: circle distance check
+	var dx = p.x - bx
+	var dz = p.z - bz
+	if dx*dx + dz*dz >= 0.81:  # 0.9^2
 		return false
-	# Y: capsule half-height 1.0 + radius 0.4 = 1.4, block half 0.5
+	# Y: capsule half-height 1.0 + block half 0.5 = 1.5
 	var dy = abs(p.y - by)
-	if dy < 1.4 + 0.5:
-		return true
-	return false
+	return dy < 1.5
 
 func _try_break():
 	var result = _raycast()
