@@ -73,16 +73,10 @@ func _try_place():
 
 func _overlaps_player(grid_pos: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position
-	var bx = float(grid_pos.x) + 0.5
-	var bz = float(grid_pos.z) + 0.5
-	var dx = p.x - bx
-	var dz = p.z - bz
-	if dx*dx + dz*dz >= 0.64:
-		return false
 	var block_feet = float(grid_pos.y)
 	var block_head = float(grid_pos.y) + 1.0
-	var player_feet = p.y - 1.0
-	var player_head = p.y + 1.0
+	var player_feet = p.y - 0.8
+	var player_head = p.y + 0.8
 	return player_head > block_feet and player_feet < block_head
 
 func _try_break():
