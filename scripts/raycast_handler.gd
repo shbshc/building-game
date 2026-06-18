@@ -84,6 +84,7 @@ func _raycast() -> Dictionary:
 	var origin = camera.global_position
 	var end = origin - camera.global_transform.basis.z * 10.0
 	var query := PhysicsRayQueryParameters3D.create(origin, end)
+	query.exclude = [$"../CameraRig"]
 	return space_state.intersect_ray(query)
 
 func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
