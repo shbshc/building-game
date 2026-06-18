@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -7,6 +7,10 @@
 [ext_resource type="Script" path="res://scripts/raycast_handler.gd" id="5_raycast"]
 [ext_resource type="Script" path="res://scripts/inventory.gd" id="6_inventory"]
 [ext_resource type="Script" path="res://scripts/save_manager.gd" id="7_save_manager"]
+
+[sub_resource type="CapsuleShape3D" id="player_shape"]
+radius = 0.5
+height = 1.8
 
 [sub_resource type="Environment" id="env_default"]
 background_mode = 1
@@ -28,11 +32,15 @@ light_color = Color(1, 1, 1, 1)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("env_default")
 
-[node name="CameraRig" type="Node3D" parent="."]
+[node name="CameraRig" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 20, 50)
 script = ExtResource("3_camera_rig")
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraRig"]
+shape = SubResource("player_shape")
+
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
+fov = 75.0
 fov = 75.0
 
 [node name="Blocks" type="Node3D" parent="."]
