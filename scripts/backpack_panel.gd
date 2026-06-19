@@ -1,7 +1,7 @@
 extends PopupPanel
 
-@onready var inv_mgr = $"../../../../InventoryManager"
-@onready var item_types_node = $"../../../../ItemTypes"
+@onready var inv_mgr = $"../../../InventoryManager"
+@onready var item_types_node = $"../../../ItemTypes"
 @onready var grid = $Grid
 var slot_buttons: Array = []
 
