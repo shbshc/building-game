@@ -22,10 +22,11 @@ func _ready():
 	hotbar[3].add(3, 1, 64)
 	hotbar[4].add(4, 1, 64)
 	hotbar[5].add(5, 1, 64)
-	hotbar[6].add(0, 1, 64)
-	hotbar[7].add(1, 1, 64)
-	hotbar[8].add(2, 1, 64)
-	hotbar[9].add(3, 1, 64)
+	# 功能方块 (id 6-9)
+	hotbar[6].add(6, 1, 64)  # Energy Continuous
+	hotbar[7].add(7, 1, 64)  # Energy Pulse
+	hotbar[8].add(8, 1, 64)  # Move
+	hotbar[9].add(9, 1, 64)  # Turn
 
 func get_selected_slot():
 	return hotbar[selected_slot]
