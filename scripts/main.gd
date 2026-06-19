@@ -52,6 +52,12 @@ func _tick_move_blocks():
 			block_manager.remove_block(pos)
 			continue
 		
+		# 移动方块碰到粘液组 → 整组被带着走
+		var group = block_manager.get_slime_group(pos)
+		if group.size() > 1:
+			block_manager.slide_chain(pos, dir_vec)
+			continue
+		
 		if target != null and target.func_type == ft.FuncType.PUSH:
 			if not block_manager.slide_chain(new_pos, dir_vec):
 				continue
