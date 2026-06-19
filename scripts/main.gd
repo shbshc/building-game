@@ -48,12 +48,17 @@ func _tick_move_blocks():
 			block_manager.set_block_direction(pos, target.direction)
 			continue
 		
+		# 消耗方块：移动方块消失
+		if target != null and target.func_type == ft.FuncType.CONSUME:
+			block_manager.remove_block(pos)
+			continue
+		
 		# 如果目标是推动方块，先推动整条链
 		if target != null and target.func_type == ft.FuncType.PUSH:
 			if block_manager.slide_chain(new_pos, dir_vec):
-				pass  # 推动成功，继续移动
+				pass
 			else:
-				continue  # 推不动，跳过
+				continue
 		
 		var delta = block_manager.move_block(pos, new_pos)
 		if delta != Vector3.ZERO:

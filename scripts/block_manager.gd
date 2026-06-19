@@ -162,30 +162,39 @@ func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 	_refresh_direction_indicator(bd)
 
 
-# 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格
+# 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格，遇到消耗方块则推动者消失
 func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
-	# 找到链末端的第一个空格
 	var end = start_pos
-	var found_space = false
+	var found_stop = false
+	var hit_consume = false
 	for _i in range(1000):
 		end += dir
 		if end.y < 0:
 			return false
 		if not blocks.has(end):
-			found_space = true
+			found_stop = true
 			break
-	if not found_space:
+		if blocks[end].func_type == func_types.FuncType.CONSUME:
+			hit_consume = true
+			break
+	if not found_stop and not hit_consume:
 		return false
 	
-	# 从空格往回，逐个移动方块（瞬移）
+	if hit_consume:
+		# 消耗方块前的推动者被摧毁
+		var doomed = end - dir
+		remove_block(doomed)
+	
+	# 从 end-1 往回把方块推到 end
 	var pos = end
 	while pos != start_pos:
 		var prev = pos - dir
-		var bd = blocks[prev]
-		blocks.erase(prev)
-		bd.node.position = Vector3(pos) + Vector3(0.5, 0.5, 0.5)
-		_refresh_direction_indicator(bd)
-		blocks[pos] = bd
+		if blocks.has(prev):
+			var bd = blocks[prev]
+			blocks.erase(prev)
+			bd.node.position = Vector3(pos) + Vector3(0.5, 0.5, 0.5)
+			_refresh_direction_indicator(bd)
+			blocks[pos] = bd
 		pos = prev
 	return true
 
