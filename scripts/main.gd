@@ -119,11 +119,11 @@ func _input(event):
 		if event.keycode == KEY_E and backpack_panel != null:
 			backpack_panel.visible = !backpack_panel.visible
 			if backpack_panel.visible:
-				backpack_panel.popup_centered()
+				var vp = get_viewport().get_visible_rect().size
+				backpack_panel.position = Vector2((vp.x - 480) / 2, (vp.y - 220) / 2)
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			else:
-				backpack_panel.hide()
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		elif event.keycode == KEY_ESCAPE and backpack_panel != null and backpack_panel.visible:
-			backpack_panel.hide()
+			backpack_panel.visible = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
