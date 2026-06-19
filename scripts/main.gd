@@ -24,9 +24,6 @@ func _ready():
 	backpack_panel = preload("res://scenes/ui/backpack_panel.tscn").instantiate()
 	$UI/UIContainer.add_child(backpack_panel)
 	get_tree().root.size_changed.connect(_on_window_resize)
-	print("Direction test: +X -> ", $FunctionalTypes.dir_vec_to_index(Vector3i(1,0,0)))
-	print("Opposite test: ", $FunctionalTypes.opposite_direction(Vector3i(1,0,0)))
-	print("Energy check: ", $FunctionalTypes.is_energy_type(1))
 
 func _process(delta):
 	_energy_tick_timer -= delta
@@ -35,12 +32,13 @@ func _process(delta):
 		_tick_continuous_energy()
 
 func _tick_continuous_energy():
-	var ft = $FunctionalTypes
-	for pos in block_manager.blocks:
-		var bd = block_manager.blocks[pos]
-		if bd.func_type == ft.FuncType.ENERGY_CONTINUOUS:
-			var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
-			$ActivationSystem.trigger_activation(pos, dir_vec)
+    var ft = $FunctionalTypes
+    var positions = block_manager.blocks.keys()  # snapshot to avoid dict mutation during iteration
+    for pos in positions:
+        var bd = block_manager.blocks.get(pos)   # may be null if removed mid-tick
+        if bd and bd.func_type == ft.FuncType.ENERGY_CONTINUOUS:
+            var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
+            $ActivationSystem.trigger_activation(pos, dir_vec)
 
 func _setup_ui():
 	var ui_root = $UI/UIContainer
