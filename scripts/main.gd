@@ -5,8 +5,8 @@ extends Node3D
 @onready var save_manager = $SaveManager
 @onready var ground = $Ground
 @onready var camera_rig = $CameraRig
+@onready var backpack_panel: PopupPanel = null
 
-var color_picker_popup: PopupPanel
 var ground_color_popup: PopupPanel
 var save_btn: Button
 var load_btn: Button
@@ -18,8 +18,8 @@ func _ready():
 	_setup_ui()
 	_create_crosshair()
 	_create_popups()
-	_connect_signals()
-	block_manager.selected_color = inventory_bar.get_selected_color()
+	backpack_panel = preload("res://scenes/ui/backpack_panel.tscn").instantiate()
+	$UI/UIContainer.add_child(backpack_panel)
 	get_tree().root.size_changed.connect(_on_window_resize)
 
 func _setup_ui():
@@ -79,38 +79,28 @@ func _on_window_resize():
 	_position_crosshair()
 
 func _create_popups():
-	color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()
-	$UI/UIContainer.add_child(color_picker_popup)
 	ground_color_popup = preload("res://scenes/ui/ground_color_popup.tscn").instantiate()
 	$UI/UIContainer.add_child(ground_color_popup)
-
-func _connect_signals():
-	inventory_bar.slot_selected.connect(_on_slot_selected)
-	inventory_bar.slot_right_clicked.connect(_on_slot_right_clicked)
-	color_picker_popup.color_confirmed.connect(_on_color_confirmed)
-
-func _on_slot_selected(index: int):
-	block_manager.selected_color = inventory_bar.get_selected_color()
-
-func _on_slot_right_clicked(index: int):
-	inventory_bar.selected_slot = index
-	inventory_bar._update_selection_highlight()
-	color_picker_popup.open_with_color(inventory_bar.inventory_colors[index])
-
-func _on_color_confirmed(color: Color):
-	var idx = inventory_bar.selected_slot
-	inventory_bar.set_slot_color(idx, color)
-	block_manager.selected_color = color
 
 func _on_save_pressed():
 	print("SAVE")
 	DirAccess.make_dir_absolute("user://")
-	print(save_manager.save(block_manager, inventory_bar, ground))
+	print(save_manager.save(block_manager, $InventoryManager, ground))
 
 func _on_load_pressed():
 	print("LOAD")
-	print(save_manager.load(block_manager, inventory_bar, ground))
+	print(save_manager.load(block_manager, $InventoryManager, ground))
 
 func _on_ground_color_pressed():
 	print("GROUND")
 	ground_color_popup.open_with_colors(ground, ground.ground_color, ground.grid_color)
+
+func _input(event):
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_E and backpack_panel != null:
+			backpack_panel.visible = !backpack_panel.visible
+			if backpack_panel.visible:
+				backpack_panel.popup_centered()
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			else:
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

@@ -16,7 +16,7 @@ const DOUBLE_TAP_TIME := 0.3
 var gravity = 30.0
 
 @onready var camera: Camera3D = $Camera3D
-@onready var inventory = $"../UI/UIContainer/InventoryBar"
+@onready var inv_mgr = $"../InventoryManager"
 
 func _ready():
 	camera.projection = Camera3D.PROJECTION_PERSPECTIVE
@@ -28,9 +28,8 @@ func _ready():
 func _process(delta):
 	if scroll_cooldown > 0:
 		scroll_cooldown -= delta
-	if Input.is_action_just_pressed("toggle_build"):
+	if Input.is_action_just_pressed("ui_cancel"):
 		_toggle_mouse()
-	
 	if mouse_captured:
 		var space_just = Input.is_action_just_pressed("move_up")
 		if space_just:
@@ -86,14 +85,10 @@ func _input(event):
 		if mouse_captured and scroll_cooldown <= 0:
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				scroll_cooldown = 0.1
-				inventory.selected_slot = (inventory.selected_slot + 1) % inventory.SLOT_COUNT
-				inventory._update_selection_highlight()
-				inventory.slot_selected.emit(inventory.selected_slot)
+				inv_mgr.selected_slot = (inv_mgr.selected_slot + 1) % inv_mgr.HOTBAR_SIZE
 			elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				scroll_cooldown = 0.1
-				inventory.selected_slot = (inventory.selected_slot - 1 + inventory.SLOT_COUNT) % inventory.SLOT_COUNT
-				inventory._update_selection_highlight()
-				inventory.slot_selected.emit(inventory.selected_slot)
+				inv_mgr.selected_slot = (inv_mgr.selected_slot - 1 + inv_mgr.HOTBAR_SIZE) % inv_mgr.HOTBAR_SIZE
 	
 	if mouse_captured and event is InputEventMouseMotion:
 		yaw -= event.relative.x * mouse_sensitivity

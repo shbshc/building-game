@@ -1,5 +1,7 @@
 extends Node3D
 
+@onready var item_types_node = $"../ItemTypes"
+
 var blocks := {}
 var selected_color := Color.RED
 
@@ -21,14 +23,19 @@ func can_place_at(grid_pos: Vector3i) -> bool:
             return true
     return false
 
-func place_block(grid_pos: Vector3i) -> bool:
+func place_block(grid_pos: Vector3i, item_id: int = -1) -> bool:
     if not can_place_at(grid_pos):
         return false
     var mesh := MeshInstance3D.new()
     mesh.mesh = BoxMesh.new()
     mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
     var mat := StandardMaterial3D.new()
-    mat.albedo_color = selected_color
+    var color := selected_color
+    if item_id >= 0 and item_types_node:
+        var t = item_types_node.get_type(item_id)
+        if t:
+            color = t.color
+    mat.albedo_color = color
     mesh.material_override = mat
     var body := StaticBody3D.new()
     var col := CollisionShape3D.new()
@@ -37,7 +44,7 @@ func place_block(grid_pos: Vector3i) -> bool:
     body.add_child(col)
     mesh.add_child(body)
     add_child(mesh)
-    blocks[grid_pos] = {"color": selected_color, "node": mesh}
+    blocks[grid_pos] = {"color": color, "item_id": item_id, "node": mesh}
     return true
 
 func remove_block(grid_pos: Vector3i) -> bool:

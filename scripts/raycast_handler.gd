@@ -2,7 +2,7 @@ extends Node3D
 
 @onready var block_manager: Node3D = $"../Blocks"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
-@onready var inventory = $"../UI/UIContainer/InventoryBar"
+@onready var inv_mgr = $"../InventoryManager"
 
 var highlight: MeshInstance3D
 var place_timer: float = 0.0
@@ -62,14 +62,15 @@ func _input(event):
 		_update_highlight()
 
 func _try_place():
-	if inventory.selected_slot < 0:
+	var selected_id = inv_mgr.get_selected_type()
+	if selected_id < 0:
 		return
 	var result = _raycast()
 	if result:
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
 			if not _is_player_cell(grid_pos):
-				block_manager.place_block(grid_pos)
+				block_manager.place_block(grid_pos, selected_id)
 
 func _is_player_cell(gp: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position
@@ -104,7 +105,7 @@ func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
 
 func _update_highlight():
 	var result = _raycast()
-	if result and inventory.selected_slot >= 0:
+	if result and inv_mgr.get_selected_type() >= 0:
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
 			highlight.visible = true

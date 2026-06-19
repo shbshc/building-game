@@ -2,9 +2,9 @@ extends Node
 
 const SAVE_PATH := "user://save.json"
 
-func save(block_manager, inventory_bar, ground_node) -> bool:
+func save(block_manager, inventory_manager, ground_node) -> bool:
     var data := {
-        "version": 1,
+        "version": 2,
         "blocks": [],
         "inventory": [],
         "ground_color": [0.85, 0.85, 0.85],
@@ -14,10 +14,13 @@ func save(block_manager, inventory_bar, ground_node) -> bool:
         var b = block_manager.blocks[pos]
         data["blocks"].append({
             "x": pos.x, "y": pos.y, "z": pos.z,
-            "color": [b["color"].r, b["color"].g, b["color"].b]
+            "item_id": b.get("item_id", -1)
         })
-    for c in inventory_bar.inventory_colors:
-        data["inventory"].append([c.r, c.g, c.b])
+    for slot in inventory_manager.hotbar:
+        data["inventory"].append({
+            "item_id": slot.item_id,
+            "count": slot.count
+        })
     if ground_node:
         data["ground_color"] = [ground_node.ground_color.r, ground_node.ground_color.g, ground_node.ground_color.b]
         data["grid_color"] = [ground_node.grid_color.r, ground_node.grid_color.g, ground_node.grid_color.b]
@@ -28,7 +31,7 @@ func save(block_manager, inventory_bar, ground_node) -> bool:
         return true
     return false
 
-func load(block_manager, inventory_bar, ground_node) -> bool:
+func load(block_manager, inventory_manager, ground_node) -> bool:
     if not FileAccess.file_exists(SAVE_PATH):
         return false
     var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -42,13 +45,17 @@ func load(block_manager, inventory_bar, ground_node) -> bool:
     var data = json.data
     block_manager.clear_all()
     for b in data.get("blocks", []):
-        var c = Color(b["color"][0], b["color"][1], b["color"][2])
-        block_manager.selected_color = c
-        block_manager.place_block(Vector3i(b["x"], b["y"], b["z"]))
+        var item_id = b.get("item_id", -1)
+        block_manager.place_block(Vector3i(b["x"], b["y"], b["z"]), item_id)
     var inv = data.get("inventory", [])
-    for i in min(inv.size(), inventory_bar.SLOT_COUNT):
-        var c = inv[i]
-        inventory_bar.set_slot_color(i, Color(c[0], c[1], c[2]))
+    for i in min(inv.size(), inventory_manager.HOTBAR_SIZE):
+        var slot_data = inv[i]
+        if slot_data is Dictionary:
+            inventory_manager.hotbar[i].item_id = slot_data.get("item_id", -1)
+            inventory_manager.hotbar[i].count = slot_data.get("count", 0)
+        elif slot_data is Array:
+            # legacy v1 format: color array, skip
+            inventory_manager.hotbar[i].clear()
     if ground_node and data.has("ground_color"):
         var gc = data["ground_color"]
         var gridc = data["grid_color"]

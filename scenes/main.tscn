@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -7,6 +7,8 @@
 [ext_resource type="Script" path="res://scripts/raycast_handler.gd" id="5_raycast"]
 [ext_resource type="Script" path="res://scripts/inventory.gd" id="6_inventory"]
 [ext_resource type="Script" path="res://scripts/save_manager.gd" id="7_save_manager"]
+[ext_resource type="Script" path="res://scripts/item_types.gd" id="8_item_types"]
+[ext_resource type="Script" path="res://scripts/inventory_manager.gd" id="9_inventory_manager"]
 
 [sub_resource type="CapsuleShape3D" id="player_shape"]
 radius = 0.4
@@ -52,6 +54,12 @@ script = ExtResource("5_raycast")
 
 [node name="SaveManager" type="Node" parent="."]
 script = ExtResource("7_save_manager")
+
+[node name="ItemTypes" type="Node" parent="."]
+script = ExtResource("8_item_types")
+
+[node name="InventoryManager" type="Node" parent="."]
+script = ExtResource("9_inventory_manager")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
