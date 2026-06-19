@@ -128,10 +128,6 @@ func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
 	var place_pos = hit_pos + hit_normal * 0.5
 	return Vector3i(floor(place_pos.x), floor(place_pos.y), floor(place_pos.z))
 
-func _face_to_direction(normal: Vector3) -> int:
-	var n = Vector3i(int(round(normal.x)), int(round(normal.y)), int(round(normal.z)))
-	return $"../FunctionalTypes".dir_vec_to_index(n)
-
 func _update_highlight():
 	var result = _raycast()
 	if result and inv_mgr.get_selected_type() >= 0:
