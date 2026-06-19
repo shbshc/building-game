@@ -221,15 +221,15 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks.has(new_p) and not to_move.has(new_p):
 			return false
 	
-	# 6. 瞬移全部方块
+	# 6. 全部取出再写入
+	for old_p in to_move:
+		blocks.erase(old_p)
 	for old_p in to_move:
 		var bd = to_move[old_p]
 		var new_p = old_p + dir
-		
-		blocks.erase(old_p)
-		blocks[new_p] = bd
 		bd.node.position = Vector3(new_p) + Vector3(0.5, 0.5, 0.5)
 		_refresh_direction_indicator(bd)
+		blocks[new_p] = bd
 	
 	return true
 
