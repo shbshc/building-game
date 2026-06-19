@@ -46,6 +46,12 @@ func _ready():
 	backpack[15].add(15, 1, 64)  # Turn-Y
 	backpack[16].add(16, 1, 64)  # Turn+Z
 	backpack[17].add(17, 1, 64)  # Turn-Z
+	backpack[18].add(18, 1, 64)  # Gen+X
+	backpack[19].add(19, 1, 64)  # Gen-X
+	backpack[20].add(20, 1, 64)  # Gen+Y
+	backpack[21].add(21, 1, 64)  # Gen-Y
+	backpack[22].add(22, 1, 64)  # Gen+Z
+	backpack[23].add(23, 1, 64)  # Gen-Z
 
 func get_selected_slot():
 	return hotbar[selected_slot]

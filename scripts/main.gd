@@ -30,6 +30,7 @@ func _process(delta):
 	if _move_tick_timer <= 0:
 		_move_tick_timer = MOVE_TICK_INTERVAL
 		_tick_move_blocks()
+		_tick_generators()
 
 func _tick_move_blocks():
 	var ft = $FunctionalTypes
@@ -67,6 +68,25 @@ func _carry_player(delta: Vector3, block_pos: Vector3i):
 			var end_pos = player.global_position + delta
 			var tween = create_tween()
 			tween.tween_property(player, "global_position", end_pos, 0.5).set_trans(Tween.TRANS_LINEAR)
+
+func _tick_generators():
+	var ft = $FunctionalTypes
+	var positions = block_manager.blocks.keys()  # snapshot
+	for pos in positions:
+		var bd = block_manager.blocks.get(pos)
+		if bd == null or bd.func_type != ft.FuncType.GENERATOR:
+			continue
+		var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
+		var behind_pos = pos - dir_vec   # 箭头后方（来源）
+		var front_pos = pos + dir_vec    # 箭头前方（目标）
+		
+		var source = block_manager.get_block_data(behind_pos)
+		if source == null:
+			continue  # 后方没有方块
+		if not block_manager.can_place_at(front_pos):
+			continue  # 前方放不下
+		
+		block_manager.place_block(front_pos, source.item_id, null, source.func_type, source.direction)
 
 func _setup_ui():
 	var ui_root = $UI/UIContainer

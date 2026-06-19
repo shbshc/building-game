@@ -80,6 +80,13 @@ func _init_defaults():
 		ItemType.new(15, "Turn-Y", Color(0.2, 0.8, 0.3), 64, 2, 3),
 		ItemType.new(16, "Turn+Z", Color(0.3, 0.9, 0.4), 64, 2, 4),
 		ItemType.new(17, "Turn-Z", Color(0.3, 0.9, 0.2), 64, 2, 5),
+		# 生成器方块 (id 18-23)
+		ItemType.new(18, "Gen+X", Color(0.7, 0.3, 1.0), 64, 3, 0),
+		ItemType.new(19, "Gen-X", Color(0.7, 0.3, 0.9), 64, 3, 1),
+		ItemType.new(20, "Gen+Y", Color(0.8, 0.4, 1.0), 64, 3, 2),
+		ItemType.new(21, "Gen-Y", Color(0.6, 0.3, 0.9), 64, 3, 3),
+		ItemType.new(22, "Gen+Z", Color(0.7, 0.4, 1.0), 64, 3, 4),
+		ItemType.new(23, "Gen-Z", Color(0.7, 0.2, 0.9), 64, 3, 5),
 	]
 	print("Item types loaded: ", item_types.size())
 

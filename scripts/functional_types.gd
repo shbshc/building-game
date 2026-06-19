@@ -4,8 +4,9 @@ extends Node
 # 功能方块类型枚举
 enum FuncType {
     NONE = 0,
-    MOVE = 1,   # 移动方块
-    TURN = 2,   # 拐弯方块
+    MOVE = 1,     # 移动方块
+    TURN = 2,     # 拐弯方块
+    GENERATOR = 3, # 生成器方块
 }
 
 # 6 个方向向量
@@ -50,6 +51,8 @@ static func get_func_type_color(ft: int) -> Color:
             return Color(0.2, 0.6, 1.0)   # 蓝色
         FuncType.TURN:
             return Color(0.3, 0.9, 0.3)   # 绿色
+        FuncType.GENERATOR:
+            return Color(0.7, 0.3, 1.0)   # 紫色
         _:
             return Color.GRAY
 
