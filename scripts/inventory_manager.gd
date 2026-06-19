@@ -1,5 +1,7 @@
 extends Node
 
+const ItemTypesScript = preload("res://scripts/item_types.gd")
+
 var hotbar: Array = []
 var backpack: Array = []
 var held_item = null
@@ -9,9 +11,9 @@ const BACKPACK_SIZE := 27
 
 func _ready():
     for i in range(HOTBAR_SIZE):
-        hotbar.append(ItemSlot.new())
+        hotbar.append(ItemTypesScript.ItemSlot.new())
     for i in range(BACKPACK_SIZE):
-        backpack.append(ItemSlot.new())
+        backpack.append(ItemTypesScript.ItemSlot.new())
     hotbar[0].add(0, 64, 64)
     hotbar[1].add(1, 64, 64)
     hotbar[2].add(2, 64, 64)
@@ -26,7 +28,7 @@ func pickup_from(slot):
     if slot.is_empty():
         return
     if held_item == null:
-        held_item = ItemSlot.new()
+        held_item = ItemTypesScript.ItemSlot.new()
     var tmp_id = held_item.item_id
     var tmp_count = held_item.count
     held_item.item_id = slot.item_id
@@ -63,7 +65,7 @@ func pickup_half(slot):
     if slot.is_empty():
         return
     if held_item == null:
-        held_item = ItemSlot.new()
+        held_item = ItemTypesScript.ItemSlot.new()
     var half = ceil(slot.count / 2.0)
     held_item.item_id = slot.item_id
     held_item.count = int(half)
