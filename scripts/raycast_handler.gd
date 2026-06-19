@@ -55,8 +55,31 @@ func _input(event):
 				mouse_left_held = false
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if event.pressed:
-				mouse_right_held = true
-				break_timer = 0.0
+				# Check if pointing at a functional block for interaction
+				var result = _raycast()
+				var interacted = false
+				if result and result.collider:
+					var parent = result.collider.get_parent()
+					if parent is MeshInstance3D:
+						var pos = parent.position
+						var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
+						var bd = block_manager.get_block_data(grid_pos)
+						if bd != null:
+							var ft = $"../FunctionalTypes"
+							# Shift+Right-click: rotate direction
+							if Input.is_key_pressed(KEY_SHIFT) and bd.func_type > 0:
+								var new_dir = ft.next_direction_index(bd.direction)
+								block_manager.set_block_direction(grid_pos, new_dir)
+								interacted = true
+							# Right-click on energy block: activate
+							elif ft.is_energy_type(bd.func_type):
+								var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
+								$"../ActivationSystem".trigger_activation(grid_pos, dir_vec)
+								interacted = true
+				# If not interacting with functional block, break block as normal
+				if not interacted:
+					mouse_right_held = true
+					break_timer = 0.0
 			else:
 				mouse_right_held = false
 	
@@ -72,8 +95,12 @@ func _try_place():
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
 			if not _is_player_cell(grid_pos):
-				var color = inv_mgr.get_selected_color($"../ItemTypes")
-				block_manager.place_block(grid_pos, selected_id, color)
+				var item_types_node = $"../ItemTypes"
+				var t = item_types_node.get_type(selected_id)
+				var func_type = t.func_type if t else 0
+				var direction = _face_to_direction(result.normal) if func_type > 0 else 2
+				var color = inv_mgr.get_selected_color(item_types_node) if func_type == 0 else null
+				block_manager.place_block(grid_pos, selected_id, color, func_type, direction)
 
 func _is_player_cell(gp: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position
@@ -105,6 +132,10 @@ func _raycast() -> Dictionary:
 func _world_to_grid(hit_pos: Vector3, hit_normal: Vector3) -> Vector3i:
 	var place_pos = hit_pos + hit_normal * 0.5
 	return Vector3i(floor(place_pos.x), floor(place_pos.y), floor(place_pos.z))
+
+func _face_to_direction(normal: Vector3) -> int:
+	var n = Vector3i(int(round(normal.x)), int(round(normal.y)), int(round(normal.z)))
+	return $"../FunctionalTypes".dir_vec_to_index(n)
 
 func _update_highlight():
 	var result = _raycast()

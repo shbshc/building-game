@@ -13,6 +13,8 @@ var save_btn: Button
 var load_btn: Button
 var ground_btn: Button
 var crosshair: ColorRect
+var _energy_tick_timer := 0.0
+const ENERGY_TICK_INTERVAL := 2.0
 
 func _ready():
 	print("=== Game started ===")
@@ -25,6 +27,20 @@ func _ready():
 	print("Direction test: +X -> ", $FunctionalTypes.dir_vec_to_index(Vector3i(1,0,0)))
 	print("Opposite test: ", $FunctionalTypes.opposite_direction(Vector3i(1,0,0)))
 	print("Energy check: ", $FunctionalTypes.is_energy_type(1))
+
+func _process(delta):
+	_energy_tick_timer -= delta
+	if _energy_tick_timer <= 0:
+		_energy_tick_timer = ENERGY_TICK_INTERVAL
+		_tick_continuous_energy()
+
+func _tick_continuous_energy():
+	var ft = $FunctionalTypes
+	for pos in block_manager.blocks:
+		var bd = block_manager.blocks[pos]
+		if bd.func_type == ft.FuncType.ENERGY_CONTINUOUS:
+			var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
+			$ActivationSystem.trigger_activation(pos, dir_vec)
 
 func _setup_ui():
 	var ui_root = $UI/UIContainer
@@ -131,10 +147,3 @@ func _input(event):
 			backpack_panel.visible = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _test_activation_chain():
-    var ft = $FunctionalTypes
-    # 放一条链：能源(5,0,5, ↑) → 移动(5,1,5, ↑)
-    block_manager.place_block(Vector3i(5, 0, 5), -1, null, ft.FuncType.ENERGY_PULSE, 2)  # +Y
-    block_manager.place_block(Vector3i(5, 1, 5), -1, null, ft.FuncType.MOVE, 2)         # +Y
-    $ActivationSystem.trigger_activation(Vector3i(5, 0, 5), Vector3i.UP)
-    print("Test activation chain done")
