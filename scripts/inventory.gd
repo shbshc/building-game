@@ -1,7 +1,7 @@
 extends Control
 
-@onready var inv_mgr = $"../../InventoryManager"
-@onready var item_types_node = $"../../ItemTypes"
+@onready var inv_mgr = $"../../../InventoryManager"
+@onready var item_types_node = $"../../../ItemTypes"
 var slot_buttons: Array = []
 const SLOT_COUNT := 10
 var tooltip_label: Label
