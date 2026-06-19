@@ -5,12 +5,14 @@ class ItemType:
 	var name: String
 	var color: Color
 	var max_stack: int = 64
+	var func_type: int = 0
 	
-	func _init(p_id: int, p_name: String, p_color: Color, p_max: int = 64):
+	func _init(p_id: int, p_name: String, p_color: Color, p_max: int = 64, p_func: int = 0):
 		id = p_id
 		name = p_name
 		color = p_color
 		max_stack = p_max
+		func_type = p_func
 
 class ItemSlot:
 	var item_id: int = -1
@@ -59,6 +61,10 @@ func _init_defaults():
 		ItemType.new(3, "Sand", Color(0.957, 0.816, 0.247)),
 		ItemType.new(4, "Glass", Color(0.835, 0.859, 0.859, 0.5)),
 		ItemType.new(5, "Brick", Color(0.753, 0.224, 0.169)),
+		ItemType.new(6, "Energy (Continuous)", Color(1.0, 0.3, 0.1), 64, 1),
+		ItemType.new(7, "Energy (Pulse)", Color(1.0, 0.5, 0.0), 64, 2),
+		ItemType.new(8, "Move", Color(0.2, 0.6, 1.0), 64, 3),
+		ItemType.new(9, "Turn", Color(0.3, 0.9, 0.3), 64, 4),
 	]
 	print("Item types loaded: ", item_types.size())
 
@@ -70,3 +76,11 @@ func get_type(id: int):
 func get_item_name(id: int) -> String:
 	var t = get_type(id)
 	return t.name if t else "Unknown"
+
+func is_functional(id: int) -> bool:
+	var t = get_type(id)
+	return t != null and t.func_type > 0
+
+func get_func_type(id: int) -> int:
+	var t = get_type(id)
+	return t.func_type if t else 0
