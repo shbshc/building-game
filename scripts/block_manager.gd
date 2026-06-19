@@ -79,19 +79,21 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 
 
 func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
-    var dir_vec = func_types.DIRECTION_VECTORS[dir_idx]
     var indicator := MeshInstance3D.new()
     indicator.mesh = BoxMesh.new()
     indicator.mesh.size = Vector3(0.3, 0.3, 0.15)
-    indicator.position = Vector3(dir_vec) * 0.55
-    # 根据方向旋转指示器
-    if dir_vec.x != 0:
-        indicator.rotation = Vector3(0, 0, PI/2 if dir_vec.x > 0 else -PI/2)
-    elif dir_vec.z != 0:
-        indicator.rotation = Vector3(PI/2, 0, 0 if dir_vec.z > 0 else PI)
-    # +Y 和 -Y 默认朝上
-    if dir_vec.y < 0:
-        indicator.rotation = Vector3(PI, 0, 0)
+    indicator.position = Vector3(func_types.DIRECTION_VECTORS[dir_idx]) * 0.55
+    indicator.set_meta("is_direction_indicator", true)
+    
+    # Rotate so thin axis (local Z) points along direction
+    match dir_idx:
+        0: indicator.rotation = Vector3(0, PI/2, 0)      # +X
+        1: indicator.rotation = Vector3(0, -PI/2, 0)     # -X
+        2: indicator.rotation = Vector3(-PI/2, 0, 0)     # +Y
+        3: indicator.rotation = Vector3(PI/2, 0, 0)      # -Y
+        4: indicator.rotation = Vector3.ZERO              # +Z
+        5: indicator.rotation = Vector3(0, PI, 0)         # -Z
+    
     var ind_mat := StandardMaterial3D.new()
     ind_mat.albedo_color = Color.WHITE
     ind_mat.emission_enabled = true
@@ -127,37 +129,29 @@ func clear_all():
 func move_block(from_pos: Vector3i, to_pos: Vector3i) -> bool:
     if not blocks.has(from_pos):
         return false
-    # 检查目标位置是否为空（允许覆盖拐弯方块）
+    if from_pos == to_pos:
+        return true  # nothing to do
+    
+    var bd = blocks[from_pos]  # GET BEFORE ANY DELETION
+    
     var target = blocks.get(to_pos, null)
     if target != null:
         if target.func_type == func_types.FuncType.TURN:
-            # 拐弯方块被消耗
             remove_block(to_pos)
         else:
-            return false  # 被其他方块占据，移动失败
-
-    var bd = blocks[from_pos]
+            return false
+    
     blocks.erase(from_pos)
-
-    # 更新节点位置
     bd.node.position = Vector3(to_pos) + Vector3(0.5, 0.5, 0.5)
-
-    # 重新创建方向指示器
     _refresh_direction_indicator(bd)
-
     blocks[to_pos] = bd
     return true
 
 
 func _refresh_direction_indicator(bd: BlockData):
-    # 移除旧指示器
-    var children = bd.node.get_children()
-    for child in children:
-        if child is StaticBody3D:
-            continue  # 保留碰撞体
-        if child is MeshInstance3D:
+    for child in bd.node.get_children():
+        if child.has_meta("is_direction_indicator"):
             child.queue_free()
-    # 添加新指示器
     _add_direction_indicator(bd.node, bd.direction)
 
 
