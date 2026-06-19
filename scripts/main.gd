@@ -80,23 +80,23 @@ func _on_window_resize():
 	_position_crosshair()
 
 func _create_popups():
-    color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()
-    $UI/UIContainer.add_child(color_picker_popup)
-    color_picker_popup.color_confirmed.connect(_on_color_confirmed)
-    ground_color_popup = preload("res://scenes/ui/ground_color_popup.tscn").instantiate()
-    $UI/UIContainer.add_child(ground_color_popup)
+	color_picker_popup = preload("res://scenes/ui/color_picker_popup.tscn").instantiate()
+	$UI/UIContainer.add_child(color_picker_popup)
+	color_picker_popup.color_confirmed.connect(_on_color_confirmed)
+	ground_color_popup = preload("res://scenes/ui/ground_color_popup.tscn").instantiate()
+	$UI/UIContainer.add_child(ground_color_popup)
 
 func open_color_picker(index: int):
-    var inv_mgr = $InventoryManager
-    var c = inv_mgr.slot_colors[index]
-    if c == null:
-        var t = $ItemTypes.get_type(inv_mgr.hotbar[index].item_id)
-        c = t.color if t else Color.RED
-    inv_mgr.selected_slot = index
-    color_picker_popup.open_with_color(c)
+	var inv_mgr = $InventoryManager
+	var c = inv_mgr.slot_colors[index]
+	if c == null:
+		var t = $ItemTypes.get_type(inv_mgr.hotbar[index].item_id)
+		c = t.color if t else Color.RED
+	inv_mgr.selected_slot = index
+	color_picker_popup.open_with_color(c)
 
 func _on_color_confirmed(color: Color):
-    $InventoryManager.slot_colors[$InventoryManager.selected_slot] = color
+	$InventoryManager.slot_colors[$InventoryManager.selected_slot] = color
 
 func _on_save_pressed():
 	print("SAVE")

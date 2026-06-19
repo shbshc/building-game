@@ -56,7 +56,6 @@ func _draw_slot(index: int):
 	style.corner_radius_bottom_left = 4
 	style.corner_radius_bottom_right = 4
 	btn.add_theme_stylebox_override("normal", style)
-	btn.text = str(slot.count) if slot.count > 1 else ""
 	if index == inv_mgr.selected_slot:
 		var sel := StyleBoxFlat.new()
 		sel.bg_color = style.bg_color
@@ -83,9 +82,7 @@ func _on_slot_input(event: InputEvent, index: int):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			var slot = inv_mgr.hotbar[index]
-			if inv_mgr.held_item != null and not inv_mgr.held_item.is_empty():
-				inv_mgr.place_one(slot, item_types_node)
-			elif not slot.is_empty():
+			if not slot.is_empty():
 				_open_color_picker(index)
 		elif event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
 			inv_mgr.selected_slot = index

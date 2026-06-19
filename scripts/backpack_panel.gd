@@ -30,7 +30,6 @@ func _refresh():
 		style.corner_radius_bottom_left = 4
 		style.corner_radius_bottom_right = 4
 		btn.add_theme_stylebox_override("normal", style)
-		btn.text = str(slot.count) if slot.count > 1 else ""
 
 func _on_slot_clicked(index: int):
 	var slot = inv_mgr.backpack[index]
