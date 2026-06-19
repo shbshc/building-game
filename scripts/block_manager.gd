@@ -4,6 +4,7 @@ extends Node3D
 @onready var func_types = $"../FunctionalTypes"
 
 var blocks := {}  # Dictionary: Vector3i -> BlockData
+var _is_moving: Dictionary = {}  # 正在动画中的方块
 
 class BlockData:
     var item_id: int = -1
@@ -141,7 +142,6 @@ func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
         return Vector3.ZERO
     
     blocks.erase(from_pos)
-    var start_pos = bd.node.position
     var end_pos = Vector3(to_pos) + Vector3(0.5, 0.5, 0.5)
     var delta = Vector3(to_pos) - Vector3(from_pos)
     
@@ -157,28 +157,27 @@ func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
     return delta
 
 
-var _is_moving: Dictionary = {}  # Vector3i → bool
-
 func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
     _is_moving.erase(from_pos)
     _refresh_direction_indicator(bd)
 
 
 # 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格
-# 返回 true 表示成功，false 表示推不动
 func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
     # 找到链末端的第一个空格
     var end = start_pos
-    for _i in range(50):  # 最多推 50 格
+    var found_space = false
+    for _i in range(50):
         end += dir
         if end.y < 0 or abs(end.x) > 50 or abs(end.z) > 50 or end.y > 50:
-            return false  # 推到边界外
+            return false
         if not blocks.has(end):
-            break  # 找到空格
-    else:
-        return false  # 50 格内无空格
+            found_space = true
+            break
+    if not found_space:
+        return false
     
-    # 从空格往回，逐个移动方块（瞬移，不用 Tween）
+    # 从空格往回，逐个移动方块（瞬移）
     var pos = end
     while pos != start_pos:
         var prev = pos - dir
