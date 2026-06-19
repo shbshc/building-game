@@ -14,7 +14,7 @@ func trigger_activation(origin_pos: Vector3i, direction_vec: Vector3i):
     _propagate(origin_pos, direction_vec, aid)
     # 清理旧激活记录（保留最近 10 次）
     if _activated_blocks.size() > 10:
-        var oldest = _activation_id - 10
+        var oldest = _activation_id - 9
         for k in _activated_blocks.keys():
             if k < oldest:
                 _activated_blocks.erase(k)
