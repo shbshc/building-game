@@ -164,6 +164,33 @@ func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
     _refresh_direction_indicator(bd)
 
 
+# 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格
+# 返回 true 表示成功，false 表示推不动
+func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
+    # 找到链末端的第一个空格
+    var end = start_pos
+    for _i in range(50):  # 最多推 50 格
+        end += dir
+        if end.y < 0 or abs(end.x) > 50 or abs(end.z) > 50 or end.y > 50:
+            return false  # 推到边界外
+        if not blocks.has(end):
+            break  # 找到空格
+    else:
+        return false  # 50 格内无空格
+    
+    # 从空格往回，逐个移动方块（瞬移，不用 Tween）
+    var pos = end
+    while pos != start_pos:
+        var prev = pos - dir
+        var bd = blocks[prev]
+        blocks.erase(prev)
+        bd.node.position = Vector3(pos) + Vector3(0.5, 0.5, 0.5)
+        _refresh_direction_indicator(bd)
+        blocks[pos] = bd
+        pos = prev
+    return true
+
+
 func _refresh_direction_indicator(bd: BlockData):
     for child in bd.node.get_children():
         if child.has_meta("is_direction_indicator"):

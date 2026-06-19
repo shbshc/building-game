@@ -42,12 +42,18 @@ func _tick_move_blocks():
 		var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
 		var new_pos = pos + dir_vec
 		
-		# 检查目标格是否有拐弯方块
 		var target = block_manager.get_block_data(new_pos)
 		if target != null and target.func_type == ft.FuncType.TURN:
 			# 拐弯方块不消失，只改变移动方块方向
 			block_manager.set_block_direction(pos, target.direction)
 			continue
+		
+		# 如果目标是推动方块，先推动整条链
+		if target != null and target.func_type == ft.FuncType.PUSH:
+			if block_manager.slide_chain(new_pos, dir_vec):
+				pass  # 推动成功，继续移动
+			else:
+				continue  # 推不动，跳过
 		
 		var delta = block_manager.move_block(pos, new_pos)
 		if delta != Vector3.ZERO:

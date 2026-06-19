@@ -87,6 +87,13 @@ func _init_defaults():
 		ItemType.new(21, "Gen-Y", Color(0.6, 0.3, 0.9), 64, 3, 3),
 		ItemType.new(22, "Gen+Z", Color(0.7, 0.4, 1.0), 64, 3, 4),
 		ItemType.new(23, "Gen-Z", Color(0.7, 0.2, 0.9), 64, 3, 5),
+		# 推动方块 (id 24-29)
+		ItemType.new(24, "Push+X", Color(1.0, 0.6, 0.1), 64, 4, 0),
+		ItemType.new(25, "Push-X", Color(1.0, 0.5, 0.1), 64, 4, 1),
+		ItemType.new(26, "Push+Y", Color(1.0, 0.7, 0.2), 64, 4, 2),
+		ItemType.new(27, "Push-Y", Color(0.9, 0.5, 0.1), 64, 4, 3),
+		ItemType.new(28, "Push+Z", Color(1.0, 0.6, 0.2), 64, 4, 4),
+		ItemType.new(29, "Push-Z", Color(1.0, 0.5, 0.0), 64, 4, 5),
 	]
 	print("Item types loaded: ", item_types.size())
 

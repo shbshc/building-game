@@ -7,6 +7,7 @@ enum FuncType {
     MOVE = 1,     # 移动方块
     TURN = 2,     # 拐弯方块
     GENERATOR = 3, # 生成器方块
+    PUSH = 4,     # 推动方块
 }
 
 # 6 个方向向量
@@ -53,6 +54,8 @@ static func get_func_type_color(ft: int) -> Color:
             return Color(0.3, 0.9, 0.3)   # 绿色
         FuncType.GENERATOR:
             return Color(0.7, 0.3, 1.0)   # 紫色
+        FuncType.PUSH:
+            return Color(1.0, 0.6, 0.1)   # 橙色
         _:
             return Color.GRAY
 
