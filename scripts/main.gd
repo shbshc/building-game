@@ -191,7 +191,7 @@ func _input(event):
 			backpack_panel.visible = !backpack_panel.visible
 			if backpack_panel.visible:
 				var vp = get_viewport().get_visible_rect().size
-				backpack_panel.position = Vector2((vp.x - 480) / 2, (vp.y - 220) / 2)
+				backpack_panel.position = Vector2((vp.x - 360) / 2, (vp.y - 260) / 2)
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			else:
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

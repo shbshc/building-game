@@ -6,7 +6,7 @@ extends Panel
 var slot_buttons: Array = []
 
 func _ready():
-	size = Vector2(480, 220)
+	size = Vector2(360, 260)
 	for i in range(inv_mgr.BACKPACK_SIZE):
 		var btn := Button.new()
 		btn.custom_minimum_size = Vector2(48, 48)

@@ -8,7 +8,7 @@ var held_item = null
 var selected_slot := 0
 var slot_colors: Array = []  # custom colors per hotbar slot
 const HOTBAR_SIZE := 10
-const BACKPACK_SIZE := 27
+const BACKPACK_SIZE := 36
 
 func _ready():
 	for i in range(HOTBAR_SIZE):
