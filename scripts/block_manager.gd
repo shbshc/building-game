@@ -163,14 +163,13 @@ func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 
 
 # 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格，遇到消耗方块则推动者消失
-# 推动链：链中任何方块连着粘液 → 整组一起推
+# 推动链：所有方块都可推，链中碰到粘液组则整组+中间方块一起推
 func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 	var end = start_pos
 	var found_stop = false
 	var hit_consume = false
-	var slime_pos = null  # 链中发现的粘液组入口
+	var slime_pos = null
 	
-	# 扫描链，同时检测粘液
 	for _i in range(1000):
 		end += dir
 		if end.y < 0:
@@ -181,62 +180,61 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks[end].func_type == func_types.FuncType.CONSUME:
 			hit_consume = true
 			break
-		# 检查当前方块是否连着粘液
 		if slime_pos == null:
 			var g = get_slime_group(end)
 			if g.size() > 1:
-				slime_pos = end  # 记录粘液组入口
+				slime_pos = end
 	
 	if not found_stop and not hit_consume and slime_pos == null:
 		return false
 	
-	# 粘液组：整组推动
+	# 收集要移动的全部方块
+	var to_move: Dictionary = {}  # old_pos → BlockData
+	
 	if slime_pos != null:
+		# 粘液组 + start 到 slime_pos 之间的所有方块
 		var group = get_slime_group(slime_pos)
-		return _push_slime_group(group, dir)
+		for p in group:
+			to_move[p] = blocks[p]
+		# 中间方块（start_pos 到 slime_pos-1）
+		var mid = start_pos
+		while mid != slime_pos:
+			if blocks.has(mid) and not to_move.has(mid):
+				to_move[mid] = blocks[mid]
+			mid += dir
+	else:
+		# 普通线性链
+		var pos = start_pos
+		while pos != end:
+			if blocks.has(pos):
+				to_move[pos] = blocks[pos]
+			pos += dir
 	
 	if hit_consume:
 		var doomed = end - dir
-		remove_block(doomed)
+		if to_move.has(doomed):
+			to_move.erase(doomed)
+			remove_block(doomed)
 	
-	# 正常线性推动
-	var pos = end
-	while pos != start_pos:
-		var prev = pos - dir
-		if blocks.has(prev):
-			var bd = blocks[prev]
-			blocks.erase(prev)
-			bd.node.position = Vector3(pos) + Vector3(0.5, 0.5, 0.5)
-			_refresh_direction_indicator(bd)
-			blocks[pos] = bd
-		pos = prev
-	return true
-
-
-# 推动整个粘液组
-func _push_slime_group(group: Array, dir: Vector3i) -> bool:
-	# 检查所有目标位置
-	for p in group:
-		var dest = p + dir
-		if dest.y < 0:
+	# 检查目标是否都可用
+	for old_p in to_move:
+		var new_p = old_p + dir
+		if new_p.y < 0:
 			return false
-		var db = blocks.get(dest, null)
-		if db != null and not group.has(dest):
-			return false  # 被组外方块挡住
+		if blocks.has(new_p) and not to_move.has(new_p):
+			return false  # 被不可移动的方块挡住
 	
 	# 先全部取出
-	var snapshots := {}
-	for p in group:
-		var bd = blocks[p]
-		snapshots[p] = bd
-		blocks.erase(p)
+	for old_p in to_move:
+		blocks.erase(old_p)
 	
 	# 写入新位置
-	for p in group:
-		var bd = snapshots[p]
-		var dest = p + dir
-		bd.node.position = Vector3(dest) + Vector3(0.5, 0.5, 0.5)
-		blocks[dest] = bd
+	for old_p in to_move:
+		var bd = to_move[old_p]
+		var new_p = old_p + dir
+		bd.node.position = Vector3(new_p) + Vector3(0.5, 0.5, 0.5)
+		_refresh_direction_indicator(bd)
+		blocks[new_p] = bd
 	
 	return true
 
