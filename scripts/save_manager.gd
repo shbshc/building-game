@@ -1,7 +1,7 @@
 extends Node
 
 const SAVE_PATH := "user://save.json"
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 
 func save(block_manager, inventory_manager, ground_node) -> bool:
     var data := {
