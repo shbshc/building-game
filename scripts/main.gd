@@ -46,10 +46,28 @@ func _tick_move_blocks():
 		var was_turn = (target != null and target.func_type == ft.FuncType.TURN)
 		var turn_dir = target.direction if was_turn else -1
 		
-		if block_manager.move_block(pos, new_pos):
+		var delta = block_manager.move_block(pos, new_pos)
+		if delta != Vector3.ZERO:
 			if was_turn:
 				block_manager.set_block_direction(new_pos, turn_dir)
-				print("Move turned to ", ft.DIRECTION_NAMES[turn_dir])
+			# 如果玩家站在这个方块上，一起移动
+			_carry_player(delta, pos)
+
+# 检查玩家是否站在方块上，是则一起移动
+func _carry_player(delta: Vector3, block_pos: Vector3i):
+	var player = $CameraRig
+	var p = player.global_position
+	# 方块顶面中心
+	var block_top = Vector3(block_pos) + Vector3(0.5, 1.0, 0.5)
+	# 玩家脚底（胶囊体底部约在 position.y - 1.3）
+	var player_feet_y = p.y - 1.3
+	# 检查是否站在方块上
+	if abs(p.x - block_top.x) < 0.6 and abs(p.z - block_top.z) < 0.6:
+		if abs(player_feet_y - block_top.y) < 0.15:
+			# 玩家站在方块上，用 Tween 平滑移动
+			var end_pos = player.global_position + delta
+			var tween = create_tween()
+			tween.tween_property(player, "global_position", end_pos, 0.5).set_trans(Tween.TRANS_LINEAR)
 
 func _setup_ui():
 	var ui_root = $UI/UIContainer

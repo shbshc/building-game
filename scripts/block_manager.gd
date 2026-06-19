@@ -125,27 +125,46 @@ func clear_all():
     blocks.clear()
 
 
-# 移动方块：将方块从 from_pos 移到 to_pos
-func move_block(from_pos: Vector3i, to_pos: Vector3i) -> bool:
+# 移动方块：平滑动画移动，返回移动向量（用于带动玩家）
+func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
     if not blocks.has(from_pos):
-        return false
+        return Vector3.ZERO
     if from_pos == to_pos:
-        return true  # nothing to do
+        return Vector3.ZERO
+    if _is_moving.has(from_pos):
+        return Vector3.ZERO  # 正在动画中，跳过
     
-    var bd = blocks[from_pos]  # GET BEFORE ANY DELETION
+    var bd = blocks[from_pos]  # 获取引用
     
     var target = blocks.get(to_pos, null)
     if target != null:
         if target.func_type == func_types.FuncType.TURN:
             remove_block(to_pos)
         else:
-            return false
+            return Vector3.ZERO
     
     blocks.erase(from_pos)
-    bd.node.position = Vector3(to_pos) + Vector3(0.5, 0.5, 0.5)
+    var start_pos = bd.node.position
+    var end_pos = Vector3(to_pos) + Vector3(0.5, 0.5, 0.5)
+    var delta = Vector3(to_pos) - Vector3(from_pos)
+    
+    # 标记正在移动
+    _is_moving[from_pos] = true
+    blocks[to_pos] = bd  # 提前占位
+    
+    # 平滑动画
+    var tween = create_tween()
+    tween.tween_property(bd.node, "position", end_pos, 0.5).set_trans(Tween.TRANS_LINEAR)
+    tween.tween_callback(_on_move_done.bind(from_pos, to_pos, bd))
+    
+    return delta
+
+
+var _is_moving: Dictionary = {}  # Vector3i → bool
+
+func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
+    _is_moving.erase(from_pos)
     _refresh_direction_indicator(bd)
-    blocks[to_pos] = bd
-    return true
 
 
 func _refresh_direction_indicator(bd: BlockData):
