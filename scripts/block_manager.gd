@@ -136,12 +136,9 @@ func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
     
     var bd = blocks[from_pos]  # 获取引用
     
-    var target = blocks.get(to_pos, null)
-    if target != null:
-        if target.func_type == func_types.FuncType.TURN:
-            remove_block(to_pos)
-        else:
-            return Vector3.ZERO
+    # 目标格被占据则无法移动
+    if blocks.has(to_pos):
+        return Vector3.ZERO
     
     blocks.erase(from_pos)
     var start_pos = bd.node.position

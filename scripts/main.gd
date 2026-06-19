@@ -43,14 +43,13 @@ func _tick_move_blocks():
 		
 		# 检查目标格是否有拐弯方块
 		var target = block_manager.get_block_data(new_pos)
-		var was_turn = (target != null and target.func_type == ft.FuncType.TURN)
-		var turn_dir = target.direction if was_turn else -1
+		if target != null and target.func_type == ft.FuncType.TURN:
+			# 拐弯方块不消失，只改变移动方块方向
+			block_manager.set_block_direction(pos, target.direction)
+			continue
 		
 		var delta = block_manager.move_block(pos, new_pos)
 		if delta != Vector3.ZERO:
-			if was_turn:
-				block_manager.set_block_direction(new_pos, turn_dir)
-			# 如果玩家站在这个方块上，一起移动
 			_carry_player(delta, pos)
 
 # 检查玩家是否站在方块上，是则一起移动

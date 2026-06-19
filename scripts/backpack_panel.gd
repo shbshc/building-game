@@ -48,7 +48,7 @@ func _on_slot_clicked(index: int):
 	if src_slot.is_empty():
 		return
 	dst_slot.item_id = src_slot.item_id
-	dst_slot.count = 64  # 始终满堆叠
+	dst_slot.count = 1
 
 func _on_slot_input(event: InputEvent, index: int):
 	# 创造模式：右键和左键一样，选中物品到 hotbar
