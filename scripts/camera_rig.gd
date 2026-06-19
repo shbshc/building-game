@@ -30,6 +30,10 @@ func _process(delta):
 		scroll_cooldown -= delta
 	if Input.is_action_just_pressed("ui_cancel"):
 		_toggle_mouse()
+	if not mouse_captured:
+		velocity = Vector3.ZERO
+		move_and_slide()
+		return
 	if mouse_captured:
 		var space_just = Input.is_action_just_pressed("move_up")
 		if space_just:

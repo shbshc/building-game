@@ -40,8 +40,10 @@ func _process(delta):
 
 func _input(event):
 	var cam_rig = $"../CameraRig"
-	if not cam_rig.mouse_captured:
-		highlight.visible = false
+	var main_node = $".."
+	if not cam_rig.mouse_captured or (main_node.has_method("is_backpack_open") and main_node.is_backpack_open()):
+		if not cam_rig.mouse_captured:
+			highlight.visible = false
 		return
 	
 	if event is InputEventMouseButton:
