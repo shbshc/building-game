@@ -221,15 +221,24 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks.has(new_p) and not to_move.has(new_p):
 			return false
 	
-	# 6. 全部取出再写入
-	for old_p in to_move:
-		blocks.erase(old_p)
+	# 6. 平滑动画移动全部方块
+	var pending := to_move.size()  # 动画计数
 	for old_p in to_move:
 		var bd = to_move[old_p]
 		var new_p = old_p + dir
-		bd.node.position = Vector3(new_p) + Vector3(0.5, 0.5, 0.5)
-		_refresh_direction_indicator(bd)
-		blocks[new_p] = bd
+		var target_pos = Vector3(new_p) + Vector3(0.5, 0.5, 0.5)
+		
+		blocks.erase(old_p)
+		blocks[new_p] = bd  # 提前占位
+		_is_moving[old_p] = true
+		
+		var tween = create_tween()
+		tween.tween_property(bd.node, "position", target_pos, 0.5).set_trans(Tween.TRANS_LINEAR)
+		tween.tween_callback(func():
+			_is_moving.erase(old_p)
+			_refresh_direction_indicator(bd)
+			pending -= 1
+		)
 	
 	return true
 

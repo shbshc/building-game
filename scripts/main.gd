@@ -40,6 +40,8 @@ func _tick_move_blocks():
 		var bd = block_manager.blocks.get(pos)
 		if bd == null or bd.func_type != ft.FuncType.MOVE:
 			continue
+		if block_manager._is_moving.has(pos):
+			continue  # 动画中，跳过
 		var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
 		var new_pos = pos + dir_vec
 		
