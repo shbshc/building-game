@@ -108,7 +108,9 @@ func _on_load_pressed():
 	print(save_manager.load(block_manager, $InventoryManager, ground))
 
 func is_backpack_open() -> bool:
-    return backpack_panel != null and backpack_panel.visible
+	return backpack_panel != null and backpack_panel.visible
+
+func _on_ground_color_pressed():
 	print("GROUND")
 	ground_color_popup.open_with_colors(ground, ground.ground_color, ground.grid_color)
 
