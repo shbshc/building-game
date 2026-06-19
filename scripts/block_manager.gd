@@ -145,8 +145,9 @@ func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
 	var end_pos = Vector3(to_pos) + Vector3(0.5, 0.5, 0.5)
 	var delta = Vector3(to_pos) - Vector3(from_pos)
 	
-	# 标记正在移动
+	# 标记正在移动（新旧位置都锁定）
 	_is_moving[from_pos] = true
+	_is_moving[to_pos] = true
 	blocks[to_pos] = bd  # 提前占位
 	
 	# 平滑动画
@@ -159,6 +160,7 @@ func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
 
 func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 	_is_moving.erase(from_pos)
+	_is_moving.erase(to_pos)
 	_refresh_direction_indicator(bd)
 
 
@@ -229,17 +231,19 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		
 		blocks.erase(old_p)
 		blocks[new_p] = bd
-		_is_moving[old_p] = true
+		_is_moving[old_p] = true  # 旧位置仍在动画
+		_is_moving[new_p] = true  # 新位置也锁定，防止重复触发
 		
 		var tween = create_tween()
 		tween.tween_property(bd.node, "position", target_pos, 0.5).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_slide_done.bind(old_p, bd))
+		tween.tween_callback(_on_slide_done.bind(old_p, new_p, bd))
 	
 	return true
 
 
-func _on_slide_done(old_pos: Vector3i, bd: BlockData):
+func _on_slide_done(old_pos: Vector3i, new_pos: Vector3i, bd: BlockData):
 	_is_moving.erase(old_pos)
+	_is_moving.erase(new_pos)
 	_refresh_direction_indicator(bd)
 
 
