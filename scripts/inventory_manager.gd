@@ -58,6 +58,18 @@ func _ready():
 	backpack[27].add(27, 1, 64)  # Push-Y
 	backpack[28].add(28, 1, 64)  # Push+Z
 	backpack[29].add(29, 1, 64)  # Push-Z
+	backpack[30].add(30, 1, 64)  # Consume+X
+	backpack[31].add(31, 1, 64)  # Consume-X
+	backpack[32].add(32, 1, 64)  # Consume+Y
+	backpack[33].add(33, 1, 64)  # Consume-Y
+	backpack[34].add(34, 1, 64)  # Consume+Z
+	backpack[35].add(35, 1, 64)  # Consume-Z
+	backpack[36].add(36, 1, 64)  # Slime+X
+	backpack[37].add(37, 1, 64)  # Slime-X
+	backpack[38].add(38, 1, 64)  # Slime+Y
+	backpack[39].add(39, 1, 64)  # Slime-Y
+	backpack[40].add(40, 1, 64)  # Slime+Z
+	backpack[41].add(41, 1, 64)  # Slime-Z
 
 func get_selected_slot():
 	return hotbar[selected_slot]

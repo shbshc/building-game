@@ -199,6 +199,29 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 	return true
 
 
+# 粘液连通组件：从 start_pos 出发，通过粘液方块找到所有粘连的方块
+func get_slime_group(start_pos: Vector3i) -> Array:
+	var visited := {}
+	var queue := [start_pos]
+	var result: Array = []
+	visited[start_pos] = true
+	
+	while not queue.is_empty():
+		var pos = queue.pop_front()
+		result.append(pos)
+		var bd = blocks.get(pos, null)
+		if bd == null:
+			continue
+		if bd.func_type == func_types.FuncType.SLIME:
+			for dir in func_types.DIRECTION_VECTORS:
+				var n = pos + dir
+				if not visited.has(n) and blocks.has(n):
+					visited[n] = true
+					queue.append(n)
+	
+	return result
+
+
 func _refresh_direction_indicator(bd: BlockData):
 	for child in bd.node.get_children():
 		if child.has_meta("is_direction_indicator"):

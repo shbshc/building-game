@@ -35,25 +35,33 @@ func _process(delta):
 func _tick_move_blocks():
 	var ft = $FunctionalTypes
 	var positions = block_manager.blocks.keys()  # snapshot
+	var moved: Dictionary = {}  # 本轮已移动过的方块
+	
 	for pos in positions:
+		if moved.has(pos):
+			continue
 		var bd = block_manager.blocks.get(pos)
 		if bd == null or bd.func_type != ft.FuncType.MOVE:
 			continue
 		var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
 		var new_pos = pos + dir_vec
 		
+		# 粘液组：如果移动方块在粘液组中，整组一起移动
+		var group = block_manager.get_slime_group(pos)
+		if group.size() > 1:
+			if _try_move_group(group, dir_vec, moved):
+				_carry_player(dir_vec, pos)
+			continue
+		
 		var target = block_manager.get_block_data(new_pos)
 		if target != null and target.func_type == ft.FuncType.TURN:
-			# 拐弯方块不消失，只改变移动方块方向
 			block_manager.set_block_direction(pos, target.direction)
 			continue
 		
-		# 消耗方块：移动方块消失
 		if target != null and target.func_type == ft.FuncType.CONSUME:
 			block_manager.remove_block(pos)
 			continue
 		
-		# 如果目标是推动方块，先推动整条链
 		if target != null and target.func_type == ft.FuncType.PUSH:
 			if block_manager.slide_chain(new_pos, dir_vec):
 				pass
@@ -63,6 +71,34 @@ func _tick_move_blocks():
 		var delta = block_manager.move_block(pos, new_pos)
 		if delta != Vector3.ZERO:
 			_carry_player(delta, pos)
+
+# 尝试移动整个粘液组
+func _try_move_group(group: Array, dir: Vector3i, moved: Dictionary) -> bool:
+	# 检查所有目标位置是否可用
+	for p in group:
+		var dest = p + dir
+		if dest.y < 0:
+			return false
+		var db = block_manager.get_block_data(dest)
+		if db != null and not group.has(dest):
+			return false  # 被组外方块挡住
+	
+	# 从最远端开始移动，避免覆盖
+	# 简单方案：先全部 erase，再全部写入新位置
+	var snapshots := {}
+	for p in group:
+		var bd = block_manager.blocks[p]
+		snapshots[p] = bd
+		block_manager.blocks.erase(p)
+	
+	for p in group:
+		var bd = snapshots[p]
+		var dest = p + dir
+		bd.node.position = Vector3(dest) + Vector3(0.5, 0.5, 0.5)
+		block_manager.blocks[dest] = bd
+		moved[dest] = true
+	
+	return true
 
 # 检查玩家是否站在方块上，是则一起移动
 func _carry_player(delta: Vector3, block_pos: Vector3i):
