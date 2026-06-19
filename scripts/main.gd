@@ -43,12 +43,6 @@ func _tick_move_blocks():
 		var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
 		var new_pos = pos + dir_vec
 		
-		# 粘液组：通过 slide_chain 统一处理（它内部会检测粘液）
-		var group = block_manager.get_slime_group(pos)
-		if group.size() > 1:
-			block_manager.slide_chain(pos, dir_vec)
-			continue
-		
 		var target = block_manager.get_block_data(new_pos)
 		if target != null and target.func_type == ft.FuncType.TURN:
 			block_manager.set_block_direction(pos, target.direction)
