@@ -212,7 +212,8 @@ func get_slime_group(start_pos: Vector3i) -> Array:
 		var bd = blocks.get(pos, null)
 		if bd == null:
 			continue
-		if bd.func_type == func_types.FuncType.SLIME:
+		# 粘液方块或起始位置：把邻居拉进组
+		if bd.func_type == func_types.FuncType.SLIME or pos == start_pos:
 			for dir in func_types.DIRECTION_VECTORS:
 				var n = pos + dir
 				if not visited.has(n) and blocks.has(n):
