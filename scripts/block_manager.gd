@@ -163,16 +163,14 @@ func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 
 
 # 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格，遇到消耗方块则推动者消失
-# 推动链：遇到粘液方块时整组一起推
+# 推动链：链中任何方块连着粘液 → 整组一起推
 func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
-	# 先检查是否有粘液组
-	var slime_group = get_slime_group(start_pos)
-	if slime_group.size() > 1:
-		return _push_slime_group(slime_group, dir)
-	
 	var end = start_pos
 	var found_stop = false
 	var hit_consume = false
+	var slime_pos = null  # 链中发现的粘液组入口
+	
+	# 扫描链，同时检测粘液
 	for _i in range(1000):
 		end += dir
 		if end.y < 0:
@@ -183,13 +181,25 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks[end].func_type == func_types.FuncType.CONSUME:
 			hit_consume = true
 			break
-	if not found_stop and not hit_consume:
+		# 检查当前方块是否连着粘液
+		if slime_pos == null:
+			var g = get_slime_group(end)
+			if g.size() > 1:
+				slime_pos = end  # 记录粘液组入口
+	
+	if not found_stop and not hit_consume and slime_pos == null:
 		return false
+	
+	# 粘液组：整组推动
+	if slime_pos != null:
+		var group = get_slime_group(slime_pos)
+		return _push_slime_group(group, dir)
 	
 	if hit_consume:
 		var doomed = end - dir
 		remove_block(doomed)
 	
+	# 正常线性推动
 	var pos = end
 	while pos != start_pos:
 		var prev = pos - dir
