@@ -163,7 +163,13 @@ func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 
 
 # 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格，遇到消耗方块则推动者消失
+# 推动链：遇到粘液方块时整组一起推
 func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
+	# 先检查是否有粘液组
+	var slime_group = get_slime_group(start_pos)
+	if slime_group.size() > 1:
+		return _push_slime_group(slime_group, dir)
+	
 	var end = start_pos
 	var found_stop = false
 	var hit_consume = false
@@ -181,11 +187,9 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		return false
 	
 	if hit_consume:
-		# 消耗方块前的推动者被摧毁
 		var doomed = end - dir
 		remove_block(doomed)
 	
-	# 从 end-1 往回把方块推到 end
 	var pos = end
 	while pos != start_pos:
 		var prev = pos - dir
@@ -196,6 +200,34 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 			_refresh_direction_indicator(bd)
 			blocks[pos] = bd
 		pos = prev
+	return true
+
+
+# 推动整个粘液组
+func _push_slime_group(group: Array, dir: Vector3i) -> bool:
+	# 检查所有目标位置
+	for p in group:
+		var dest = p + dir
+		if dest.y < 0:
+			return false
+		var db = blocks.get(dest, null)
+		if db != null and not group.has(dest):
+			return false  # 被组外方块挡住
+	
+	# 先全部取出
+	var snapshots := {}
+	for p in group:
+		var bd = blocks[p]
+		snapshots[p] = bd
+		blocks.erase(p)
+	
+	# 写入新位置
+	for p in group:
+		var bd = snapshots[p]
+		var dest = p + dir
+		bd.node.position = Vector3(dest) + Vector3(0.5, 0.5, 0.5)
+		blocks[dest] = bd
+	
 	return true
 
 
