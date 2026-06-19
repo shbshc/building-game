@@ -165,11 +165,10 @@ func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 # 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格，遇到消耗方块则推动者消失
 # 推动链：所有方块都可推，链中碰到粘液组则整组+中间方块一起推
 func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
+	# 1. 扫描找到停止点
 	var end = start_pos
 	var found_stop = false
 	var hit_consume = false
-	var slime_pos = null
-	
 	for _i in range(1000):
 		end += dir
 		if end.y < 0:
@@ -180,55 +179,50 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks[end].func_type == func_types.FuncType.CONSUME:
 			hit_consume = true
 			break
-		if slime_pos == null:
-			var g = get_slime_group(end)
-			if g.size() > 1:
-				slime_pos = end
-	
-	if not found_stop and not hit_consume and slime_pos == null:
+	if not found_stop and not hit_consume:
 		return false
 	
-	# 收集要移动的全部方块
-	var to_move: Dictionary = {}  # old_pos → BlockData
+	# 2. 收集链上所有方块，同时扩展粘液邻居
+	var to_move: Dictionary = {}
+	var queue: Array = []  # BFS 队列
+	var pos = start_pos
+	while pos != end:
+		if blocks.has(pos) and not to_move.has(pos):
+			to_move[pos] = blocks[pos]
+			queue.append(pos)
+		pos += dir
 	
-	if slime_pos != null:
-		# 粘液组 + start 到 slime_pos 之间的所有方块
-		var group = get_slime_group(slime_pos)
-		for p in group:
-			to_move[p] = blocks[p]
-		# 中间方块（start_pos 到 slime_pos-1）
-		var mid = start_pos
-		while mid != slime_pos:
-			if blocks.has(mid) and not to_move.has(mid):
-				to_move[mid] = blocks[mid]
-			mid += dir
-	else:
-		# 普通线性链
-		var pos = start_pos
-		while pos != end:
-			if blocks.has(pos):
-				to_move[pos] = blocks[pos]
-			pos += dir
+	# 3. BFS 扩展粘液组：从链上每个方块找粘液邻居
+	while not queue.is_empty():
+		var p = queue.pop_front()
+		for d in func_types.DIRECTION_VECTORS:
+			var n = p + d
+			if blocks.has(n) and not to_move.has(n):
+				# 如果 p 是粘液，或 n 是粘液，加入
+				var bd_p = blocks.get(p)
+				var bd_n = blocks.get(n)
+				if (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME):
+					to_move[n] = bd_n
+					queue.append(n)
 	
+	# 4. 消耗方块处理
 	if hit_consume:
 		var doomed = end - dir
 		if to_move.has(doomed):
 			to_move.erase(doomed)
 			remove_block(doomed)
 	
-	# 检查目标是否都可用
+	# 5. 检查目标格
 	for old_p in to_move:
 		var new_p = old_p + dir
 		if new_p.y < 0:
 			return false
 		if blocks.has(new_p) and not to_move.has(new_p):
-			return false  # 被不可移动的方块挡住
+			return false
 	
-	# 先全部取出
+	# 6. 全部取出再写入
 	for old_p in to_move:
 		blocks.erase(old_p)
-	
-	# 写入新位置
 	for old_p in to_move:
 		var bd = to_move[old_p]
 		var new_p = old_p + dir
@@ -252,13 +246,19 @@ func get_slime_group(start_pos: Vector3i) -> Array:
 		var bd = blocks.get(pos, null)
 		if bd == null:
 			continue
-		# 粘液方块或起始位置：把邻居拉进组
-		if bd.func_type == func_types.FuncType.SLIME or pos == start_pos:
+		# 粘液方块：把6个邻居全拉进组；普通方块：也检查邻居是否粘液（入口检测）
+		if bd.func_type == func_types.FuncType.SLIME:
 			for dir in func_types.DIRECTION_VECTORS:
 				var n = pos + dir
 				if not visited.has(n) and blocks.has(n):
 					visited[n] = true
 					queue.append(n)
+		# 非粘液方块也找相邻粘液，防止遗漏入口
+		for dir in func_types.DIRECTION_VECTORS:
+			var n = pos + dir
+			if not visited.has(n) and blocks.has(n) and blocks[n].func_type == func_types.FuncType.SLIME:
+				visited[n] = true
+				queue.append(n)
 	
 	return result
 
