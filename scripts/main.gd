@@ -5,7 +5,7 @@ extends Node3D
 @onready var save_manager = $SaveManager
 @onready var ground = $Ground
 @onready var camera_rig = $CameraRig
-@onready var backpack_panel: PopupPanel = null
+var backpack_panel: Panel = null
 
 var ground_color_popup: PopupPanel
 var color_picker_popup: PopupPanel
