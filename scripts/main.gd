@@ -130,3 +130,11 @@ func _input(event):
 		elif event.keycode == KEY_ESCAPE and backpack_panel != null and backpack_panel.visible:
 			backpack_panel.visible = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _test_activation_chain():
+    var ft = $FunctionalTypes
+    # 放一条链：能源(5,0,5, ↑) → 移动(5,1,5, ↑)
+    block_manager.place_block(Vector3i(5, 0, 5), -1, null, ft.FuncType.ENERGY_PULSE, 2)  # +Y
+    block_manager.place_block(Vector3i(5, 1, 5), -1, null, ft.FuncType.MOVE, 2)         # +Y
+    $ActivationSystem.trigger_activation(Vector3i(5, 0, 5), Vector3i.UP)
+    print("Test activation chain done")
