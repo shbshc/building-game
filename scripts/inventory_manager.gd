@@ -16,17 +16,17 @@ func _ready():
 		slot_colors.append(null)
 	for i in range(BACKPACK_SIZE):
 		backpack.append(ItemTypesScript.ItemSlot.new())
-	hotbar[0].add(0, 1, 64)
-	hotbar[1].add(1, 1, 64)
-	hotbar[2].add(2, 1, 64)
-	hotbar[3].add(3, 1, 64)
-	hotbar[4].add(4, 1, 64)
-	hotbar[5].add(5, 1, 64)
-	# 功能方块 (id 6-9)
-	hotbar[6].add(6, 1, 64)  # Energy Continuous
-	hotbar[7].add(7, 1, 64)  # Energy Pulse
-	hotbar[8].add(8, 1, 64)  # Move
-	hotbar[9].add(9, 1, 64)  # Turn
+	hotbar[0].add(0, 1, 64)   # Stone
+	hotbar[1].add(1, 1, 64)   # Wood
+	hotbar[2].add(2, 1, 64)   # Grass
+	hotbar[3].add(3, 1, 64)   # Sand
+	hotbar[4].add(5, 1, 64)   # Brick
+	# 移动方块 (id 6-11)
+	hotbar[5].add(8, 1, 64)   # Move+Y
+	hotbar[6].add(9, 1, 64)   # Move-Y
+	hotbar[7].add(6, 1, 64)   # Move+X
+	hotbar[8].add(7, 1, 64)   # Move-X
+	hotbar[9].add(10, 1, 64)  # Move+Z
 
 func get_selected_slot():
 	return hotbar[selected_slot]

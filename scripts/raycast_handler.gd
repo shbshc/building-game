@@ -55,7 +55,7 @@ func _input(event):
 				mouse_left_held = false
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if event.pressed:
-				# Check if pointing at a functional block for interaction
+				# Check if pointing at a functional block for direction rotation
 				var result = _raycast()
 				var interacted = false
 				if result and result.collider:
@@ -64,19 +64,13 @@ func _input(event):
 						var pos = parent.position
 						var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
 						var bd = block_manager.get_block_data(grid_pos)
-						if bd != null:
+						if bd != null and bd.func_type > 0:
+							# Right-click functional block: rotate direction
 							var ft = $"../FunctionalTypes"
-							# Shift+Right-click: rotate direction
-							if Input.is_key_pressed(KEY_SHIFT) and bd.func_type > 0:
-								var new_dir = ft.next_direction_index(bd.direction)
-								block_manager.set_block_direction(grid_pos, new_dir)
-								interacted = true
-							# Right-click on energy block: activate
-							elif ft.is_energy_type(bd.func_type):
-								var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
-								$"../ActivationSystem".trigger_activation(grid_pos, dir_vec)
-								interacted = true
-				# If not interacting with functional block, break block as normal
+							var new_dir = ft.next_direction_index(bd.direction)
+							block_manager.set_block_direction(grid_pos, new_dir)
+							interacted = true
+				# If not interacting, break block as normal
 				if not interacted:
 					mouse_right_held = true
 					break_timer = 0.0
@@ -98,7 +92,8 @@ func _try_place():
 				var item_types_node = $"../ItemTypes"
 				var t = item_types_node.get_type(selected_id)
 				var func_type = t.func_type if t else 0
-				var direction = _face_to_direction(result.normal) if func_type > 0 else 2
+				# 功能方块用物品预设方向，普通方块忽略方向
+				var direction = t.direction if func_type > 0 else 2
 				var color = inv_mgr.get_selected_color(item_types_node) if func_type == 0 else null
 				block_manager.place_block(grid_pos, selected_id, color, func_type, direction)
 

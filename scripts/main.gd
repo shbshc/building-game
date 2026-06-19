@@ -13,8 +13,8 @@ var save_btn: Button
 var load_btn: Button
 var ground_btn: Button
 var crosshair: ColorRect
-var _energy_tick_timer := 0.0
-const ENERGY_TICK_INTERVAL := 2.0
+var _move_tick_timer := 0.0
+const MOVE_TICK_INTERVAL := 1.0
 
 func _ready():
 	print("=== Game started ===")
@@ -26,19 +26,30 @@ func _ready():
 	get_tree().root.size_changed.connect(_on_window_resize)
 
 func _process(delta):
-	_energy_tick_timer -= delta
-	if _energy_tick_timer <= 0:
-		_energy_tick_timer = ENERGY_TICK_INTERVAL
-		_tick_continuous_energy()
+	_move_tick_timer -= delta
+	if _move_tick_timer <= 0:
+		_move_tick_timer = MOVE_TICK_INTERVAL
+		_tick_move_blocks()
 
-func _tick_continuous_energy():
-    var ft = $FunctionalTypes
-    var positions = block_manager.blocks.keys()  # snapshot to avoid dict mutation during iteration
-    for pos in positions:
-        var bd = block_manager.blocks.get(pos)   # may be null if removed mid-tick
-        if bd and bd.func_type == ft.FuncType.ENERGY_CONTINUOUS:
-            var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
-            $ActivationSystem.trigger_activation(pos, dir_vec)
+func _tick_move_blocks():
+	var ft = $FunctionalTypes
+	var positions = block_manager.blocks.keys()  # snapshot
+	for pos in positions:
+		var bd = block_manager.blocks.get(pos)
+		if bd == null or bd.func_type != ft.FuncType.MOVE:
+			continue
+		var dir_vec = ft.DIRECTION_VECTORS[bd.direction]
+		var new_pos = pos + dir_vec
+		
+		# 检查目标格是否有拐弯方块
+		var target = block_manager.get_block_data(new_pos)
+		var was_turn = (target != null and target.func_type == ft.FuncType.TURN)
+		var turn_dir = target.direction if was_turn else -1
+		
+		if block_manager.move_block(pos, new_pos):
+			if was_turn:
+				block_manager.set_block_direction(new_pos, turn_dir)
+				print("Move turned to ", ft.DIRECTION_NAMES[turn_dir])
 
 func _setup_ui():
 	var ui_root = $UI/UIContainer
@@ -144,4 +155,3 @@ func _input(event):
 		elif event.keycode == KEY_ESCAPE and backpack_panel != null and backpack_panel.visible:
 			backpack_panel.visible = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
