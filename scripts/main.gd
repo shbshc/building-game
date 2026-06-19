@@ -119,4 +119,8 @@ func _input(event):
 				backpack_panel.popup_centered()
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			else:
+				backpack_panel.hide()
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		elif event.keycode == KEY_ESCAPE and backpack_panel != null and backpack_panel.visible:
+			backpack_panel.hide()
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
