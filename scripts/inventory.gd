@@ -24,7 +24,6 @@ func _build_ui():
 		btn.gui_input.connect(_on_slot_input.bind(i))
 		btn.mouse_entered.connect(_on_slot_hover.bind(i))
 		btn.mouse_exited.connect(_on_slot_unhover)
-		btn.set_drag_forwarding(_get_drag_data.bind(i), _can_drop_data.bind(i), _drop_data.bind(i))
 		hbox.add_child(btn)
 		slot_buttons.append(btn)
 	tooltip_label = Label.new()
@@ -112,30 +111,3 @@ func _process(_delta):
 	if tooltip_label.visible:
 		tooltip_label.position = get_global_mouse_position() + Vector2(16, -16)
 	_refresh()
-
-func _get_drag_data(index: int, _at_position: Vector2):
-	var slot = inv_mgr.hotbar[index]
-	if slot.is_empty():
-		return null
-	inv_mgr.pickup_from(slot)
-	var preview := Button.new()
-	preview.text = ""
-	var s := StyleBoxFlat.new()
-	s.bg_color = item_types_node.get_type(slot.item_id).color
-	s.corner_radius_top_left = 4
-	s.corner_radius_top_right = 4
-	s.corner_radius_bottom_left = 4
-	s.corner_radius_bottom_right = 4
-	preview.add_theme_stylebox_override("normal", s)
-	preview.size = Vector2(48, 48)
-	set_drag_preview(preview)
-	return {"source": "hotbar", "index": index}
-
-func _can_drop_data(index: int, data, _at_position: Vector2) -> bool:
-	if data == null or inv_mgr.held_item == null:
-		return false
-	return true
-
-func _drop_data(index: int, data, _at_position: Vector2):
-	var slot = inv_mgr.hotbar[index]
-	inv_mgr.place_into(slot, item_types_node)
