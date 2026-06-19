@@ -85,6 +85,8 @@ func _process(delta):
 	move_and_slide()
 
 func _input(event):
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
 	if event is InputEventMouseButton:
 		if mouse_captured and scroll_cooldown <= 0:
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
