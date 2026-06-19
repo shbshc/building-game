@@ -169,7 +169,7 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 	var end = start_pos
 	var found_stop = false
 	var hit_consume = false
-	for _i in range(1000):
+	while true:
 		end += dir
 		if end.y < 0:
 			return false
@@ -182,9 +182,9 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 	if not found_stop and not hit_consume:
 		return false
 	
-	# 2. 收集链上所有方块，同时扩展粘液邻居
+	# 2. 收集链上所有方块
 	var to_move: Dictionary = {}
-	var queue: Array = []  # BFS 队列
+	var queue: Array = []
 	var pos = start_pos
 	while pos != end:
 		if blocks.has(pos) and not to_move.has(pos):
@@ -192,16 +192,17 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 			queue.append(pos)
 		pos += dir
 	
-	# 3. BFS 扩展粘液组：从链上每个方块找粘液邻居
+	# 3. BFS 扩展：组内任何方块都传播，找粘液邻居
 	while not queue.is_empty():
 		var p = queue.pop_front()
+		var bd_p = blocks.get(p)
 		for d in func_types.DIRECTION_VECTORS:
 			var n = p + d
 			if blocks.has(n) and not to_move.has(n):
-				# 如果 p 是粘液，或 n 是粘液，加入
-				var bd_p = blocks.get(p)
 				var bd_n = blocks.get(n)
-				if (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME):
+				# p 是粘液，或 n 是粘液，或 p 已在组内（传播连接）
+				if (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) \
+				   or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME):
 					to_move[n] = bd_n
 					queue.append(n)
 	
