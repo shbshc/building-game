@@ -70,7 +70,8 @@ func _try_place():
 		var grid_pos = _world_to_grid(result.position, result.normal)
 		if grid_pos != null and block_manager.can_place_at(grid_pos):
 			if not _is_player_cell(grid_pos):
-				block_manager.place_block(grid_pos, selected_id)
+				var color = inv_mgr.get_selected_color($"../ItemTypes")
+				block_manager.place_block(grid_pos, selected_id, color)
 
 func _is_player_cell(gp: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position

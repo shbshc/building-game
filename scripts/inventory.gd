@@ -85,10 +85,15 @@ func _on_slot_input(event: InputEvent, index: int):
 			var slot = inv_mgr.hotbar[index]
 			if inv_mgr.held_item != null and not inv_mgr.held_item.is_empty():
 				inv_mgr.place_one(slot, item_types_node)
-			else:
-				inv_mgr.pickup_half(slot)
+			elif not slot.is_empty():
+				_open_color_picker(index)
 		elif event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
 			inv_mgr.selected_slot = index
+
+func _open_color_picker(index: int):
+	var main_node = $"../../.."
+	if main_node.has_method("open_color_picker"):
+		main_node.open_color_picker(index)
 
 func _on_slot_hover(index: int):
 	var slot = inv_mgr.hotbar[index]

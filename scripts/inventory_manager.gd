@@ -6,12 +6,14 @@ var hotbar: Array = []
 var backpack: Array = []
 var held_item = null
 var selected_slot := 0
+var slot_colors: Array = []  # custom colors per hotbar slot
 const HOTBAR_SIZE := 10
 const BACKPACK_SIZE := 27
 
 func _ready():
 	for i in range(HOTBAR_SIZE):
 		hotbar.append(ItemTypesScript.ItemSlot.new())
+		slot_colors.append(null)
 	for i in range(BACKPACK_SIZE):
 		backpack.append(ItemTypesScript.ItemSlot.new())
 	hotbar[0].add(0, 64, 64)
@@ -23,6 +25,15 @@ func get_selected_slot():
 
 func get_selected_type() -> int:
 	return hotbar[selected_slot].item_id
+
+func get_selected_color(item_types_node) -> Color:
+	var c = slot_colors[selected_slot]
+	if c != null:
+		return c
+	var t = item_types_node.get_type(get_selected_type())
+	if t:
+		return t.color
+	return Color.RED
 
 func pickup_from(slot):
 	if slot.is_empty():

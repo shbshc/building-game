@@ -23,7 +23,7 @@ func can_place_at(grid_pos: Vector3i) -> bool:
             return true
     return false
 
-func place_block(grid_pos: Vector3i, item_id: int = -1) -> bool:
+func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null) -> bool:
     if not can_place_at(grid_pos):
         return false
     var mesh := MeshInstance3D.new()
@@ -31,7 +31,9 @@ func place_block(grid_pos: Vector3i, item_id: int = -1) -> bool:
     mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
     var mat := StandardMaterial3D.new()
     var color := selected_color
-    if item_id >= 0 and item_types_node:
+    if custom_color != null:
+        color = custom_color
+    elif item_id >= 0 and item_types_node:
         var t = item_types_node.get_type(item_id)
         if t:
             color = t.color
