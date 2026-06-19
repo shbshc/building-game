@@ -67,6 +67,6 @@ func get_type(id: int):
         return item_types[id]
     return null
 
-func get_name(id: int) -> String:
+func get_item_name(id: int) -> String:
     var t = get_type(id)
     return t.name if t else "Unknown"
