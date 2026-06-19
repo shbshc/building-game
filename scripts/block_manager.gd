@@ -221,26 +221,17 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks.has(new_p) and not to_move.has(new_p):
 			return false
 	
-	# 6. 平滑动画移动全部方块
+	# 6. 瞬移全部方块
 	for old_p in to_move:
 		var bd = to_move[old_p]
 		var new_p = old_p + dir
-		var target_pos = Vector3(new_p) + Vector3(0.5, 0.5, 0.5)
 		
 		blocks.erase(old_p)
 		blocks[new_p] = bd
-		_is_moving[old_p] = true
-		
-		var tween = create_tween()
-		tween.tween_property(bd.node, "position", target_pos, 0.5).set_trans(Tween.TRANS_LINEAR)
-		tween.tween_callback(_on_slide_done.bind(old_p, bd))
+		bd.node.position = Vector3(new_p) + Vector3(0.5, 0.5, 0.5)
+		_refresh_direction_indicator(bd)
 	
 	return true
-
-
-func _on_slide_done(old_pos: Vector3i, bd: BlockData):
-	_is_moving.erase(old_pos)
-	_refresh_direction_indicator(bd)
 
 
 # 粘液连通组件：从 start_pos 出发，通过粘液方块找到所有粘连的方块

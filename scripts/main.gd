@@ -29,8 +29,6 @@ func _process(delta):
 	_move_tick_timer -= delta
 	if _move_tick_timer <= 0:
 		_move_tick_timer = MOVE_TICK_INTERVAL
-		if not block_manager._is_moving.is_empty():
-			return  # 动画进行中，跳过本轮
 		_tick_move_blocks()
 		_tick_generators()
 
