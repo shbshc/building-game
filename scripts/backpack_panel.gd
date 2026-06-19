@@ -42,20 +42,18 @@ func _refresh():
 			btn.add_theme_constant_override("outline_size", 1)
 
 func _on_slot_clicked(index: int):
-	var slot = inv_mgr.backpack[index]
-	if inv_mgr.held_item != null and not inv_mgr.held_item.is_empty():
-		inv_mgr.place_into(slot, item_types_node)
-	else:
-		inv_mgr.pickup_from(slot)
+	# 创造模式：点击即选中，把背包物品复制到 hotbar 当前选中格
+	var src_slot = inv_mgr.backpack[index]
+	var dst_slot = inv_mgr.hotbar[inv_mgr.selected_slot]
+	if src_slot.is_empty():
+		return
+	dst_slot.item_id = src_slot.item_id
+	dst_slot.count = 64  # 始终满堆叠
 
 func _on_slot_input(event: InputEvent, index: int):
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			var slot = inv_mgr.backpack[index]
-			if inv_mgr.held_item != null and not inv_mgr.held_item.is_empty():
-				inv_mgr.place_one(slot, item_types_node)
-			else:
-				inv_mgr.pickup_half(slot)
+	# 创造模式：右键和左键一样，选中物品到 hotbar
+	if event is InputEventMouseButton and event.pressed:
+		_on_slot_clicked(index)
 
 func _process(_delta):
 	_refresh()

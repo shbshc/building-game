@@ -88,12 +88,9 @@ func _draw_slot(index: int):
 		btn.add_theme_stylebox_override("normal", sel)
 
 func _on_slot_clicked(index: int):
-	var slot = inv_mgr.hotbar[index]
-	if inv_mgr.held_item != null and not inv_mgr.held_item.is_empty():
-		inv_mgr.place_into(slot, item_types_node)
-	else:
-		inv_mgr.pickup_from(slot)
+	# 创造模式：点击即选中，不消耗物品
 	inv_mgr.selected_slot = index
+	inv_mgr.held_item = null  # 清空手持
 
 func _on_slot_input(event: InputEvent, index: int):
 	if event is InputEventMouseButton:

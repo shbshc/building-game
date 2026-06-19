@@ -16,17 +16,26 @@ func _ready():
 		slot_colors.append(null)
 	for i in range(BACKPACK_SIZE):
 		backpack.append(ItemTypesScript.ItemSlot.new())
-	hotbar[0].add(0, 1, 64)   # Stone
-	hotbar[1].add(1, 1, 64)   # Wood
-	hotbar[2].add(2, 1, 64)   # Grass
-	hotbar[3].add(3, 1, 64)   # Sand
-	hotbar[4].add(5, 1, 64)   # Brick
+	hotbar[0].add(0, 64, 64)   # Stone
+	hotbar[1].add(1, 64, 64)   # Wood
+	hotbar[2].add(2, 64, 64)   # Grass
+	hotbar[3].add(3, 64, 64)   # Sand
+	hotbar[4].add(5, 64, 64)   # Brick
 	# 移动方块 (id 6-11)
-	hotbar[5].add(8, 1, 64)   # Move+Y
-	hotbar[6].add(9, 1, 64)   # Move-Y
-	hotbar[7].add(6, 1, 64)   # Move+X
-	hotbar[8].add(7, 1, 64)   # Move-X
-	hotbar[9].add(10, 1, 64)  # Move+Z
+	hotbar[5].add(8, 64, 64)   # Move+Y
+	hotbar[6].add(9, 64, 64)   # Move-Y
+	hotbar[7].add(6, 64, 64)   # Move+X
+	hotbar[8].add(7, 64, 64)   # Move-X
+	hotbar[9].add(10, 64, 64)  # Move+Z
+	# 背包填充
+	backpack[0].add(4, 64, 64)   # Glass
+	backpack[1].add(11, 64, 64)  # Move-Z
+	backpack[2].add(12, 64, 64)  # Turn+X
+	backpack[3].add(13, 64, 64)  # Turn-X
+	backpack[4].add(14, 64, 64)  # Turn+Y
+	backpack[5].add(15, 64, 64)  # Turn-Y
+	backpack[6].add(16, 64, 64)  # Turn+Z
+	backpack[7].add(17, 64, 64)  # Turn-Z
 
 func get_selected_slot():
 	return hotbar[selected_slot]
