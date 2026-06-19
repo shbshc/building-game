@@ -16,9 +16,16 @@ func _ready():
 		slot_colors.append(null)
 	for i in range(BACKPACK_SIZE):
 		backpack.append(ItemTypesScript.ItemSlot.new())
-	hotbar[0].add(0, 64, 64)
-	hotbar[1].add(1, 64, 64)
-	hotbar[2].add(2, 64, 64)
+	hotbar[0].add(0, 1, 64)
+	hotbar[1].add(1, 1, 64)
+	hotbar[2].add(2, 1, 64)
+	hotbar[3].add(3, 1, 64)
+	hotbar[4].add(4, 1, 64)
+	hotbar[5].add(5, 1, 64)
+	hotbar[6].add(0, 1, 64)
+	hotbar[7].add(1, 1, 64)
+	hotbar[8].add(2, 1, 64)
+	hotbar[9].add(3, 1, 64)
 
 func get_selected_slot():
 	return hotbar[selected_slot]

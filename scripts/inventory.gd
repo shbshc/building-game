@@ -49,8 +49,12 @@ func _draw_slot(index: int):
 	if slot.is_empty():
 		style.bg_color = Color(0.1, 0.1, 0.1, 0.7)
 	else:
-		var t = item_types_node.get_type(slot.item_id)
-		style.bg_color = t.color if t else Color.GRAY
+		var cc = inv_mgr.slot_colors[index]
+		if cc != null:
+			style.bg_color = cc
+		else:
+			var t = item_types_node.get_type(slot.item_id)
+			style.bg_color = t.color if t else Color.GRAY
 	style.corner_radius_top_left = 4
 	style.corner_radius_top_right = 4
 	style.corner_radius_bottom_left = 4
