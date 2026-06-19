@@ -1,10 +1,11 @@
 extends Node
 
 const SAVE_PATH := "user://save.json"
+const SAVE_VERSION := 3
 
 func save(block_manager, inventory_manager, ground_node) -> bool:
     var data := {
-        "version": 2,
+        "version": SAVE_VERSION,
         "blocks": [],
         "inventory": [],
         "ground_color": [0.85, 0.85, 0.85],
@@ -14,7 +15,9 @@ func save(block_manager, inventory_manager, ground_node) -> bool:
         var b = block_manager.blocks[pos]
         data["blocks"].append({
             "x": pos.x, "y": pos.y, "z": pos.z,
-            "item_id": b.get("item_id", -1)
+            "item_id": b.item_id,
+            "func_type": b.func_type,
+            "direction": b.direction
         })
     for slot in inventory_manager.hotbar:
         data["inventory"].append({
@@ -46,7 +49,15 @@ func load(block_manager, inventory_manager, ground_node) -> bool:
     block_manager.clear_all()
     for b in data.get("blocks", []):
         var item_id = b.get("item_id", -1)
-        block_manager.place_block(Vector3i(b["x"], b["y"], b["z"]), item_id)
+        var func_type = b.get("func_type", 0)
+        var direction = b.get("direction", 2)
+        block_manager.place_block(
+            Vector3i(b["x"], b["y"], b["z"]),
+            item_id,
+            null,
+            func_type,
+            direction
+        )
     var inv = data.get("inventory", [])
     for i in min(inv.size(), inventory_manager.HOTBAR_SIZE):
         var slot_data = inv[i]
