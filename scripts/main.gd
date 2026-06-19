@@ -22,6 +22,9 @@ func _ready():
 	backpack_panel = preload("res://scenes/ui/backpack_panel.tscn").instantiate()
 	$UI/UIContainer.add_child(backpack_panel)
 	get_tree().root.size_changed.connect(_on_window_resize)
+	print("Direction test: +X -> ", $FunctionalTypes.dir_vec_to_index(Vector3i(1,0,0)))
+	print("Opposite test: ", $FunctionalTypes.opposite_direction(Vector3i(1,0,0)))
+	print("Energy check: ", $FunctionalTypes.is_energy_type(1))
 
 func _setup_ui():
 	var ui_root = $UI/UIContainer
