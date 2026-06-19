@@ -31,6 +31,15 @@ func _refresh():
 		style.corner_radius_bottom_left = 4
 		style.corner_radius_bottom_right = 4
 		btn.add_theme_stylebox_override("normal", style)
+		# 显示物品名字
+		if slot.is_empty():
+			btn.text = ""
+		else:
+			btn.text = item_types_node.get_item_name(slot.item_id)
+			btn.add_theme_font_size_override("font_size", 10)
+			btn.add_theme_color_override("font_color", Color.BLACK)
+			btn.add_theme_color_override("font_outline_color", Color.WHITE)
+			btn.add_theme_constant_override("outline_size", 1)
 
 func _on_slot_clicked(index: int):
 	var slot = inv_mgr.backpack[index]

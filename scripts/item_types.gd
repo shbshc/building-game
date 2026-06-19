@@ -61,8 +61,8 @@ func _init_defaults():
 		ItemType.new(3, "Sand", Color(0.957, 0.816, 0.247)),
 		ItemType.new(4, "Glass", Color(0.835, 0.859, 0.859, 0.5)),
 		ItemType.new(5, "Brick", Color(0.753, 0.224, 0.169)),
-		ItemType.new(6, "Energy (Continuous)", Color(1.0, 0.3, 0.1), 64, 1),
-		ItemType.new(7, "Energy (Pulse)", Color(1.0, 0.5, 0.0), 64, 2),
+		ItemType.new(6, "Energ+", Color(1.0, 0.3, 0.1), 64, 1),
+		ItemType.new(7, "Energy", Color(1.0, 0.5, 0.0), 64, 2),
 		ItemType.new(8, "Move", Color(0.2, 0.6, 1.0), 64, 3),
 		ItemType.new(9, "Turn", Color(0.3, 0.9, 0.3), 64, 4),
 	]
