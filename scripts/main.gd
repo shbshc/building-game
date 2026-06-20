@@ -15,6 +15,7 @@ var load_btn: Button
 var ground_btn: Button
 var crosshair: ColorRect
 var _move_tick_timer := 0.0
+var _item_textures: Dictionary = {}
 const MOVE_TICK_INTERVAL := 1.0
 
 func _ready():
