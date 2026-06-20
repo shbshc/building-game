@@ -3,15 +3,15 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="PopupPanel"]
-size = Vector2i(440, 400)
+size = Vector2i(620, 370)
 script = ExtResource("1_pp")
 
 [node name="FaceGrid" type="GridContainer" parent="."]
 layout_mode = 1
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 392.0
-offset_bottom = 264.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 396.0
+offset_bottom = 268.0
 columns = 3
 
 [node name="TopCanvas" type="Control" parent="FaceGrid"]
@@ -38,61 +38,54 @@ mouse_filter = 1
 custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="ToolBar" type="HBoxContainer" parent="."]
+[node name="ToolBox" type="VBoxContainer" parent="."]
 layout_mode = 1
-offset_left = 8.0
-offset_top = 280.0
-offset_right = 432.0
-offset_bottom = 312.0
+offset_left = 412.0
+offset_top = 12.0
+offset_right = 608.0
+offset_bottom = 358.0
+theme_override_constants/separation = 4
 
-[node name="BrushBtn" type="Button" parent="ToolBar"]
+[node name="ActiveLabel" type="Label" parent="ToolBox"]
+text = "Face: Top"
+
+[node name="HBox1" type="HBoxContainer" parent="ToolBox"]
+[node name="BrushBtn" type="Button" parent="ToolBox/HBox1"]
 text = "Brush"
 toggle_mode = true
 button_pressed = true
-
-[node name="Pen1Btn" type="Button" parent="ToolBar"]
+[node name="Pen1Btn" type="Button" parent="ToolBox/HBox1"]
 text = "1px"
 toggle_mode = true
 button_pressed = true
-
-[node name="Pen2Btn" type="Button" parent="ToolBar"]
+[node name="Pen2Btn" type="Button" parent="ToolBox/HBox1"]
 text = "2px"
 toggle_mode = true
 
-[node name="ActiveFace" type="Label" parent="ToolBar"]
-text = "Top"
-
-[node name="ColorPreview" type="ColorRect" parent="ToolBar"]
+[node name="HBox2" type="HBoxContainer" parent="ToolBox"]
+[node name="ColorPreview" type="ColorRect" parent="ToolBox/HBox2"]
 custom_minimum_size = Vector2(28, 28)
 color = Color(1, 1, 1, 1)
-
-[node name="ColorBtn" type="Button" parent="ToolBar"]
+[node name="ColorBtn" type="Button" parent="ToolBox/HBox2"]
 text = "Color"
 
-[node name="BtnBar" type="HBoxContainer" parent="."]
-layout_mode = 1
-offset_left = 8.0
-offset_top = 320.0
-offset_right = 432.0
-offset_bottom = 352.0
+[node name="CopyBtn" type="Button" parent="ToolBox"]
+text = "Copy Face"
 
-[node name="CopyBtn" type="Button" parent="BtnBar"]
-text = "Copy"
+[node name="PasteBtn" type="Button" parent="ToolBox"]
+text = "Paste Face"
 
-[node name="PasteBtn" type="Button" parent="BtnBar"]
-text = "Paste"
+[node name="ClearBtn" type="Button" parent="ToolBox"]
+text = "Clear Face"
 
-[node name="ClearBtn" type="Button" parent="BtnBar"]
-text = "Clear"
+[node name="FillBtn" type="Button" parent="ToolBox"]
+text = "Fill Face"
 
-[node name="FillBtn" type="Button" parent="BtnBar"]
-text = "Fill"
+[node name="SaveBtn" type="Button" parent="ToolBox"]
+text = "Save PNG"
 
-[node name="SaveBtn" type="Button" parent="BtnBar"]
-text = "Save"
+[node name="LoadBtn" type="Button" parent="ToolBox"]
+text = "Load PNG"
 
-[node name="LoadBtn" type="Button" parent="BtnBar"]
-text = "Load"
-
-[node name="ApplyBtn" type="Button" parent="BtnBar"]
-text = "Apply"
+[node name="ApplyBtn" type="Button" parent="ToolBox"]
+text = "Apply & Close"

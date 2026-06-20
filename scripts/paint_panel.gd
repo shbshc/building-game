@@ -18,27 +18,36 @@ const FACE_NAMES := ["Top", "Bottom", "Front", "Back", "Left", "Right"]
     $FaceGrid/FrontCanvas, $FaceGrid/BackCanvas,
     $FaceGrid/LeftCanvas, $FaceGrid/RightCanvas,
 ]
-@onready var color_preview := $ToolBar/ColorPreview
-@onready var active_label := $ToolBar/ActiveFace
-@onready var brush_btn := $ToolBar/BrushBtn
+@onready var color_preview := $ToolBox/HBox2/ColorPreview
+@onready var active_label := $ToolBox/ActiveLabel
+@onready var brush_btn := $ToolBox/HBox1/BrushBtn
 
 
 func _ready():
+    # 不透明背景
+    var bg := StyleBoxFlat.new()
+    bg.bg_color = Color(0.15, 0.15, 0.18, 1.0)
+    bg.corner_radius_top_left = 8
+    bg.corner_radius_top_right = 8
+    bg.corner_radius_bottom_left = 8
+    bg.corner_radius_bottom_right = 8
+    add_theme_stylebox_override("panel", bg)
+    
     _init_faces()
     for i in range(6):
         canvases[i].gui_input.connect(_on_face_input.bind(i))
         canvases[i].draw.connect(_on_face_draw.bind(i))
         canvases[i].mouse_entered.connect(_on_hover.bind(i))
-    $ToolBar/ColorBtn.pressed.connect(_on_color_btn)
-    $ToolBar/Pen1Btn.pressed.connect(func(): pen_size = 1)
-    $ToolBar/Pen2Btn.pressed.connect(func(): pen_size = 2)
-    $BtnBar/CopyBtn.pressed.connect(_on_copy)
-    $BtnBar/PasteBtn.pressed.connect(_on_paste)
-    $BtnBar/ClearBtn.pressed.connect(_on_clear)
-    $BtnBar/FillBtn.pressed.connect(_on_fill)
-    $BtnBar/SaveBtn.pressed.connect(_on_save)
-    $BtnBar/LoadBtn.pressed.connect(_on_load)
-    $BtnBar/ApplyBtn.pressed.connect(_on_apply)
+    $ToolBox/HBox2/ColorBtn.pressed.connect(_on_color_btn)
+    $ToolBox/HBox1/Pen1Btn.pressed.connect(func(): pen_size = 1)
+    $ToolBox/HBox1/Pen2Btn.pressed.connect(func(): pen_size = 2)
+    $ToolBox/CopyBtn.pressed.connect(_on_copy)
+    $ToolBox/PasteBtn.pressed.connect(_on_paste)
+    $ToolBox/ClearBtn.pressed.connect(_on_clear)
+    $ToolBox/FillBtn.pressed.connect(_on_fill)
+    $ToolBox/SaveBtn.pressed.connect(_on_save)
+    $ToolBox/LoadBtn.pressed.connect(_on_load)
+    $ToolBox/ApplyBtn.pressed.connect(_on_apply)
     color_preview.color = brush_color
 
 
