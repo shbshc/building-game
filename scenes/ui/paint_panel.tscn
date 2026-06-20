@@ -3,89 +3,91 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="PopupPanel"]
-size = Vector2i(620, 370)
+size = Vector2i(800, 520)
 script = ExtResource("1_pp")
 
 [node name="FaceGrid" type="GridContainer" parent="."]
 layout_mode = 1
-offset_left = 12.0
-offset_top = 12.0
-offset_right = 396.0
-offset_bottom = 268.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 592.0
+offset_bottom = 400.0
 columns = 3
 
 [node name="TopCanvas" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(192, 192)
 mouse_filter = 1
 
 [node name="BottomCanvas" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(192, 192)
 mouse_filter = 1
 
 [node name="FrontCanvas" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(192, 192)
 mouse_filter = 1
 
 [node name="BackCanvas" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(192, 192)
 mouse_filter = 1
 
 [node name="LeftCanvas" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(192, 192)
 mouse_filter = 1
 
 [node name="RightCanvas" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(192, 192)
 mouse_filter = 1
 
-[node name="ToolBox" type="VBoxContainer" parent="."]
+[node name="ToolBar" type="HBoxContainer" parent="."]
 layout_mode = 1
-offset_left = 412.0
-offset_top = 12.0
-offset_right = 608.0
-offset_bottom = 358.0
-theme_override_constants/separation = 4
+offset_left = 12.0
+offset_top = 420.0
+offset_right = 788.0
+offset_bottom = 460.0
 
-[node name="ActiveLabel" type="Label" parent="ToolBox"]
+[node name="ActiveLabel" type="Label" parent="ToolBar"]
 text = "Face: Top"
 
-[node name="HBox1" type="HBoxContainer" parent="ToolBox"]
-[node name="BrushBtn" type="Button" parent="ToolBox/HBox1"]
-text = "Brush"
-toggle_mode = true
-button_pressed = true
-[node name="Pen1Btn" type="Button" parent="ToolBox/HBox1"]
+[node name="Pen1Btn" type="Button" parent="ToolBar"]
 text = "1px"
 toggle_mode = true
 button_pressed = true
-[node name="Pen2Btn" type="Button" parent="ToolBox/HBox1"]
+custom_minimum_size = Vector2(40, 0)
+
+[node name="Pen2Btn" type="Button" parent="ToolBar"]
 text = "2px"
 toggle_mode = true
+custom_minimum_size = Vector2(40, 0)
 
-[node name="HBox2" type="HBoxContainer" parent="ToolBox"]
-[node name="ColorPreview" type="ColorRect" parent="ToolBox/HBox2"]
-custom_minimum_size = Vector2(28, 28)
+[node name="Pen4Btn" type="Button" parent="ToolBar"]
+text = "4px"
+toggle_mode = true
+custom_minimum_size = Vector2(40, 0)
+
+[node name="ColorPreview" type="ColorRect" parent="ToolBar"]
+custom_minimum_size = Vector2(32, 32)
 color = Color(1, 1, 1, 1)
-[node name="ColorBtn" type="Button" parent="ToolBox/HBox2"]
-text = "Color"
 
-[node name="CopyBtn" type="Button" parent="ToolBox"]
-text = "Copy Face"
+[node name="ColorBtn" type="Button" parent="ToolBar"]
+text = "Pick Color"
 
-[node name="PasteBtn" type="Button" parent="ToolBox"]
-text = "Paste Face"
+[node name="CopyBtn" type="Button" parent="ToolBar"]
+text = "Copy"
 
-[node name="ClearBtn" type="Button" parent="ToolBox"]
-text = "Clear Face"
+[node name="PasteBtn" type="Button" parent="ToolBar"]
+text = "Paste"
 
-[node name="FillBtn" type="Button" parent="ToolBox"]
-text = "Fill Face"
+[node name="ClearBtn" type="Button" parent="ToolBar"]
+text = "Clear"
 
-[node name="SaveBtn" type="Button" parent="ToolBox"]
-text = "Save PNG"
+[node name="FillBtn" type="Button" parent="ToolBar"]
+text = "Fill"
 
-[node name="LoadBtn" type="Button" parent="ToolBox"]
-text = "Load PNG"
+[node name="SaveBtn" type="Button" parent="ToolBar"]
+text = "Save"
 
-[node name="ApplyBtn" type="Button" parent="ToolBox"]
+[node name="LoadBtn" type="Button" parent="ToolBar"]
+text = "Load"
+
+[node name="ApplyBtn" type="Button" parent="ToolBar"]
 text = "Apply & Close"

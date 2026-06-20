@@ -3,7 +3,7 @@ extends PopupPanel
 signal texture_applied(face_data: Array)
 
 const TEX_SIZE := 16
-const SCALE := 8
+const SCALE := 12  # 192/16
 
 var face_data: Array[Image] = []
 var brush_color := Color.WHITE
@@ -18,36 +18,31 @@ const FACE_NAMES := ["Top", "Bottom", "Front", "Back", "Left", "Right"]
     $FaceGrid/FrontCanvas, $FaceGrid/BackCanvas,
     $FaceGrid/LeftCanvas, $FaceGrid/RightCanvas,
 ]
-@onready var color_preview := $ToolBox/HBox2/ColorPreview
-@onready var active_label := $ToolBox/ActiveLabel
-@onready var brush_btn := $ToolBox/HBox1/BrushBtn
+@onready var color_preview := $ToolBar/ColorPreview
+@onready var active_label := $ToolBar/ActiveLabel
 
 
 func _ready():
-    # 不透明背景
     var bg := StyleBoxFlat.new()
     bg.bg_color = Color(0.15, 0.15, 0.18, 1.0)
-    bg.corner_radius_top_left = 8
-    bg.corner_radius_top_right = 8
-    bg.corner_radius_bottom_left = 8
-    bg.corner_radius_bottom_right = 8
     add_theme_stylebox_override("panel", bg)
-    
+
     _init_faces()
     for i in range(6):
         canvases[i].gui_input.connect(_on_face_input.bind(i))
         canvases[i].draw.connect(_on_face_draw.bind(i))
         canvases[i].mouse_entered.connect(_on_hover.bind(i))
-    $ToolBox/HBox2/ColorBtn.pressed.connect(_on_color_btn)
-    $ToolBox/HBox1/Pen1Btn.pressed.connect(func(): pen_size = 1)
-    $ToolBox/HBox1/Pen2Btn.pressed.connect(func(): pen_size = 2)
-    $ToolBox/CopyBtn.pressed.connect(_on_copy)
-    $ToolBox/PasteBtn.pressed.connect(_on_paste)
-    $ToolBox/ClearBtn.pressed.connect(_on_clear)
-    $ToolBox/FillBtn.pressed.connect(_on_fill)
-    $ToolBox/SaveBtn.pressed.connect(_on_save)
-    $ToolBox/LoadBtn.pressed.connect(_on_load)
-    $ToolBox/ApplyBtn.pressed.connect(_on_apply)
+    $ToolBar/ColorBtn.pressed.connect(_on_color_btn)
+    $ToolBar/Pen1Btn.pressed.connect(func(): pen_size = 1)
+    $ToolBar/Pen2Btn.pressed.connect(func(): pen_size = 2)
+    $ToolBar/Pen4Btn.pressed.connect(func(): pen_size = 4)
+    $ToolBar/CopyBtn.pressed.connect(_on_copy)
+    $ToolBar/PasteBtn.pressed.connect(_on_paste)
+    $ToolBar/ClearBtn.pressed.connect(_on_clear)
+    $ToolBar/FillBtn.pressed.connect(_on_fill)
+    $ToolBar/SaveBtn.pressed.connect(_on_save)
+    $ToolBar/LoadBtn.pressed.connect(_on_load)
+    $ToolBar/ApplyBtn.pressed.connect(_on_apply)
     color_preview.color = brush_color
 
 
@@ -61,14 +56,12 @@ func _init_faces():
 
 func _on_hover(index: int):
     _last_face = index
-    active_label.text = FACE_NAMES[index]
+    active_label.text = "Face: " + FACE_NAMES[index]
 
 
 func _on_face_input(event: InputEvent, index: int):
-    if not brush_btn.button_pressed:
-        return  # 非画笔模式不画
     _last_face = index
-    active_label.text = FACE_NAMES[index]
+    active_label.text = "Face: " + FACE_NAMES[index]
 
     if event is InputEventMouseButton:
         if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -105,18 +98,15 @@ func _pick(index: int, pos: Vector2):
 func _on_face_draw(index: int):
     var canvas = canvases[index]
     var img = face_data[index]
-    # 棋盘格背景
     for x in range(TEX_SIZE):
         for y in range(TEX_SIZE):
             var bg = Color(0.25, 0.25, 0.25) if (x + y) % 2 == 0 else Color(0.35, 0.35, 0.35)
             canvas.draw_rect(Rect2(x * SCALE, y * SCALE, SCALE, SCALE), bg)
-    # 像素
     for x in range(TEX_SIZE):
         for y in range(TEX_SIZE):
             canvas.draw_rect(Rect2(x * SCALE, y * SCALE, SCALE, SCALE), img.get_pixel(x, y))
-    # 标签
     var font = ThemeDB.fallback_font
-    canvas.draw_string(font, Vector2(2, 12), FACE_NAMES[index], HORIZONTAL_ALIGNMENT_LEFT, -1, 10)
+    canvas.draw_string(font, Vector2(2, 14), FACE_NAMES[index], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 
 
 func _on_color_btn():
