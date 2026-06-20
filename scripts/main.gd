@@ -214,7 +214,8 @@ func _on_texture_applied(face_data: Array, grid_pos: Vector3i):
 			bd.faces[i].material_override.albedo_color = Color.WHITE  # 用贴图覆盖纯色
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _on_color_confirmed(color: Color):
+func _get_color_picker_popup():
+    return color_picker_popup
 	$InventoryManager.slot_colors[$InventoryManager.selected_slot] = color
 
 func _on_save_pressed():

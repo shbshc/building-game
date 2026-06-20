@@ -42,10 +42,11 @@ func _ready():
 
 
 func _on_open_color_picker():
-    # 复用主场景的调色盘
     var main = get_tree().root.get_node("Main")
-    if main.has_method("open_color_picker"):
-        main.open_color_picker(0)  # 暂用 slot 0 的颜色
+    if main.has_method("_get_color_picker_popup"):
+        var popup = main._get_color_picker_popup()
+        popup.color_confirmed.connect(_on_color_pick, CONNECT_ONE_SHOT)
+        popup.popup_centered()
 
 
 func _init_faces():
