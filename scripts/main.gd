@@ -203,9 +203,9 @@ func open_paint_panel_for_item(item_id: int):
 
 
 func _on_item_texture_applied(face_data: Array, item_id: int):
-	# 保存贴图模板：之后放置该类型方块时使用此贴图
 	_item_textures[item_id] = face_data.duplicate()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	paint_panel.hide()
 
 
 func get_item_textures(item_id: int) -> Array:

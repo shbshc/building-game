@@ -67,21 +67,19 @@ func load(block_manager, inventory_manager, ground_node) -> bool:
         )
         # 恢复贴图
         if b.get("has_texture", false):
-            var bd = block_manager.get_block_data(Vector3i(b["x"], b["y"], b["z"]))
-            if bd != null:
-                var textures: Array = []
-                for i in range(6):
-                    var path = "user://textures/b_%d_%d_%d_f%d.png" % [b["x"], b["y"], b["z"], i]
-                    if FileAccess.file_exists(path):
-                        var img := Image.load_from_file(path)
-                        if img != null:
-                            textures.append(img)
-                            var tex := ImageTexture.create_from_image(img)
-                            bd.faces[i].material_override.albedo_texture = tex
-                            bd.faces[i].material_override.albedo_color = Color.WHITE
-                            continue
-                    textures.append(null)
-                bd.face_textures = textures
+            var textures: Array = []
+            for i in range(6):
+                var path = "user://textures/b_%d_%d_%d_f%d.png" % [b["x"], b["y"], b["z"], i]
+                if FileAccess.file_exists(path):
+                    var img := Image.load_from_file(path)
+                    if img != null:
+                        textures.append(img)
+                        continue
+                textures.append(null)
+            # 重新放置（带贴图）
+            var gpos = Vector3i(b["x"], b["y"], b["z"])
+            block_manager.remove_block(gpos)
+            block_manager.place_block(gpos, item_id, null, func_type, direction, textures)
     var inv = data.get("inventory", [])
     for i in min(inv.size(), inventory_manager.HOTBAR_SIZE):
         var slot_data = inv[i]

@@ -1,4 +1,4 @@
-extends Panel
+extends PopupPanel
 
 signal texture_applied(face_data: Array)
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
-[node name="PaintPanel" type="Panel"]
+[node name="PaintPanel" type="PopupPanel"]
 size = Vector2i(520, 480)
 script = ExtResource("1_pp")
 
