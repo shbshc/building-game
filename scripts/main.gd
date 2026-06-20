@@ -6,6 +6,7 @@ extends Node3D
 @onready var ground = $Ground
 @onready var camera_rig = $CameraRig
 var backpack_panel: Panel = null
+var paint_panel: Panel = null
 
 var ground_color_popup: PopupPanel
 var color_picker_popup: PopupPanel
@@ -23,6 +24,9 @@ func _ready():
 	_create_popups()
 	backpack_panel = preload("res://scenes/ui/backpack_panel.tscn").instantiate()
 	$UI/UIContainer.add_child(backpack_panel)
+	paint_panel = preload("res://scenes/ui/paint_panel.tscn").instantiate()
+	$UI/UIContainer.add_child(paint_panel)
+	paint_panel.hide()
 	get_tree().root.size_changed.connect(_on_window_resize)
 
 func _process(delta):
@@ -184,6 +188,31 @@ func open_color_picker(index: int):
 		c = t.color if t else Color.RED
 	inv_mgr.selected_slot = index
 	color_picker_popup.open_with_color(c)
+
+
+func open_paint_panel(grid_pos: Vector3i):
+	var bd = block_manager.get_block_data(grid_pos)
+	if bd == null:
+		return
+	paint_panel.load_from_block(bd.face_textures)
+	paint_panel.texture_applied.connect(_on_texture_applied.bind(grid_pos), CONNECT_ONE_SHOT)
+	paint_panel.popup_centered()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _on_texture_applied(face_data: Array, grid_pos: Vector3i):
+	# 给方块更新贴图
+	var bd = block_manager.get_block_data(grid_pos)
+	if bd == null:
+		return
+	bd.face_textures = face_data.duplicate()
+	# 更新6个面的材质
+	for i in range(6):
+		if i < bd.faces.size() and face_data[i] != null:
+			var tex := ImageTexture.create_from_image(face_data[i])
+			bd.faces[i].material_override.albedo_texture = tex
+			bd.faces[i].material_override.albedo_color = Color.WHITE  # 用贴图覆盖纯色
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _on_color_confirmed(color: Color):
 	$InventoryManager.slot_colors[$InventoryManager.selected_slot] = color

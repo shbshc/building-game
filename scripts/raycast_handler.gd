@@ -55,20 +55,23 @@ func _input(event):
 				mouse_left_held = false
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if event.pressed:
-				# Check if pointing at a functional block for direction rotation
 				var result = _raycast()
 				var interacted = false
 				if result and result.collider:
-					var parent = result.collider.get_parent()
-					if parent is MeshInstance3D:
-						var pos = parent.position
-						var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
+					var grid_pos = _get_grid_from_collider(result.collider)
+					if grid_pos != Vector3i(-999, -999, -999):
 						var bd = block_manager.get_block_data(grid_pos)
 						if bd != null and bd.func_type > 0:
-							# Right-click functional block: rotate direction
+							# 功能方块：旋转方向
 							var ft = $"../FunctionalTypes"
 							var new_dir = ft.next_direction_index(bd.direction)
 							block_manager.set_block_direction(grid_pos, new_dir)
+							interacted = true
+						elif bd != null:
+							# 普通方块：打开绘图面板
+							var main_node = $".."
+							if main_node.has_method("open_paint_panel"):
+								main_node.open_paint_panel(grid_pos)
 							interacted = true
 				# If not interacting, break block as normal
 				if not interacted:
@@ -110,11 +113,19 @@ func _is_player_cell(gp: Vector3i) -> bool:
 func _try_break():
 	var result = _raycast()
 	if result and result.collider:
-		var parent = result.collider.get_parent()
-		if parent is MeshInstance3D:
-			var pos = parent.position
-			var grid_pos = Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
+		var grid_pos = _get_grid_from_collider(result.collider)
+		if grid_pos != Vector3i(-999, -999, -999):
 			block_manager.remove_block(grid_pos)
+
+# 从碰撞体找到方块的网格坐标
+func _get_grid_from_collider(collider: Node) -> Vector3i:
+	var node = collider
+	for _i in range(3):
+		if node is Node3D:
+			var pos = node.position
+			return Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
+		node = node.get_parent()
+	return Vector3i(-999, -999, -999)
 
 func _raycast() -> Dictionary:
 	var space_state = get_world_3d().direct_space_state

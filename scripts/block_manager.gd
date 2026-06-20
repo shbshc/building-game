@@ -9,9 +9,11 @@ var _is_moving: Dictionary = {}  # 正在动画中的方块
 class BlockData:
 	var item_id: int = -1
 	var color: Color = Color.RED
-	var node: MeshInstance3D = null
-	var func_type: int = 0     # FuncType enum
-	var direction: int = 2     # direction index (默认 +Y)
+	var node: Node3D = null          # 容器节点
+	var faces: Array[MeshInstance3D] = []  # 6 个面的 mesh
+	var func_type: int = 0
+	var direction: int = 2
+	var face_textures: Array = []    # 6 个面的 Image 贴图
 
 var selected_color := Color.RED
 
@@ -35,15 +37,10 @@ func can_place_at(grid_pos: Vector3i) -> bool:
 	return false
 
 
-func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, func_type: int = 0, direction: int = 2) -> bool:
+func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, func_type: int = 0, direction: int = 2, textures: Array = []) -> bool:
 	if not can_place_at(grid_pos):
 		return false
 
-	var mesh := MeshInstance3D.new()
-	mesh.mesh = BoxMesh.new()
-	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
-
-	var mat := StandardMaterial3D.new()
 	var color := selected_color
 	if custom_color != null:
 		color = custom_color
@@ -53,33 +50,66 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		var t = item_types_node.get_type(item_id)
 		if t:
 			color = t.color
-	mat.albedo_color = color
-	mesh.material_override = mat
 
-	# 添加方向箭头指示器（功能方块专有）
+	# 容器
+	var container := Node3D.new()
+	container.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
+
+	var faces: Array[MeshInstance3D] = []
+	var face_defs := [
+		[Vector3(0, 0.5, 0), Vector3(-PI/2, 0, 0)],   # +Y Top
+		[Vector3(0, -0.5, 0), Vector3(PI/2, 0, 0)],     # -Y Bottom
+		[Vector3(0, 0, 0.5), Vector3(0, 0, 0)],          # +Z Front
+		[Vector3(0, 0, -0.5), Vector3(0, PI, 0)],        # -Z Back
+		[Vector3(0.5, 0, 0), Vector3(0, PI/2, 0)],       # +X Right
+		[Vector3(-0.5, 0, 0), Vector3(0, -PI/2, 0)],     # -X Left
+	]
+
+	for i in range(6):
+		var fm := MeshInstance3D.new()
+		var plane := PlaneMesh.new()
+		plane.size = Vector2(1, 1)
+		fm.mesh = plane
+		fm.position = face_defs[i][0]
+		fm.rotation = face_defs[i][1]
+
+		var mat := StandardMaterial3D.new()
+		if textures.size() > i and textures[i] != null:
+			var tex := ImageTexture.create_from_image(textures[i])
+			mat.albedo_texture = tex
+		else:
+			mat.albedo_color = color
+		fm.material_override = mat
+
+		container.add_child(fm)
+		faces.append(fm)
+
 	if func_type > 0:
-		_add_direction_indicator(mesh, direction)
+		_add_direction_indicator(container, direction)
 
 	var body := StaticBody3D.new()
 	var col := CollisionShape3D.new()
 	col.shape = BoxShape3D.new()
 	col.shape.size = Vector3(1, 1, 1)
 	body.add_child(col)
-	mesh.add_child(body)
+	container.add_child(body)
 
-	add_child(mesh)
+	add_child(container)
 
 	var bd := BlockData.new()
 	bd.item_id = item_id
 	bd.color = color
-	bd.node = mesh
+	bd.node = container
+	bd.faces = faces
 	bd.func_type = func_type
 	bd.direction = direction
+	if textures.size() == 6:
+		bd.face_textures = textures.duplicate()
 	blocks[grid_pos] = bd
 	return true
 
 
-func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
+func _add_direction_indicator(container: Node3D, dir_idx: int):
 	var indicator := MeshInstance3D.new()
 	indicator.mesh = BoxMesh.new()
 	indicator.mesh.size = Vector3(0.3, 0.3, 0.15)
