@@ -215,7 +215,9 @@ func _on_texture_applied(face_data: Array, grid_pos: Vector3i):
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _get_color_picker_popup():
-    return color_picker_popup
+	return color_picker_popup
+
+func _on_color_confirmed(color: Color):
 	$InventoryManager.slot_colors[$InventoryManager.selected_slot] = color
 
 func _on_save_pressed():
