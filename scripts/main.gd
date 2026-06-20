@@ -66,8 +66,8 @@ func _tick_move_blocks():
 				moved[p + dir_vec] = true  # 标记新位置，防止重复
 			continue
 		
-		# 目标被占 → 尝试推动（任意类型都推）
-		if target != null:
+		# 目标被功能方块占据 → 尝试推动
+		if target != null and target.func_type > 0:
 			if block_manager.slide_chain(new_pos, dir_vec):
 				pass
 			else:

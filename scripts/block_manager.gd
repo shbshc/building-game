@@ -179,6 +179,8 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 		if blocks[end].func_type == func_types.FuncType.CONSUME:
 			hit_consume = true
 			break
+		if blocks[end].func_type == func_types.FuncType.NONE:
+			return false  # 普通方块不可推动，整链失败
 	if not found_stop and not hit_consume:
 		return false
 	
