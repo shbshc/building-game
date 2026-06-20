@@ -3,15 +3,15 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="PopupPanel"]
-size = Vector2i(600, 440)
+size = Vector2i(440, 400)
 script = ExtResource("1_pp")
 
 [node name="FaceGrid" type="GridContainer" parent="."]
 layout_mode = 1
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 416.0
-offset_bottom = 432.0
+offset_right = 392.0
+offset_bottom = 264.0
 columns = 3
 
 [node name="TopCanvas" type="Control" parent="FaceGrid"]
@@ -38,40 +38,61 @@ mouse_filter = 1
 custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="ToolPanel" type="VBoxContainer" parent="."]
+[node name="ToolBar" type="HBoxContainer" parent="."]
 layout_mode = 1
-offset_left = 432.0
-offset_top = 8.0
-offset_right = 592.0
-offset_bottom = 432.0
+offset_left = 8.0
+offset_top = 280.0
+offset_right = 432.0
+offset_bottom = 312.0
 
-[node name="ActiveLabel" type="Label" parent="ToolPanel"]
-text = "Draw on any face"
+[node name="BrushBtn" type="Button" parent="ToolBar"]
+text = "Brush"
+toggle_mode = true
+button_pressed = true
 
-[node name="ColorPreview" type="ColorRect" parent="ToolPanel"]
-custom_minimum_size = Vector2(40, 40)
+[node name="Pen1Btn" type="Button" parent="ToolBar"]
+text = "1px"
+toggle_mode = true
+button_pressed = true
+
+[node name="Pen2Btn" type="Button" parent="ToolBar"]
+text = "2px"
+toggle_mode = true
+
+[node name="ActiveFace" type="Label" parent="ToolBar"]
+text = "Top"
+
+[node name="ColorPreview" type="ColorRect" parent="ToolBar"]
+custom_minimum_size = Vector2(28, 28)
 color = Color(1, 1, 1, 1)
 
-[node name="ColorBtn" type="Button" parent="ToolPanel"]
-text = "Pick Color"
+[node name="ColorBtn" type="Button" parent="ToolBar"]
+text = "Color"
 
-[node name="CopyBtn" type="Button" parent="ToolPanel"]
-text = "Copy Face"
+[node name="BtnBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+offset_left = 8.0
+offset_top = 320.0
+offset_right = 432.0
+offset_bottom = 352.0
 
-[node name="PasteBtn" type="Button" parent="ToolPanel"]
-text = "Paste Face"
+[node name="CopyBtn" type="Button" parent="BtnBar"]
+text = "Copy"
 
-[node name="ClearBtn" type="Button" parent="ToolPanel"]
-text = "Clear Face"
+[node name="PasteBtn" type="Button" parent="BtnBar"]
+text = "Paste"
 
-[node name="FillBtn" type="Button" parent="ToolPanel"]
-text = "Fill Face"
+[node name="ClearBtn" type="Button" parent="BtnBar"]
+text = "Clear"
 
-[node name="SaveBtn" type="Button" parent="ToolPanel"]
-text = "Save to File"
+[node name="FillBtn" type="Button" parent="BtnBar"]
+text = "Fill"
 
-[node name="LoadBtn" type="Button" parent="ToolPanel"]
-text = "Load from File"
+[node name="SaveBtn" type="Button" parent="BtnBar"]
+text = "Save"
 
-[node name="ApplyBtn" type="Button" parent="ToolPanel"]
-text = "Apply & Close"
+[node name="LoadBtn" type="Button" parent="BtnBar"]
+text = "Load"
+
+[node name="ApplyBtn" type="Button" parent="BtnBar"]
+text = "Apply"

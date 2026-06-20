@@ -3,13 +3,13 @@ extends PopupPanel
 signal texture_applied(face_data: Array)
 
 const TEX_SIZE := 16
-const SCALE := 8  # 128/16
+const SCALE := 8
 
 var face_data: Array[Image] = []
 var brush_color := Color.WHITE
-var mouse_drawing := false
+var pen_size := 1
 var _clipboard: Image = null
-var _last_canvas := -1
+var _last_face := 0
 
 const FACE_NAMES := ["Top", "Bottom", "Front", "Back", "Left", "Right"]
 
@@ -18,8 +18,9 @@ const FACE_NAMES := ["Top", "Bottom", "Front", "Back", "Left", "Right"]
     $FaceGrid/FrontCanvas, $FaceGrid/BackCanvas,
     $FaceGrid/LeftCanvas, $FaceGrid/RightCanvas,
 ]
-@onready var color_preview := $ToolPanel/ColorPreview
-@onready var active_label := $ToolPanel/ActiveLabel
+@onready var color_preview := $ToolBar/ColorPreview
+@onready var active_label := $ToolBar/ActiveFace
+@onready var brush_btn := $ToolBar/BrushBtn
 
 
 func _ready():
@@ -28,14 +29,16 @@ func _ready():
         canvases[i].gui_input.connect(_on_face_input.bind(i))
         canvases[i].draw.connect(_on_face_draw.bind(i))
         canvases[i].mouse_entered.connect(_on_hover.bind(i))
-    $ToolPanel/ColorBtn.pressed.connect(_on_color_btn)
-    $ToolPanel/CopyBtn.pressed.connect(_on_copy)
-    $ToolPanel/PasteBtn.pressed.connect(_on_paste)
-    $ToolPanel/ClearBtn.pressed.connect(_on_clear)
-    $ToolPanel/FillBtn.pressed.connect(_on_fill)
-    $ToolPanel/SaveBtn.pressed.connect(_on_save)
-    $ToolPanel/LoadBtn.pressed.connect(_on_load)
-    $ToolPanel/ApplyBtn.pressed.connect(_on_apply)
+    $ToolBar/ColorBtn.pressed.connect(_on_color_btn)
+    $ToolBar/Pen1Btn.pressed.connect(func(): pen_size = 1)
+    $ToolBar/Pen2Btn.pressed.connect(func(): pen_size = 2)
+    $BtnBar/CopyBtn.pressed.connect(_on_copy)
+    $BtnBar/PasteBtn.pressed.connect(_on_paste)
+    $BtnBar/ClearBtn.pressed.connect(_on_clear)
+    $BtnBar/FillBtn.pressed.connect(_on_fill)
+    $BtnBar/SaveBtn.pressed.connect(_on_save)
+    $BtnBar/LoadBtn.pressed.connect(_on_load)
+    $BtnBar/ApplyBtn.pressed.connect(_on_apply)
     color_preview.color = brush_color
 
 
@@ -47,44 +50,44 @@ func _init_faces():
         face_data.append(img)
 
 
-func _update_all():
-    color_preview.color = brush_color
-    for c in canvases:
-        c.queue_redraw()
-
-
 func _on_hover(index: int):
-    _last_canvas = index
-    active_label.text = "Active: " + FACE_NAMES[index]
+    _last_face = index
+    active_label.text = FACE_NAMES[index]
 
 
 func _on_face_input(event: InputEvent, index: int):
-    _last_canvas = index
-    active_label.text = "Editing: " + FACE_NAMES[index]
-    
+    if not brush_btn.button_pressed:
+        return  # 非画笔模式不画
+    _last_face = index
+    active_label.text = FACE_NAMES[index]
+
     if event is InputEventMouseButton:
-        if event.button_index == MOUSE_BUTTON_LEFT:
-            mouse_drawing = event.pressed
-            if event.pressed:
-                _paint(canvases[index], index, event.position)
+        if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+            _paint(index, event.position)
         elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
             _pick(index, event.position)
-    
-    if event is InputEventMouseMotion and mouse_drawing:
-        _paint(canvases[index], index, event.position)
+
+    if event is InputEventMouseMotion:
+        if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+            _paint(index, event.position)
 
 
-func _paint(canvas: Control, index: int, screen_pos: Vector2):
-    var px := int(screen_pos.x / SCALE)
-    var py := int(screen_pos.y / SCALE)
-    if px >= 0 and px < TEX_SIZE and py >= 0 and py < TEX_SIZE:
-        face_data[index].set_pixel(px, py, brush_color)
-        canvas.queue_redraw()
+func _paint(index: int, pos: Vector2):
+    var px := int(pos.x / SCALE)
+    var py := int(pos.y / SCALE)
+    var r := pen_size - 1
+    for dx in range(-r, r + 1):
+        for dy in range(-r, r + 1):
+            var nx := px + dx
+            var ny := py + dy
+            if nx >= 0 and nx < TEX_SIZE and ny >= 0 and ny < TEX_SIZE:
+                face_data[index].set_pixel(nx, ny, brush_color)
+    canvases[index].queue_redraw()
 
 
-func _pick(index: int, screen_pos: Vector2):
-    var px := int(screen_pos.x / SCALE)
-    var py := int(screen_pos.y / SCALE)
+func _pick(index: int, pos: Vector2):
+    var px := int(pos.x / SCALE)
+    var py := int(pos.y / SCALE)
     if px >= 0 and px < TEX_SIZE and py >= 0 and py < TEX_SIZE:
         brush_color = face_data[index].get_pixel(px, py)
         color_preview.color = brush_color
@@ -102,10 +105,6 @@ func _on_face_draw(index: int):
     for x in range(TEX_SIZE):
         for y in range(TEX_SIZE):
             canvas.draw_rect(Rect2(x * SCALE, y * SCALE, SCALE, SCALE), img.get_pixel(x, y))
-    # 网格线
-    for i in range(TEX_SIZE + 1):
-        canvas.draw_line(Vector2(i * SCALE, 0), Vector2(i * SCALE, TEX_SIZE * SCALE), Color(0.5, 0.5, 0.5), 0.5)
-        canvas.draw_line(Vector2(0, i * SCALE), Vector2(TEX_SIZE * SCALE, i * SCALE), Color(0.5, 0.5, 0.5), 0.5)
     # 标签
     var font = ThemeDB.fallback_font
     canvas.draw_string(font, Vector2(2, 12), FACE_NAMES[index], HORIZONTAL_ALIGNMENT_LEFT, -1, 10)
@@ -126,26 +125,23 @@ func _set_color(c: Color):
 
 
 func _on_copy():
-    if _last_canvas >= 0:
-        _clipboard = face_data[_last_canvas].duplicate()
+    _clipboard = face_data[_last_face].duplicate()
 
 
 func _on_paste():
-    if _clipboard and _last_canvas >= 0:
-        face_data[_last_canvas] = _clipboard.duplicate()
-        _update_all()
+    if _clipboard:
+        face_data[_last_face] = _clipboard.duplicate()
+        canvases[_last_face].queue_redraw()
 
 
 func _on_clear():
-    if _last_canvas >= 0:
-        face_data[_last_canvas].fill(Color(0.5, 0.5, 0.5))
-        _update_all()
+    face_data[_last_face].fill(Color(0.5, 0.5, 0.5))
+    canvases[_last_face].queue_redraw()
 
 
 func _on_fill():
-    if _last_canvas >= 0:
-        face_data[_last_canvas].fill(brush_color)
-        _update_all()
+    face_data[_last_face].fill(brush_color)
+    canvases[_last_face].queue_redraw()
 
 
 func _on_save():
@@ -162,7 +158,8 @@ func _on_load():
             if img:
                 img.resize(TEX_SIZE, TEX_SIZE)
                 face_data[i] = img
-    _update_all()
+    for c in canvases:
+        c.queue_redraw()
 
 
 func _on_apply():
