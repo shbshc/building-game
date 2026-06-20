@@ -3,7 +3,7 @@ extends PopupPanel
 signal texture_applied(face_data: Array)
 
 const TEX_SIZE := 16
-const SCALE := 12  # 192/16
+const SCALE := 16  # 256/16
 
 var face_data: Array[Image] = []
 var brush_color := Color.WHITE
@@ -14,12 +14,12 @@ var _last_face := 0
 const FACE_NAMES := ["Top", "Bottom", "Front", "Back", "Left", "Right"]
 
 @onready var canvases := [
-    $FaceGrid/TopCanvas, $FaceGrid/BottomCanvas,
-    $FaceGrid/FrontCanvas, $FaceGrid/BackCanvas,
-    $FaceGrid/LeftCanvas, $FaceGrid/RightCanvas,
+    $Margin/VBox/FaceGrid/TopCanvas, $Margin/VBox/FaceGrid/BottomCanvas,
+    $Margin/VBox/FaceGrid/FrontCanvas, $Margin/VBox/FaceGrid/BackCanvas,
+    $Margin/VBox/FaceGrid/LeftCanvas, $Margin/VBox/FaceGrid/RightCanvas,
 ]
-@onready var color_preview := $ToolBar/ColorPreview
-@onready var active_label := $ToolBar/ActiveLabel
+@onready var color_preview := $Margin/VBox/ToolBar/ColorPreview
+@onready var active_label := $Margin/VBox/ToolBar/ActiveLabel
 
 
 func _ready():
@@ -32,17 +32,17 @@ func _ready():
         canvases[i].gui_input.connect(_on_face_input.bind(i))
         canvases[i].draw.connect(_on_face_draw.bind(i))
         canvases[i].mouse_entered.connect(_on_hover.bind(i))
-    $ToolBar/ColorBtn.pressed.connect(_on_color_btn)
-    $ToolBar/Pen1Btn.pressed.connect(func(): pen_size = 1)
-    $ToolBar/Pen2Btn.pressed.connect(func(): pen_size = 2)
-    $ToolBar/Pen4Btn.pressed.connect(func(): pen_size = 4)
-    $ToolBar/CopyBtn.pressed.connect(_on_copy)
-    $ToolBar/PasteBtn.pressed.connect(_on_paste)
-    $ToolBar/ClearBtn.pressed.connect(_on_clear)
-    $ToolBar/FillBtn.pressed.connect(_on_fill)
-    $ToolBar/SaveBtn.pressed.connect(_on_save)
-    $ToolBar/LoadBtn.pressed.connect(_on_load)
-    $ToolBar/ApplyBtn.pressed.connect(_on_apply)
+    $Margin/VBox/ToolBar/ColorBtn.pressed.connect(_on_color_btn)
+    $Margin/VBox/ToolBar/Pen1Btn.pressed.connect(func(): pen_size = 1)
+    $Margin/VBox/ToolBar/Pen2Btn.pressed.connect(func(): pen_size = 2)
+    $Margin/VBox/ToolBar/Pen4Btn.pressed.connect(func(): pen_size = 4)
+    $Margin/VBox/ToolBar/CopyBtn.pressed.connect(_on_copy)
+    $Margin/VBox/ToolBar/PasteBtn.pressed.connect(_on_paste)
+    $Margin/VBox/ToolBar/ClearBtn.pressed.connect(_on_clear)
+    $Margin/VBox/ToolBar/FillBtn.pressed.connect(_on_fill)
+    $Margin/VBox/ToolBar/SaveBtn.pressed.connect(_on_save)
+    $Margin/VBox/ToolBar/LoadBtn.pressed.connect(_on_load)
+    $Margin/VBox/ToolBar/ApplyBtn.pressed.connect(_on_apply)
     color_preview.color = brush_color
 
 
