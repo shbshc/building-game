@@ -1,5 +1,7 @@
 extends Panel
 
+signal texture_applied(face_data: Array)
+
 const TEX_SIZE := 16
 const SCALE := 8  # 编辑画布放大倍率
 
