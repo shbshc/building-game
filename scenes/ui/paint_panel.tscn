@@ -3,80 +3,75 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="PopupPanel"]
-size = Vector2i(520, 480)
+size = Vector2i(600, 440)
 script = ExtResource("1_pp")
 
 [node name="FaceGrid" type="GridContainer" parent="."]
 layout_mode = 1
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 320.0
-offset_bottom = 320.0
+offset_right = 416.0
+offset_bottom = 432.0
 columns = 3
 
-[node name="TopFace" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(100, 100)
+[node name="TopCanvas" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="BottomFace" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(100, 100)
+[node name="BottomCanvas" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="FrontFace" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(100, 100)
+[node name="FrontCanvas" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="BackFace" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(100, 100)
+[node name="BackCanvas" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="LeftFace" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(100, 100)
+[node name="LeftCanvas" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="RightFace" type="Control" parent="FaceGrid"]
-custom_minimum_size = Vector2(100, 100)
+[node name="RightCanvas" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(128, 128)
 mouse_filter = 1
 
-[node name="EditCanvas" type="Control" parent="."]
+[node name="ToolPanel" type="VBoxContainer" parent="."]
 layout_mode = 1
-offset_left = 8.0
-offset_top = 330.0
-offset_right = 320.0
-offset_bottom = 472.0
-mouse_filter = 1
-
-[node name="Toolbar" type="VBoxContainer" parent="."]
-layout_mode = 1
-offset_left = 336.0
+offset_left = 432.0
 offset_top = 8.0
-offset_right = 512.0
-offset_bottom = 472.0
+offset_right = 592.0
+offset_bottom = 432.0
 
-[node name="FaceLabel" type="Label" parent="Toolbar"]
-text = "Click a face above to edit"
+[node name="ActiveLabel" type="Label" parent="ToolPanel"]
+text = "Draw on any face"
 
-[node name="ColorRect" type="ColorRect" parent="Toolbar"]
+[node name="ColorPreview" type="ColorRect" parent="ToolPanel"]
 custom_minimum_size = Vector2(40, 40)
 color = Color(1, 1, 1, 1)
 
-[node name="ColorBtn" type="Button" parent="Toolbar"]
+[node name="ColorBtn" type="Button" parent="ToolPanel"]
 text = "Pick Color"
 
-[node name="CopyBtn" type="Button" parent="Toolbar"]
+[node name="CopyBtn" type="Button" parent="ToolPanel"]
 text = "Copy Face"
 
-[node name="PasteBtn" type="Button" parent="Toolbar"]
+[node name="PasteBtn" type="Button" parent="ToolPanel"]
 text = "Paste Face"
 
-[node name="ClearBtn" type="Button" parent="Toolbar"]
+[node name="ClearBtn" type="Button" parent="ToolPanel"]
 text = "Clear Face"
 
-[node name="SaveBtn" type="Button" parent="Toolbar"]
+[node name="FillBtn" type="Button" parent="ToolPanel"]
+text = "Fill Face"
+
+[node name="SaveBtn" type="Button" parent="ToolPanel"]
 text = "Save to File"
 
-[node name="LoadBtn" type="Button" parent="Toolbar"]
+[node name="LoadBtn" type="Button" parent="ToolPanel"]
 text = "Load from File"
 
-[node name="ApplyBtn" type="Button" parent="Toolbar"]
+[node name="ApplyBtn" type="Button" parent="ToolPanel"]
 text = "Apply & Close"
