@@ -1,7 +1,7 @@
 extends Node
 
 const SAVE_PATH := "user://save.json"
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 
 func save(block_manager, inventory_manager, ground_node) -> bool:
     var data := {
@@ -17,8 +17,15 @@ func save(block_manager, inventory_manager, ground_node) -> bool:
             "x": pos.x, "y": pos.y, "z": pos.z,
             "item_id": b.item_id,
             "func_type": b.func_type,
-            "direction": b.direction
+            "direction": b.direction,
+            "has_texture": b.face_textures.size() == 6 and b.face_textures[0] != null
         })
+        # 保存贴图 PNG
+        if b.face_textures.size() == 6 and b.face_textures[0] != null:
+            DirAccess.make_dir_absolute("user://textures")
+            for i in range(6):
+                var path = "user://textures/b_%d_%d_%d_f%d.png" % [pos.x, pos.y, pos.z, i]
+                b.face_textures[i].save_png(path)
     for slot in inventory_manager.hotbar:
         data["inventory"].append({
             "item_id": slot.item_id,
@@ -58,6 +65,23 @@ func load(block_manager, inventory_manager, ground_node) -> bool:
             func_type,
             direction
         )
+        # 恢复贴图
+        if b.get("has_texture", false):
+            var bd = block_manager.get_block_data(Vector3i(b["x"], b["y"], b["z"]))
+            if bd != null:
+                var textures: Array = []
+                for i in range(6):
+                    var path = "user://textures/b_%d_%d_%d_f%d.png" % [b["x"], b["y"], b["z"], i]
+                    if FileAccess.file_exists(path):
+                        var img := Image.load_from_file(path)
+                        if img != null:
+                            textures.append(img)
+                            var tex := ImageTexture.create_from_image(img)
+                            bd.faces[i].material_override.albedo_texture = tex
+                            bd.faces[i].material_override.albedo_color = Color.WHITE
+                            continue
+                    textures.append(null)
+                bd.face_textures = textures
     var inv = data.get("inventory", [])
     for i in min(inv.size(), inventory_manager.HOTBAR_SIZE):
         var slot_data = inv[i]
