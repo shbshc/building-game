@@ -6,7 +6,7 @@ extends Node3D
 @onready var ground = $Ground
 @onready var camera_rig = $CameraRig
 var backpack_panel: Panel = null
-var paint_panel: Panel = null
+var paint_panel: PopupPanel = null
 
 var ground_color_popup: PopupPanel
 var color_picker_popup: PopupPanel
