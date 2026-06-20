@@ -194,7 +194,7 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 			queue.append(pos)
 		pos += dir
 	
-	# 3. BFS 扩展：组内任何方块都传播，找粘液邻居
+	# 3. BFS 扩展：相邻的功能方块一起推
 	while not queue.is_empty():
 		var p = queue.pop_front()
 		var bd_p = blocks.get(p)
@@ -202,9 +202,12 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 			var n = p + d
 			if blocks.has(n) and not to_move.has(n):
 				var bd_n = blocks.get(n)
-				# p 是粘液，或 n 是粘液，或 p 已在组内（传播连接）
-				if (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) \
-				   or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME):
+				# 粘液方块连通任意邻居，功能方块连通功能方块
+				var slime_link = (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) \
+				              or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME)
+				var func_link = (bd_p != null and bd_p.func_type > 0) \
+				             and (bd_n != null and bd_n.func_type > 0)
+				if slime_link or func_link:
 					to_move[n] = bd_n
 					queue.append(n)
 	
