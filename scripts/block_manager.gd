@@ -131,7 +131,7 @@ func _add_direction_indicator(container: Node3D, dir_idx: int):
 	ind_mat.emission = Color.WHITE
 	ind_mat.emission_energy_multiplier = 0.5
 	indicator.material_override = ind_mat
-	mesh.add_child(indicator)
+	container.add_child(indicator)
 
 
 func remove_block(grid_pos: Vector3i) -> bool:
@@ -234,9 +234,9 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 				var bd_n = blocks.get(n)
 				# 粘液方块连通任意邻居，功能方块连通功能方块
 				var slime_link = (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) \
-				              or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME)
+							  or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME)
 				var func_link = (bd_p != null and bd_p.func_type > 0) \
-				             and (bd_n != null and bd_n.func_type > 0)
+							 and (bd_n != null and bd_n.func_type > 0)
 				if slime_link or func_link:
 					to_move[n] = bd_n
 					queue.append(n)
