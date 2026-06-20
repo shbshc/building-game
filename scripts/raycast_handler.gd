@@ -67,11 +67,6 @@ func _input(event):
 							var new_dir = ft.next_direction_index(bd.direction)
 							block_manager.set_block_direction(grid_pos, new_dir)
 							interacted = true
-						elif bd != null:
-							# 普通方块：打开绘图面板
-							if main_node.has_method("open_paint_panel"):
-								main_node.open_paint_panel(grid_pos)
-							interacted = true
 				# If not interacting, break block as normal
 				if not interacted:
 					mouse_right_held = true
@@ -94,10 +89,14 @@ func _try_place():
 				var item_types_node = $"../ItemTypes"
 				var t = item_types_node.get_type(selected_id)
 				var func_type = t.func_type if t else 0
-				# 功能方块用物品预设方向，普通方块忽略方向
 				var direction = t.direction if func_type > 0 else 2
 				var color = inv_mgr.get_selected_color(item_types_node) if func_type == 0 else null
-				block_manager.place_block(grid_pos, selected_id, color, func_type, direction)
+				# 获取该类型的贴图模板
+				var textures: Array = []
+				var main_node = $".."
+				if main_node.has_method("get_item_textures"):
+					textures = main_node.get_item_textures(selected_id)
+				block_manager.place_block(grid_pos, selected_id, color, func_type, direction, textures)
 
 func _is_player_cell(gp: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position

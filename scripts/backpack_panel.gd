@@ -51,9 +51,16 @@ func _on_slot_clicked(index: int):
 	dst_slot.count = 1
 
 func _on_slot_input(event: InputEvent, index: int):
-	# 创造模式：右键和左键一样，选中物品到 hotbar
 	if event is InputEventMouseButton and event.pressed:
-		_on_slot_clicked(index)
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			# 右键背包方块 → 打开绘图面板编辑该类型
+			var slot = inv_mgr.backpack[index]
+			if not slot.is_empty():
+				var main_node = $"../../.."
+				if main_node.has_method("open_paint_panel_for_item"):
+					main_node.open_paint_panel_for_item(slot.item_id)
+		else:
+			_on_slot_clicked(index)
 
 func _process(_delta):
 	_refresh()

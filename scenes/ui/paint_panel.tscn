@@ -3,55 +3,65 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="Panel"]
-size = Vector2i(520, 430)
+size = Vector2i(520, 480)
 script = ExtResource("1_pp")
 
-[node name="FaceBar" type="HBoxContainer" parent="."]
+[node name="FaceGrid" type="GridContainer" parent="."]
 layout_mode = 1
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 512.0
-offset_bottom = 36.0
+offset_right = 320.0
+offset_bottom = 320.0
+columns = 3
 
-[node name="TopBtn" type="Button" parent="FaceBar"]
-text = "Top"
+[node name="TopFace" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 1
 
-[node name="BottomBtn" type="Button" parent="FaceBar"]
-text = "Bottom"
+[node name="BottomFace" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 1
 
-[node name="FrontBtn" type="Button" parent="FaceBar"]
-text = "Front"
+[node name="FrontFace" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 1
 
-[node name="BackBtn" type="Button" parent="FaceBar"]
-text = "Back"
+[node name="BackFace" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 1
 
-[node name="LeftBtn" type="Button" parent="FaceBar"]
-text = "Left"
+[node name="LeftFace" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 1
 
-[node name="RightBtn" type="Button" parent="FaceBar"]
-text = "Right"
+[node name="RightFace" type="Control" parent="FaceGrid"]
+custom_minimum_size = Vector2(100, 100)
+mouse_filter = 1
 
-[node name="Canvas" type="Control" parent="."]
+[node name="EditCanvas" type="Control" parent="."]
 layout_mode = 1
 offset_left = 8.0
-offset_top = 44.0
-offset_right = 296.0
-offset_bottom = 332.0
+offset_top = 330.0
+offset_right = 320.0
+offset_bottom = 472.0
 mouse_filter = 1
 
 [node name="Toolbar" type="VBoxContainer" parent="."]
 layout_mode = 1
-offset_left = 312.0
-offset_top = 44.0
+offset_left = 336.0
+offset_top = 8.0
 offset_right = 512.0
-offset_bottom = 332.0
+offset_bottom = 472.0
+
+[node name="FaceLabel" type="Label" parent="Toolbar"]
+text = "Click a face above to edit"
 
 [node name="ColorRect" type="ColorRect" parent="Toolbar"]
 custom_minimum_size = Vector2(40, 40)
 color = Color(1, 1, 1, 1)
 
 [node name="ColorBtn" type="Button" parent="Toolbar"]
-text = "Pick Color..."
+text = "Pick Color"
 
 [node name="CopyBtn" type="Button" parent="Toolbar"]
 text = "Copy Face"
@@ -69,4 +79,4 @@ text = "Save to File"
 text = "Load from File"
 
 [node name="ApplyBtn" type="Button" parent="Toolbar"]
-text = "Apply"
+text = "Apply & Close"
