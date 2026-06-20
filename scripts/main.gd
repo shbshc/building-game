@@ -195,8 +195,6 @@ func open_paint_panel_for_item(item_id: int):
 	var t = $ItemTypes.get_type(item_id)
 	if t == null:
 		return
-	paint_panel._editing_item_id = item_id
-	paint_panel._init_faces()
 	paint_panel.texture_applied.connect(_on_item_texture_applied.bind(item_id), CONNECT_ONE_SHOT)
 	paint_panel.popup_centered()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
