@@ -69,7 +69,6 @@ func _input(event):
 							interacted = true
 						elif bd != null:
 							# 普通方块：打开绘图面板（单方块编辑）
-							var main_node = $".."
 							if main_node.has_method("open_paint_panel_for_block"):
 								main_node.open_paint_panel_for_block(grid_pos)
 							interacted = true
