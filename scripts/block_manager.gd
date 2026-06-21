@@ -50,23 +50,10 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		if t:
 			color = t.color
 
+	# 创建 6-Surface 自定义立方体
 	var mesh := MeshInstance3D.new()
-	mesh.mesh = BoxMesh.new()
+	mesh.mesh = _build_cube_mesh(textures, color)
 	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
-
-	var mat := StandardMaterial3D.new()
-	if textures.size() == 6 and textures[0] != null:
-		var img: Image = textures[2]  # Front face as base
-		if img.get_size() != Vector2i(16, 16):
-			img = img.duplicate()
-			img.resize(16, 16, Image.INTERPOLATE_NEAREST)
-		var tex := ImageTexture.create_from_image(img)
-		mat.albedo_texture = tex
-		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		mat.albedo_color = Color.WHITE
-	else:
-		mat.albedo_color = color
-	mesh.material_override = mat
 
 	if func_type > 0:
 		_add_direction_indicator(mesh, direction)
@@ -90,6 +77,54 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		bd.face_textures = textures.duplicate()
 	blocks[grid_pos] = bd
 	return true
+
+
+# 6 面独立材质的立方体
+func _build_cube_mesh(textures: Array, default_color: Color) -> ArrayMesh:
+	var arr_mesh := ArrayMesh.new()
+	# 每面 4 顶点 2 三角形
+	var face_verts := [
+		# +Y Top (0)
+		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5)],
+		# -Y Bottom (1)
+		[Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],
+		# +Z Front (2)
+		[Vector3(-0.5, -0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],
+		# -Z Back (3)
+		[Vector3(0.5, -0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5)],
+		# +X Right (4)
+		[Vector3(0.5, -0.5, 0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5)],
+		# -X Left (5)
+		[Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, 0.5, -0.5)],
+	]
+	var uvs := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+
+	for i in range(6):
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var n := (face_verts[i][1] - face_verts[i][0]).cross(face_verts[i][3] - face_verts[i][0]).normalized()
+		# Tri 1: v0, v1, v2
+		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
+		st.set_normal(n); st.set_uv(uvs[1]); st.add_vertex(face_verts[i][1])
+		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
+		# Tri 2: v0, v2, v3
+		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
+		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
+		st.set_normal(n); st.set_uv(uvs[3]); st.add_vertex(face_verts[i][3])
+		st.generate_normals()
+		var mat := StandardMaterial3D.new()
+		if textures.size() == 6 and i < textures.size() and textures[i] != null:
+			var img: Image = textures[i]
+			if img.get_size() != Vector2i(16, 16):
+				img = img.duplicate()
+				img.resize(16, 16, Image.INTERPOLATE_NEAREST)
+			mat.albedo_texture = ImageTexture.create_from_image(img)
+			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		else:
+			mat.albedo_color = default_color
+		st.set_material(mat)
+		st.commit(arr_mesh)
+	return arr_mesh
 
 
 # 将6张16×16贴图合并为 Atlas (3列×2行, 48×32)
