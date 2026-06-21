@@ -56,9 +56,14 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 
 	var mat := StandardMaterial3D.new()
 	if textures.size() == 6 and textures[0] != null:
-		var tex := ImageTexture.create_from_image(textures[2])  # Front face
+		var img := textures[2]  # Front face as base
+		if img.get_size() != Vector2i(16, 16):
+			img = img.duplicate()
+			img.resize(16, 16, Image.INTERPOLATE_NEAREST)
+		var tex := ImageTexture.create_from_image(img)
 		mat.albedo_texture = tex
 		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat.albedo_color = Color.WHITE
 	else:
 		mat.albedo_color = color
 	mesh.material_override = mat

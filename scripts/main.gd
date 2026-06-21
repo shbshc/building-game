@@ -195,6 +195,10 @@ func _on_item_texture_applied(face_data: Array):
 		_item_textures[_paint_item_id] = face_data.duplicate()
 		_paint_is_item = false
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	# 关闭背包
+	if backpack_panel != null:
+		backpack_panel.visible = false
+	paint_panel.hide()
 
 
 
