@@ -21,9 +21,8 @@ func update_power_network():
             queue.append([pos, 0])
             visited[pos] = true
         elif bd.func_type == func_types.FuncType.SWITCH:
-            if bd.get("switch_on") == true:
-                queue.append([pos, 0])
-                visited[pos] = true
+            # 开关不发电，只导电——由 BFS 蔓延时通过导线连通
+            pass
     
     # 3. BFS 蔓延
     while not queue.is_empty():
@@ -42,10 +41,10 @@ func update_power_network():
             var nb = block_manager.blocks.get(n, null)
             if nb == null:
                 continue
-            # 导线和灯泡可以导电，开关在ON状态也可以
             var can_conduct = (nb.func_type == func_types.FuncType.WIRE or 
-                              nb.func_type == func_types.FuncType.LAMP or
-                              nb.func_type == func_types.FuncType.SWITCH)
+                              nb.func_type == func_types.FuncType.LAMP)
+            if nb.func_type == func_types.FuncType.SWITCH and nb.get("switch_on") == true:
+                can_conduct = true
             if can_conduct:
                 visited[n] = true
                 queue.append([n, dist + 1])
