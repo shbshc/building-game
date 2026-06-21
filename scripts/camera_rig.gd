@@ -14,6 +14,7 @@ var is_flying := true
 var last_space_time := 0.0
 const DOUBLE_TAP_TIME := 0.3
 var gravity = 30.0
+var max_fall_speed := 50.0
 
 @onready var camera: Camera3D = $Camera3D
 @onready var inv_mgr = $"../InventoryManager"
@@ -79,6 +80,8 @@ func _process(delta):
 			
 			if not is_on_floor():
 				velocity.y -= gravity * delta
+				if velocity.y < -max_fall_speed:
+					velocity.y = -max_fall_speed
 			if space_just and is_on_floor():
 				velocity.y = jump_velocity
 	
