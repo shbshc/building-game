@@ -15,6 +15,7 @@ var load_btn: Button
 var ground_btn: Button
 var crosshair: ColorRect
 var _move_tick_timer := 0.0
+var _item_textures: Dictionary = {}
 const MOVE_TICK_INTERVAL := 1.0
 
 func _ready():
@@ -190,31 +191,27 @@ func open_color_picker(index: int):
 	color_picker_popup.open_with_color(c)
 
 
-func open_paint_panel_for_block(grid_pos: Vector3i):
-	var bd = block_manager.get_block_data(grid_pos)
-	if bd == null:
-		return
-	_paint_target_pos = grid_pos
-	if bd.face_textures.size() == 6:
-		paint_panel._init_faces_from(bd.face_textures)
-	paint_panel.texture_applied.connect(_on_block_texture_applied, CONNECT_ONE_SHOT)
+func open_paint_panel_for_item(item_id: int):
+	_paint_is_item = true
+	_paint_item_id = item_id
+	paint_panel._init_faces()
+	paint_panel.texture_applied.connect(_on_item_texture_applied, CONNECT_ONE_SHOT)
 	paint_panel.popup_centered()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
-var _paint_target_pos := Vector3i.ZERO
+var _paint_is_item := false
+var _paint_item_id := -1
 
-func _on_block_texture_applied(face_data: Array):
-	var bd = block_manager.get_block_data(_paint_target_pos)
-	if bd == null:
-		return
-	bd.face_textures = face_data.duplicate()
-	var atlas := block_manager._make_atlas(face_data)
-	var tex := ImageTexture.create_from_image(atlas)
-	bd.node.material_override.albedo_texture = tex
-	bd.node.material_override.albedo_color = Color.WHITE
+func _on_item_texture_applied(face_data: Array):
+	if _paint_is_item:
+		_item_textures[_paint_item_id] = face_data.duplicate()
+		_paint_is_item = false
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
+
+func get_item_textures(item_id: int) -> Array:
+	return _item_textures.get(item_id, [])
 
 func _get_color_picker_popup():
 	return color_picker_popup

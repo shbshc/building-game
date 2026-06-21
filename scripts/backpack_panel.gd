@@ -52,7 +52,14 @@ func _on_slot_clicked(index: int):
 
 func _on_slot_input(event: InputEvent, index: int):
 	if event is InputEventMouseButton and event.pressed:
-		_on_slot_clicked(index)
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			var slot = inv_mgr.backpack[index]
+			if not slot.is_empty():
+				var main_node = $"../../.."
+				if main_node.has_method("open_paint_panel_for_item"):
+					main_node.open_paint_panel_for_item(slot.item_id)
+		else:
+			_on_slot_clicked(index)
 
 func _process(_delta):
 	_refresh()

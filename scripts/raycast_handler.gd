@@ -97,7 +97,11 @@ func _try_place():
 				var func_type = t.func_type if t else 0
 				var direction = t.direction if func_type > 0 else 2
 				var color = inv_mgr.get_selected_color(item_types_node) if func_type == 0 else null
-				block_manager.place_block(grid_pos, selected_id, color, func_type, direction)
+				var textures: Array = []
+				var main_node = $".."
+				if main_node.has_method("get_item_textures"):
+					textures = main_node.get_item_textures(selected_id)
+				block_manager.place_block(grid_pos, selected_id, color, func_type, direction, textures)
 
 func _is_player_cell(gp: Vector3i) -> bool:
 	var p = $"../CameraRig".global_position

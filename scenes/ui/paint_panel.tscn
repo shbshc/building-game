@@ -3,92 +3,94 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="PopupPanel"]
-size = Vector2i(860, 640)
+size = Vector2i(600, 460)
 script = ExtResource("1_pp")
 
-[node name="Margin" type="MarginContainer" parent="."]
+[node name="SelectView" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 584.0
+offset_bottom = 444.0
 
-[node name="VBox" type="VBoxContainer" parent="Margin"]
+[node name="SelectLabel" type="Label" parent="SelectView"]
+text = "Click a face to edit"
 
-[node name="FaceGrid" type="GridContainer" parent="Margin/VBox"]
+[node name="FaceGrid" type="GridContainer" parent="SelectView"]
 columns = 3
 
-[node name="TopCanvas" type="Control" parent="Margin/VBox/FaceGrid"]
-custom_minimum_size = Vector2(256, 256)
+[node name="TopBtn" type="Button" parent="SelectView/FaceGrid"]
+custom_minimum_size = Vector2(160, 160)
+
+[node name="BottomBtn" type="Button" parent="SelectView/FaceGrid"]
+custom_minimum_size = Vector2(160, 160)
+
+[node name="FrontBtn" type="Button" parent="SelectView/FaceGrid"]
+custom_minimum_size = Vector2(160, 160)
+
+[node name="BackBtn" type="Button" parent="SelectView/FaceGrid"]
+custom_minimum_size = Vector2(160, 160)
+
+[node name="LeftBtn" type="Button" parent="SelectView/FaceGrid"]
+custom_minimum_size = Vector2(160, 160)
+
+[node name="RightBtn" type="Button" parent="SelectView/FaceGrid"]
+custom_minimum_size = Vector2(160, 160)
+
+[node name="EditView" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 584.0
+offset_bottom = 444.0
+
+[node name="EditTop" type="HBoxContainer" parent="EditView"]
+[node name="BackBtn" type="Button" parent="EditView/EditTop"]
+text = "< Back"
+[node name="EditLabel" type="Label" parent="EditView/EditTop"]
+text = "Editing: Top"
+
+[node name="EditCanvas" type="Control" parent="EditView"]
+custom_minimum_size = Vector2(320, 320)
 mouse_filter = 1
 
-[node name="BottomCanvas" type="Control" parent="Margin/VBox/FaceGrid"]
-custom_minimum_size = Vector2(256, 256)
-mouse_filter = 1
+[node name="EditTools" type="HBoxContainer" parent="EditView"]
 
-[node name="FrontCanvas" type="Control" parent="Margin/VBox/FaceGrid"]
-custom_minimum_size = Vector2(256, 256)
-mouse_filter = 1
-
-[node name="BackCanvas" type="Control" parent="Margin/VBox/FaceGrid"]
-custom_minimum_size = Vector2(256, 256)
-mouse_filter = 1
-
-[node name="LeftCanvas" type="Control" parent="Margin/VBox/FaceGrid"]
-custom_minimum_size = Vector2(256, 256)
-mouse_filter = 1
-
-[node name="RightCanvas" type="Control" parent="Margin/VBox/FaceGrid"]
-custom_minimum_size = Vector2(256, 256)
-mouse_filter = 1
-
-[node name="ToolBar" type="HBoxContainer" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 44)
-
-[node name="ActiveLabel" type="Label" parent="Margin/VBox/ToolBar"]
-text = "Face: Top"
-custom_minimum_size = Vector2(120, 0)
-
-[node name="Pen1Btn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="Pen1Btn" type="Button" parent="EditView/EditTools"]
 text = "1px"
 toggle_mode = true
 button_pressed = true
 
-[node name="Pen2Btn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="Pen2Btn" type="Button" parent="EditView/EditTools"]
 text = "2px"
 toggle_mode = true
 
-[node name="Pen4Btn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="Pen4Btn" type="Button" parent="EditView/EditTools"]
 text = "4px"
 toggle_mode = true
 
-[node name="ColorPreview" type="ColorRect" parent="Margin/VBox/ToolBar"]
-custom_minimum_size = Vector2(32, 32)
+[node name="ColorPreview" type="ColorRect" parent="EditView/EditTools"]
+custom_minimum_size = Vector2(28, 28)
 color = Color(1, 1, 1, 1)
 
-[node name="ColorBtn" type="Button" parent="Margin/VBox/ToolBar"]
-text = "Color"
-
-[node name="CopyBtn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="CopyBtn" type="Button" parent="EditView/EditTools"]
 text = "Copy"
 
-[node name="PasteBtn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="PasteBtn" type="Button" parent="EditView/EditTools"]
 text = "Paste"
 
-[node name="ClearBtn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="ClearBtn" type="Button" parent="EditView/EditTools"]
 text = "Clear"
 
-[node name="FillBtn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="FillBtn" type="Button" parent="EditView/EditTools"]
 text = "Fill"
 
-[node name="SaveBtn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="SaveBtn" type="Button" parent="EditView/EditTools"]
 text = "Save"
 
-[node name="LoadBtn" type="Button" parent="Margin/VBox/ToolBar"]
+[node name="LoadBtn" type="Button" parent="EditView/EditTools"]
 text = "Load"
 
-[node name="ApplyBtn" type="Button" parent="Margin/VBox/ToolBar"]
-text = "Apply & Close"
+[node name="ApplyBtn" type="Button" parent="EditView/EditTools"]
+text = "Apply"
