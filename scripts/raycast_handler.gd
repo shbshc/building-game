@@ -3,8 +3,6 @@ extends Node3D
 @onready var block_manager: Node3D = $"../Blocks"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
 @onready var inv_mgr = $"../InventoryManager"
-@onready var func_types = $"../FunctionalTypes"
-@onready var power_system = $"../PowerSystem"
 
 var highlight: MeshInstance3D
 var place_timer: float = 0.0
@@ -64,9 +62,10 @@ func _input(event):
 					if grid_pos != Vector3i(-999, -999, -999):
 						var bd = block_manager.get_block_data(grid_pos)
 						if bd != null:
-							if bd.func_type == func_types.FuncType.SWITCH:
+							var ft = $"../FunctionalTypes"
+							if bd.func_type == ft.FuncType.SWITCH:
 								bd.switch_on = !bd.switch_on
-								power_system.update_power_network()
+								$"../PowerSystem".update_power_network()
 								interacted = true
 							elif bd.func_type > 0:
 								var new_dir = func_types.next_direction_index(bd.direction)
