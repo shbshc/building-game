@@ -9,8 +9,7 @@ var _is_moving: Dictionary = {}  # 正在动画中的方块
 class BlockData:
 	var item_id: int = -1
 	var color: Color = Color.RED
-	var node: Node3D = null
-	var faces: Array[MeshInstance3D] = []
+	var node: MeshInstance3D = null
 	var func_type: int = 0
 	var direction: int = 2
 	var face_textures: Array = []
@@ -51,55 +50,35 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		if t:
 			color = t.color
 
-	# 容器 (cube center)
-	var container := Node3D.new()
-	container.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
+	var mesh := MeshInstance3D.new()
+	mesh.mesh = BoxMesh.new()
+	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
 
-	# 6面：+Y=T  -Y=B  +Z=F  -Z=Bk  +X=R  -X=L
-	var faces: Array[MeshInstance3D] = []
-	var posrot := [
-		[Vector3(0, 0.5, 0), Vector3(-PI/2, 0, 0)],   # 0: +Y Top
-		[Vector3(0, -0.5, 0), Vector3(PI/2, 0, 0)],    # 1: -Y Bottom
-		[Vector3(0, 0, 0.5), Vector3(0, 0, 0)],         # 2: +Z Front
-		[Vector3(0, 0, -0.5), Vector3(0, PI, 0)],       # 3: -Z Back
-		[Vector3(0.5, 0, 0), Vector3(0, PI/2, 0)],      # 4: +X Right
-		[Vector3(-0.5, 0, 0), Vector3(0, -PI/2, 0)],    # 5: -X Left
-	]
-	for i in range(6):
-		var fm := MeshInstance3D.new()
-		var plane := PlaneMesh.new()
-		plane.size = Vector2(1, 1)
-		fm.mesh = plane
-		fm.position = posrot[i][0]
-		fm.rotation = posrot[i][1]
-		var fmat := StandardMaterial3D.new()
-		if textures.size() == 6 and i < textures.size() and textures[i] != null:
-			var tex := ImageTexture.create_from_image(textures[i])
-			fmat.albedo_texture = tex
-			fmat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		else:
-			fmat.albedo_color = color
-		fm.material_override = fmat
-		container.add_child(fm)
-		faces.append(fm)
+	var mat := StandardMaterial3D.new()
+	if textures.size() == 6 and textures[0] != null:
+		var tex := ImageTexture.create_from_image(textures[2])  # Front face
+		mat.albedo_texture = tex
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	else:
+		mat.albedo_color = color
+	mesh.material_override = mat
 
 	if func_type > 0:
-		_add_direction_indicator(container, direction)
+		_add_direction_indicator(mesh, direction)
 
 	var body := StaticBody3D.new()
 	var col := CollisionShape3D.new()
 	col.shape = BoxShape3D.new()
 	col.shape.size = Vector3(1, 1, 1)
 	body.add_child(col)
-	container.add_child(body)
+	mesh.add_child(body)
 
-	add_child(container)
+	add_child(mesh)
 
 	var bd := BlockData.new()
 	bd.item_id = item_id
 	bd.color = color
-	bd.node = container
-	bd.faces = faces
+	bd.node = mesh
 	bd.func_type = func_type
 	bd.direction = direction
 	if textures.size() == 6:
@@ -132,7 +111,7 @@ func _make_atlas(textures: Array) -> Image:
 	return atlas
 
 
-func _add_direction_indicator(container: Node3D, dir_idx: int):
+func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
 	var indicator := MeshInstance3D.new()
 	indicator.mesh = BoxMesh.new()
 	indicator.mesh.size = Vector3(0.3, 0.3, 0.15)
@@ -154,7 +133,7 @@ func _add_direction_indicator(container: Node3D, dir_idx: int):
 	ind_mat.emission = Color.WHITE
 	ind_mat.emission_energy_multiplier = 0.5
 	indicator.material_override = ind_mat
-	container.add_child(indicator)
+	mesh.add_child(indicator)
 
 
 func remove_block(grid_pos: Vector3i) -> bool:
