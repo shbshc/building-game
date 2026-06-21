@@ -16,54 +16,53 @@ func _ready():
 		slot_colors.append(null)
 	for i in range(BACKPACK_SIZE):
 		backpack.append(ItemTypesScript.ItemSlot.new())
-	hotbar[0].add(0, 1, 64)   # Stone
-	hotbar[1].add(1, 1, 64)   # Wood
-	hotbar[2].add(2, 1, 64)   # Grass
-	hotbar[3].add(3, 1, 64)   # Sand
-	hotbar[4].add(5, 1, 64)   # Brick
-	# 移动方块 (id 6-11)
-	hotbar[5].add(8, 1, 64)   # Move+Y
-	hotbar[6].add(9, 1, 64)   # Move-Y
-	hotbar[7].add(6, 1, 64)   # Move+X
-	hotbar[8].add(7, 1, 64)   # Move-X
-	hotbar[9].add(10, 1, 64)  # Move+Z
-	# 背包——包含所有方块，防止物品栏被替换后找不到
-	backpack[0].add(0, 1, 64)    # Stone
-	backpack[1].add(1, 1, 64)    # Wood
-	backpack[2].add(2, 1, 64)    # Grass
-	backpack[3].add(3, 1, 64)    # Sand
-	backpack[4].add(4, 1, 64)    # Glass
-	backpack[5].add(5, 1, 64)    # Brick
-	backpack[6].add(6, 1, 64)    # Move+X
-	backpack[7].add(7, 1, 64)    # Move-X
-	backpack[8].add(8, 1, 64)    # Move+Y
-	backpack[9].add(9, 1, 64)    # Move-Y
-	backpack[10].add(10, 1, 64)  # Move+Z
-	backpack[11].add(11, 1, 64)  # Move-Z
-	backpack[12].add(12, 1, 64)  # Turn+X
-	backpack[13].add(13, 1, 64)  # Turn-X
-	backpack[14].add(14, 1, 64)  # Turn+Y
-	backpack[15].add(15, 1, 64)  # Turn-Y
-	backpack[16].add(16, 1, 64)  # Turn+Z
-	backpack[17].add(17, 1, 64)  # Turn-Z
-	backpack[18].add(18, 1, 64)  # Gen+X
-	backpack[19].add(19, 1, 64)  # Gen-X
-	backpack[20].add(20, 1, 64)  # Gen+Y
-	backpack[21].add(21, 1, 64)  # Gen-Y
-	backpack[22].add(22, 1, 64)  # Gen+Z
-	backpack[23].add(23, 1, 64)  # Gen-Z
-	backpack[24].add(24, 1, 64)  # Push+X
-	backpack[25].add(25, 1, 64)  # Push-X
-	backpack[26].add(26, 1, 64)  # Push+Y
-	backpack[27].add(27, 1, 64)  # Push-Y
-	backpack[28].add(28, 1, 64)  # Push+Z
-	backpack[29].add(29, 1, 64)  # Push-Z
-	backpack[30].add(30, 1, 64)  # Consume
-	backpack[31].add(31, 1, 64)  # Slime
-	backpack[32].add(32, 1, 64)  # Power
-	backpack[33].add(33, 1, 64)  # Switch
-	backpack[34].add(34, 1, 64)  # Wire
-	backpack[35].add(35, 1, 64)  # Lamp
+	hotbar[0].add(0, 1, 64)    # Stone
+	hotbar[1].add(1, 1, 64)    # Wood
+	hotbar[2].add(2, 1, 64)    # Grass
+	hotbar[3].add(3, 1, 64)    # Sand
+	hotbar[4].add(5, 1, 64)    # Brick
+	# 移动方块 (id 10-15)
+	hotbar[5].add(12, 1, 64)   # Move+Y
+	hotbar[6].add(13, 1, 64)   # Move-Y
+	hotbar[7].add(10, 1, 64)   # Move+X
+	hotbar[8].add(11, 1, 64)   # Move-X
+	hotbar[9].add(14, 1, 64)   # Move+Z
+	# 背包——全部 35 种
+	backpack[0].add(0, 1, 64)     # Stone
+	backpack[1].add(1, 1, 64)     # Wood
+	backpack[2].add(2, 1, 64)     # Grass
+	backpack[3].add(3, 1, 64)     # Sand
+	backpack[4].add(4, 1, 64)     # Glass
+	backpack[5].add(5, 1, 64)     # Brick
+	backpack[6].add(6, 1, 64)     # Marble
+	backpack[7].add(7, 1, 64)     # Obsidian
+	backpack[8].add(8, 1, 64)     # Metal
+	backpack[9].add(9, 1, 64)     # Dirt
+	backpack[10].add(10, 1, 64)   # Move+X
+	backpack[11].add(11, 1, 64)   # Move-X
+	backpack[12].add(12, 1, 64)   # Move+Y
+	backpack[13].add(13, 1, 64)   # Move-Y
+	backpack[14].add(14, 1, 64)   # Move+Z
+	backpack[15].add(15, 1, 64)   # Move-Z
+	backpack[16].add(16, 1, 64)   # Turn+X
+	backpack[17].add(17, 1, 64)   # Turn-X
+	backpack[18].add(18, 1, 64)   # Turn+Y
+	backpack[19].add(19, 1, 64)   # Turn-Y
+	backpack[20].add(20, 1, 64)   # Turn+Z
+	backpack[21].add(21, 1, 64)   # Turn-Z
+	backpack[22].add(22, 1, 64)   # Gen+X
+	backpack[23].add(23, 1, 64)   # Gen-X
+	backpack[24].add(24, 1, 64)   # Gen+Y
+	backpack[25].add(25, 1, 64)   # Gen-Y
+	backpack[26].add(26, 1, 64)   # Gen+Z
+	backpack[27].add(27, 1, 64)   # Gen-Z
+	backpack[28].add(28, 1, 64)   # Push
+	backpack[29].add(29, 1, 64)   # Consume
+	backpack[30].add(30, 1, 64)   # Slime
+	backpack[31].add(31, 1, 64)   # Power
+	backpack[32].add(32, 1, 64)   # Switch
+	backpack[33].add(33, 1, 64)   # Wire
+	backpack[34].add(34, 1, 64)   # Lamp
 
 func get_selected_slot():
 	return hotbar[selected_slot]

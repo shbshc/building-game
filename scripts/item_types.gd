@@ -59,50 +59,49 @@ func _ready():
 
 func _init_defaults():
 	item_types = [
-		# 普通方块 (id 0-5)
+		# 普通方块 (id 0-9)
 		ItemType.new(0, "Stone", Color(0.5, 0.5, 0.5)),
 		ItemType.new(1, "Wood", Color(0.545, 0.27, 0.075)),
 		ItemType.new(2, "Grass", Color(0.298, 0.647, 0.314)),
 		ItemType.new(3, "Sand", Color(0.957, 0.816, 0.247)),
 		ItemType.new(4, "Glass", Color(0.835, 0.859, 0.859, 0.5)),
 		ItemType.new(5, "Brick", Color(0.753, 0.224, 0.169)),
-		# 移动方块 (id 6-11), 方向与 DIRECTION_VECTORS 索引一致
-		ItemType.new(6,  "Move+X", Color(0.2, 0.6, 1.0), 64, 1, 0),
-		ItemType.new(7,  "Move-X", Color(0.2, 0.5, 0.9), 64, 1, 1),
-		ItemType.new(8,  "Move+Y", Color(0.2, 0.7, 1.0), 64, 1, 2),
-		ItemType.new(9,  "Move-Y", Color(0.2, 0.4, 0.9), 64, 1, 3),
-		ItemType.new(10, "Move+Z", Color(0.3, 0.6, 1.0), 64, 1, 4),
-		ItemType.new(11, "Move-Z", Color(0.1, 0.5, 0.9), 64, 1, 5),
-		# 拐弯方块 (id 12-17), 方向与 DIRECTION_VECTORS 索引一致
-		ItemType.new(12, "Turn+X", Color(0.3, 0.9, 0.3), 64, 2, 0),
-		ItemType.new(13, "Turn-X", Color(0.3, 0.8, 0.3), 64, 2, 1),
-		ItemType.new(14, "Turn+Y", Color(0.4, 0.9, 0.3), 64, 2, 2),
-		ItemType.new(15, "Turn-Y", Color(0.2, 0.8, 0.3), 64, 2, 3),
-		ItemType.new(16, "Turn+Z", Color(0.3, 0.9, 0.4), 64, 2, 4),
-		ItemType.new(17, "Turn-Z", Color(0.3, 0.9, 0.2), 64, 2, 5),
-		# 生成器方块 (id 18-23)
-		ItemType.new(18, "Gen+X", Color(0.7, 0.3, 1.0), 64, 3, 0),
-		ItemType.new(19, "Gen-X", Color(0.7, 0.3, 0.9), 64, 3, 1),
-		ItemType.new(20, "Gen+Y", Color(0.8, 0.4, 1.0), 64, 3, 2),
-		ItemType.new(21, "Gen-Y", Color(0.6, 0.3, 0.9), 64, 3, 3),
-		ItemType.new(22, "Gen+Z", Color(0.7, 0.4, 1.0), 64, 3, 4),
-		ItemType.new(23, "Gen-Z", Color(0.7, 0.2, 0.9), 64, 3, 5),
-		# 推动方块 (id 24-29)
-		ItemType.new(24, "Push+X", Color(1.0, 0.6, 0.1), 64, 4, 0),
-		ItemType.new(25, "Push-X", Color(1.0, 0.5, 0.1), 64, 4, 1),
-		ItemType.new(26, "Push+Y", Color(1.0, 0.7, 0.2), 64, 4, 2),
-		ItemType.new(27, "Push-Y", Color(0.9, 0.5, 0.1), 64, 4, 3),
-		ItemType.new(28, "Push+Z", Color(1.0, 0.6, 0.2), 64, 4, 4),
-		ItemType.new(29, "Push-Z", Color(1.0, 0.5, 0.0), 64, 4, 5),
-		# 消耗方块 (id 30)
-		ItemType.new(30, "Consume", Color(0.9, 0.2, 0.2), 64, 5),
-		# 粘液方块 (id 31)
-		ItemType.new(31, "Slime", Color(0.2, 1.0, 0.3), 64, 6),
-		# 电力方块 (id 32-35)
-		ItemType.new(32, "Power", Color(1.0, 0.2, 0.1), 64, 7),
-		ItemType.new(33, "Switch", Color(0.4, 0.4, 0.4), 64, 8),
-		ItemType.new(34, "Wire", Color(0.6, 0.5, 0.3), 64, 9),
-		ItemType.new(35, "Lamp", Color(0.9, 0.9, 0.8), 64, 10),
+		ItemType.new(6, "Marble", Color(0.9, 0.9, 0.85)),
+		ItemType.new(7, "Obsidian", Color(0.1, 0.05, 0.15)),
+		ItemType.new(8, "Metal", Color(0.65, 0.65, 0.7)),
+		ItemType.new(9, "Dirt", Color(0.4, 0.3, 0.2)),
+		# 移动方块 (id 10-15)
+		ItemType.new(10, "Move+X", Color(0.2, 0.6, 1.0), 64, 1, 0),
+		ItemType.new(11, "Move-X", Color(0.2, 0.5, 0.9), 64, 1, 1),
+		ItemType.new(12, "Move+Y", Color(0.2, 0.7, 1.0), 64, 1, 2),
+		ItemType.new(13, "Move-Y", Color(0.2, 0.4, 0.9), 64, 1, 3),
+		ItemType.new(14, "Move+Z", Color(0.3, 0.6, 1.0), 64, 1, 4),
+		ItemType.new(15, "Move-Z", Color(0.1, 0.5, 0.9), 64, 1, 5),
+		# 拐弯方块 (id 16-21)
+		ItemType.new(16, "Turn+X", Color(0.3, 0.9, 0.3), 64, 2, 0),
+		ItemType.new(17, "Turn-X", Color(0.3, 0.8, 0.3), 64, 2, 1),
+		ItemType.new(18, "Turn+Y", Color(0.4, 0.9, 0.3), 64, 2, 2),
+		ItemType.new(19, "Turn-Y", Color(0.2, 0.8, 0.3), 64, 2, 3),
+		ItemType.new(20, "Turn+Z", Color(0.3, 0.9, 0.4), 64, 2, 4),
+		ItemType.new(21, "Turn-Z", Color(0.3, 0.9, 0.2), 64, 2, 5),
+		# 生成器方块 (id 22-27)
+		ItemType.new(22, "Gen+X", Color(0.7, 0.3, 1.0), 64, 3, 0),
+		ItemType.new(23, "Gen-X", Color(0.7, 0.3, 0.9), 64, 3, 1),
+		ItemType.new(24, "Gen+Y", Color(0.8, 0.4, 1.0), 64, 3, 2),
+		ItemType.new(25, "Gen-Y", Color(0.6, 0.3, 0.9), 64, 3, 3),
+		ItemType.new(26, "Gen+Z", Color(0.7, 0.4, 1.0), 64, 3, 4),
+		ItemType.new(27, "Gen-Z", Color(0.7, 0.2, 0.9), 64, 3, 5),
+		# 推动方块 (id 28)
+		ItemType.new(28, "Push", Color(1.0, 0.6, 0.1), 64, 4),
+		# 消耗方块 (id 29)
+		ItemType.new(29, "Consume", Color(0.9, 0.2, 0.2), 64, 5),
+		# 粘液方块 (id 30)
+		ItemType.new(30, "Slime", Color(0.2, 1.0, 0.3), 64, 6),
+		# 电力方块 (id 31-34)
+		ItemType.new(31, "Power", Color(1.0, 0.2, 0.1), 64, 7),
+		ItemType.new(32, "Switch", Color(0.4, 0.4, 0.4), 64, 8),
+		ItemType.new(33, "Wire", Color(0.6, 0.5, 0.3), 64, 9),
+		ItemType.new(34, "Lamp", Color(0.9, 0.9, 0.8), 64, 10),
 	]
 	print("Item types loaded: ", item_types.size())
 
