@@ -97,7 +97,7 @@ func _build_cube_mesh(textures: Array, default_color: Color) -> ArrayMesh:
 		# -X Left (5)
 		[Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, 0.5, -0.5)],
 	]
-	var uvs := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+	var uvs := [Vector2(1, 0), Vector2(0, 0), Vector2(0, 1), Vector2(1, 1)]
 
 	for i in range(6):
 		var st := SurfaceTool.new()
