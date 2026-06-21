@@ -102,7 +102,7 @@ func _build_cube_mesh(textures: Array, default_color: Color) -> ArrayMesh:
 	for i in range(6):
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
-		var n := (face_verts[i][1] - face_verts[i][0]).cross(face_verts[i][3] - face_verts[i][0]).normalized()
+		var n: Vector3 = (face_verts[i][1] - face_verts[i][0]).cross(face_verts[i][3] - face_verts[i][0]).normalized()
 		# Tri 1: v0, v1, v2
 		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
 		st.set_normal(n); st.set_uv(uvs[1]); st.add_vertex(face_verts[i][1])
