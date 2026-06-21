@@ -43,7 +43,39 @@ func _ready():
     $Margin/VBox/ToolBar/SaveBtn.pressed.connect(_on_save)
     $Margin/VBox/ToolBar/LoadBtn.pressed.connect(_on_load)
     $Margin/VBox/ToolBar/ApplyBtn.pressed.connect(_on_apply)
+    
+    # 创建调色盘
+    _create_palette()
+    
     color_preview.color = brush_color
+
+
+var _palette_colors := [
+    Color.BLACK, Color.WHITE,
+    Color.RED, Color.GREEN, Color.BLUE,
+    Color.YELLOW, Color.CYAN, Color.MAGENTA,
+    Color(0.5,0.5,0.5), Color(0.3,0.3,0.3), Color(0.7,0.7,0.7),
+    Color(0.545,0.27,0.075), Color(0.298,0.647,0.314), Color(0.957,0.816,0.247),
+    Color(0.753,0.224,0.169), Color(0.835,0.859,0.859),
+]
+
+
+func _create_palette():
+    var palette := HBoxContainer.new()
+    palette.name = "Palette"
+    for c in _palette_colors:
+        var btn := ColorRect.new()
+        btn.color = c
+        btn.custom_minimum_size = Vector2(24, 24)
+        btn.mouse_filter = Control.MOUSE_FILTER_STOP
+        btn.gui_input.connect(func(event: InputEvent):
+            if event is InputEventMouseButton and event.pressed:
+                brush_color = c
+                color_preview.color = c
+        )
+        palette.add_child(btn)
+    $Margin/VBox.add_child(palette)
+    $Margin/VBox.move_child(palette, $Margin/VBox.get_child_count() - 2)  # before toolbar
 
 
 func _init_faces():
