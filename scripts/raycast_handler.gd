@@ -3,6 +3,8 @@ extends Node3D
 @onready var block_manager: Node3D = $"../Blocks"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
 @onready var inv_mgr = $"../InventoryManager"
+@onready var func_types = $"../FunctionalTypes"
+@onready var power_system = $"../PowerSystem"
 
 var highlight: MeshInstance3D
 var place_timer: float = 0.0
@@ -61,10 +63,9 @@ func _input(event):
 					var grid_pos = _get_grid_from_collider(result.collider)
 					if grid_pos != Vector3i(-999, -999, -999):
 						var bd = block_manager.get_block_data(grid_pos)
-						if bd != null and bd.func_type == $"../FunctionalTypes".FuncType.SWITCH:
-							# 开关：切换开/关
+						if bd != null and bd.func_type == func_types.FuncType.SWITCH:
 							bd.switch_on = !bd.switch_on
-							$"../PowerSystem".update_power_network()
+							power_system.update_power_network()
 							interacted = true
 						elif bd != null and bd.func_type > 0:
 							# 功能方块：旋转方向
