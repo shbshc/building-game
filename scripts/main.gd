@@ -36,6 +36,7 @@ func _process(delta):
 		_move_tick_timer = MOVE_TICK_INTERVAL
 		_tick_move_blocks()
 		_tick_generators()
+		$PowerSystem.update_power_network()
 
 func _tick_move_blocks():
 	var ft = $FunctionalTypes

@@ -69,7 +69,31 @@ func _ready():
 	backpack[38].add(38, 1, 64)  # Slime+Y
 	backpack[39].add(39, 1, 64)  # Slime-Y
 	backpack[40].add(40, 1, 64)  # Slime+Z
-	backpack[41].add(41, 1, 64)  # Slime-Z
+	backpack[41].add(41, 1, 64)
+	backpack[42].add(42, 1, 64)  # Power+X
+	backpack[43].add(43, 1, 64)
+	backpack[44].add(44, 1, 64)
+	backpack[45].add(45, 1, 64)
+	backpack[46].add(46, 1, 64)
+	backpack[47].add(47, 1, 64)
+	backpack[48].add(48, 1, 64)  # Switch+X
+	backpack[49].add(49, 1, 64)
+	backpack[50].add(50, 1, 64)
+	backpack[51].add(51, 1, 64)
+	backpack[52].add(52, 1, 64)
+	backpack[53].add(53, 1, 64)
+	backpack[54].add(54, 1, 64)  # Wire+X
+	backpack[55].add(55, 1, 64)
+	backpack[56].add(56, 1, 64)
+	backpack[57].add(57, 1, 64)
+	backpack[58].add(58, 1, 64)
+	backpack[59].add(59, 1, 64)
+	backpack[60].add(60, 1, 64)  # Lamp+X
+	backpack[61].add(61, 1, 64)
+	backpack[62].add(62, 1, 64)
+	backpack[63].add(63, 1, 64)
+	backpack[64].add(64, 1, 64)
+	backpack[65].add(65, 1, 64)
 
 func get_selected_slot():
 	return hotbar[selected_slot]

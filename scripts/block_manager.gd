@@ -13,6 +13,8 @@ class BlockData:
 	var func_type: int = 0
 	var direction: int = 2
 	var face_textures: Array = []
+	var powered: bool = false
+	var switch_on: bool = false
 
 var selected_color := Color.RED
 

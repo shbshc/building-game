@@ -14,7 +14,7 @@ var is_flying := true
 var last_space_time := 0.0
 const DOUBLE_TAP_TIME := 0.3
 var gravity = 30.0
-var max_fall_speed := 50.0
+var max_fall_speed := 30.0
 
 @onready var camera: Camera3D = $Camera3D
 @onready var inv_mgr = $"../InventoryManager"

@@ -10,6 +10,10 @@ enum FuncType {
 	PUSH = 4,     # 推动方块
 	CONSUME = 5,  # 消耗方块
 	SLIME = 6,    # 粘液方块
+	POWER = 7,    # 电源
+	SWITCH = 8,   # 开关
+	WIRE = 9,     # 导线
+	LAMP = 10,    # 灯泡
 
 }
 
@@ -63,6 +67,14 @@ static func get_func_type_color(ft: int) -> Color:
 			return Color(0.2, 0.05, 0.05) # 暗红
 		FuncType.SLIME:
 			return Color(0.2, 1.0, 0.3)   # 亮绿
+		FuncType.POWER:
+			return Color(1.0, 0.2, 0.1)   # 红橙
+		FuncType.SWITCH:
+			return Color(0.4, 0.4, 0.4)   # 灰色
+		FuncType.WIRE:
+			return Color(0.6, 0.5, 0.3)   # 铜色
+		FuncType.LAMP:
+			return Color(0.9, 0.9, 0.8)   # 米白
 		FuncType.CONSUME:
 			return Color(0.9, 0.2, 0.2)   # 红色
 		_:

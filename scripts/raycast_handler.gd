@@ -61,16 +61,16 @@ func _input(event):
 					var grid_pos = _get_grid_from_collider(result.collider)
 					if grid_pos != Vector3i(-999, -999, -999):
 						var bd = block_manager.get_block_data(grid_pos)
-						if bd != null and bd.func_type > 0:
+						if bd != null and bd.func_type == $"../FunctionalTypes".FuncType.SWITCH:
+							# 开关：切换开/关
+							bd.switch_on = !bd.switch_on
+							$"../PowerSystem".update_power_network()
+							interacted = true
+						elif bd != null and bd.func_type > 0:
 							# 功能方块：旋转方向
 							var ft = $"../FunctionalTypes"
 							var new_dir = ft.next_direction_index(bd.direction)
 							block_manager.set_block_direction(grid_pos, new_dir)
-							interacted = true
-						elif bd != null:
-							# 普通方块：打开绘图面板（单方块编辑）
-							if main_node.has_method("open_paint_panel_for_block"):
-								main_node.open_paint_panel_for_block(grid_pos)
 							interacted = true
 				# If not interacting, break block as normal
 				if not interacted:
