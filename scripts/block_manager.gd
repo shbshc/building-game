@@ -179,11 +179,15 @@ func _build_wire_mesh(grid_pos: Vector3i) -> ArrayMesh:
 				Vector3(-beam_s, -beam_s, 0.5), Vector3(beam_s, -beam_s, 0.5),
 				Vector3(beam_s, beam_s, 0.5), Vector3(-beam_s, beam_s, 0.5),
 			]
-			# 旋转 beam 到正确方向
+			# 旋转 beam 到正确方向 (beam 默认沿 +Z)
 			var rot := Basis()
-			if abs(d.x) == 1: rot = Basis(Vector3(0,0,1), PI/2 * d.x) if d.x > 0 else Basis(Vector3(0,0,-1), PI/2)
-			elif abs(d.y) == 1: rot = Basis(Vector3(1,0,0), -PI/2 * d.y) if d.y > 0 else Basis(Vector3(1,0,0), PI/2)
-			elif abs(d.z) == 1: rot = Basis()
+			match i:
+				0: rot = Basis(Vector3.UP, PI/2)       # +X
+				1: rot = Basis(Vector3.UP, -PI/2)      # -X
+				2: rot = Basis(Vector3.RIGHT, -PI/2)   # +Y
+				3: rot = Basis(Vector3.RIGHT, PI/2)    # -Y
+				4: rot = Basis()                        # +Z (默认)
+				5: rot = Basis(Vector3.UP, PI)          # -Z
 			var rv: Array[Vector3] = []
 			for v in bv:
 				rv.append(rot * v)
