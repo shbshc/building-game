@@ -63,16 +63,15 @@ func _input(event):
 					var grid_pos = _get_grid_from_collider(result.collider)
 					if grid_pos != Vector3i(-999, -999, -999):
 						var bd = block_manager.get_block_data(grid_pos)
-						if bd != null and bd.func_type == func_types.FuncType.SWITCH:
-							bd.switch_on = !bd.switch_on
-							power_system.update_power_network()
-							interacted = true
-						elif bd != null and bd.func_type > 0:
-							# 功能方块：旋转方向
-							var ft = $"../FunctionalTypes"
-							var new_dir = ft.next_direction_index(bd.direction)
-							block_manager.set_block_direction(grid_pos, new_dir)
-							interacted = true
+						if bd != null:
+							if bd.func_type == func_types.FuncType.SWITCH:
+								bd.switch_on = !bd.switch_on
+								power_system.update_power_network()
+								interacted = true
+							elif bd.func_type > 0:
+								var new_dir = func_types.next_direction_index(bd.direction)
+								block_manager.set_block_direction(grid_pos, new_dir)
+								interacted = true
 				# If not interacting, break block as normal
 				if not interacted:
 					mouse_right_held = true
