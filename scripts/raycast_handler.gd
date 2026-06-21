@@ -68,7 +68,7 @@ func _input(event):
 								$"../PowerSystem".update_power_network()
 								interacted = true
 							elif bd.func_type > 0:
-								var new_dir = func_types.next_direction_index(bd.direction)
+								var new_dir = ft.next_direction_index(bd.direction)
 								block_manager.set_block_direction(grid_pos, new_dir)
 								interacted = true
 				# If not interacting, break block as normal
