@@ -40,11 +40,8 @@ func _process(delta):
 func _tick_move_blocks():
 	var ft = $FunctionalTypes
 	var positions = block_manager.blocks.keys()  # snapshot
-	var moved: Dictionary = {}  # 本轮已处理
 	
 	for pos in positions:
-		if moved.has(pos):
-			continue
 		var bd = block_manager.blocks.get(pos)
 		if bd == null or bd.func_type != ft.FuncType.MOVE:
 			continue
@@ -63,14 +60,6 @@ func _tick_move_blocks():
 			block_manager.remove_block(pos)
 			continue
 		
-		# 粘液组：整组一起走
-		var group = block_manager.get_slime_group(pos)
-		if group.size() > 1:
-			block_manager.slide_chain(pos, dir_vec)
-			for p in group:
-				moved[p + dir_vec] = true  # 标记新位置，防止重复
-			continue
-		
 		# 目标被功能方块占据 → 尝试推动
 		if target != null and target.func_type > 0:
 			if block_manager.slide_chain(new_pos, dir_vec):
@@ -81,7 +70,6 @@ func _tick_move_blocks():
 		var delta = block_manager.move_block(pos, new_pos)
 		if delta != Vector3.ZERO:
 			_carry_player(delta, pos)
-			moved[new_pos] = true
 
 # 检查玩家是否站在方块上，是则一起移动
 func _carry_player(delta: Vector3, block_pos: Vector3i):
