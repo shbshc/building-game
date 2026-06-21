@@ -94,25 +94,15 @@ func _init_defaults():
 		ItemType.new(27, "Push-Y", Color(0.9, 0.5, 0.1), 64, 4, 3),
 		ItemType.new(28, "Push+Z", Color(1.0, 0.6, 0.2), 64, 4, 4),
 		ItemType.new(29, "Push-Z", Color(1.0, 0.5, 0.0), 64, 4, 5),
-		# 消耗方块 (id 30-35)
-		ItemType.new(30, "Consume+X", Color(0.9, 0.2, 0.2), 64, 5, 0),
-		ItemType.new(31, "Consume-X", Color(0.8, 0.2, 0.2), 64, 5, 1),
-		ItemType.new(32, "Consume+Y", Color(1.0, 0.3, 0.3), 64, 5, 2),
-		ItemType.new(33, "Consume-Y", Color(0.8, 0.1, 0.2), 64, 5, 3),
-		ItemType.new(34, "Consume+Z", Color(0.9, 0.3, 0.3), 64, 5, 4),
-		ItemType.new(35, "Consume-Z", Color(0.9, 0.1, 0.2), 64, 5, 5),
-		# 粘液方块 (id 36-41)
-		ItemType.new(36, "Slime+X", Color(0.2, 1.0, 0.3), 64, 6, 0),
-		ItemType.new(37, "Slime-X", Color(0.2, 0.9, 0.3), 64, 6, 1),
-		ItemType.new(38, "Slime+Y", Color(0.3, 1.0, 0.4), 64, 6, 2),
-		ItemType.new(39, "Slime-Y", Color(0.1, 0.9, 0.2), 64, 6, 3),
-		ItemType.new(40, "Slime+Z", Color(0.2, 1.0, 0.4), 64, 6, 4),
-		ItemType.new(41, "Slime-Z", Color(0.2, 0.9, 0.2), 64, 6, 5),
-		# 电力方块 (id 42-45, 无方向)
-		ItemType.new(42, "Power", Color(1.0, 0.2, 0.1), 64, 7),
-		ItemType.new(43, "Switch", Color(0.4, 0.4, 0.4), 64, 8),
-		ItemType.new(44, "Wire", Color(0.6, 0.5, 0.3), 64, 9),
-		ItemType.new(45, "Lamp", Color(0.9, 0.9, 0.8), 64, 10),
+		# 消耗方块 (id 30)
+		ItemType.new(30, "Consume", Color(0.9, 0.2, 0.2), 64, 5),
+		# 粘液方块 (id 31)
+		ItemType.new(31, "Slime", Color(0.2, 1.0, 0.3), 64, 6),
+		# 电力方块 (id 32-35)
+		ItemType.new(32, "Power", Color(1.0, 0.2, 0.1), 64, 7),
+		ItemType.new(33, "Switch", Color(0.4, 0.4, 0.4), 64, 8),
+		ItemType.new(34, "Wire", Color(0.6, 0.5, 0.3), 64, 9),
+		ItemType.new(35, "Lamp", Color(0.9, 0.9, 0.8), 64, 10),
 	]
 	print("Item types loaded: ", item_types.size())
 
