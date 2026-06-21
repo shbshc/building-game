@@ -54,6 +54,19 @@ func _init_faces():
         face_data.append(img)
 
 
+func _init_faces_from(existing: Array):
+    face_data.clear()
+    for i in range(6):
+        if i < existing.size() and existing[i] != null:
+            face_data.append(existing[i].duplicate())
+        else:
+            var img := Image.create(TEX_SIZE, TEX_SIZE, false, Image.FORMAT_RGBA8)
+            img.fill(Color(0.5, 0.5, 0.5))
+            face_data.append(img)
+    for c in canvases:
+        c.queue_redraw()
+
+
 func _on_hover(index: int):
     _last_face = index
     active_label.text = "Face: " + FACE_NAMES[index]

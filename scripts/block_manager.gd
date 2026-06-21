@@ -59,6 +59,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		var atlas := _make_atlas(textures)
 		var tex := ImageTexture.create_from_image(atlas)
 		mat.albedo_texture = tex
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST  # 像素风格
 	else:
 		mat.albedo_color = color
 	mesh.material_override = mat
