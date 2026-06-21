@@ -67,7 +67,7 @@ func _input(event):
 								bd.switch_on = !bd.switch_on
 								$"../PowerSystem".update_power_network()
 								interacted = true
-							elif bd.func_type > 0:
+							elif bd.func_type > 0 and bd.func_type < $"../FunctionalTypes".FuncType.POWER:
 								var new_dir = ft.next_direction_index(bd.direction)
 								block_manager.set_block_direction(grid_pos, new_dir)
 								interacted = true
