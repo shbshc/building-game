@@ -61,6 +61,12 @@ func _tick_move_blocks():
 			block_manager.remove_block(pos)
 			continue
 		
+		# 粘液组：移动方块接触粘液 → 推动整组
+		var group = block_manager.get_slime_group(pos)
+		if group.size() > 1:
+			block_manager.slide_chain(pos, dir_vec)
+			continue
+		
 		# 目标被功能方块占据 → 尝试推动
 		if target != null and target.func_type > 0:
 			if block_manager.slide_chain(new_pos, dir_vec):
