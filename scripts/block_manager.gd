@@ -335,7 +335,8 @@ func move_block(from_pos: Vector3i, to_pos: Vector3i) -> Vector3:
 
 func _on_move_done(from_pos: Vector3i, to_pos: Vector3i, bd: BlockData):
 	_is_moving.erase(from_pos)
-	_refresh_direction_indicator(bd)
+	if is_instance_valid(bd.node):
+		_refresh_direction_indicator(bd)
 
 
 # 推动链：把从 start_pos 沿 dir 方向的一排方块整体推 1 格，遇到消耗方块则推动者消失
@@ -444,6 +445,8 @@ func get_slime_group(start_pos: Vector3i) -> Array:
 
 
 func _refresh_direction_indicator(bd: BlockData):
+	if not is_instance_valid(bd.node):
+		return
 	for child in bd.node.get_children():
 		if child.has_meta("is_direction_indicator"):
 			child.queue_free()
