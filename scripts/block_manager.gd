@@ -137,7 +137,6 @@ func _build_cube_mesh(textures: Array, default_color: Color) -> ArrayMesh:
 		st.set_normal(n); st.set_uv(uvs[3]); st.add_vertex(face_verts[i][3])
 		st.generate_normals()
 		var mat := StandardMaterial3D.new()
-		mat.cull_mode = BaseMaterial3D.CULL_DISABLED  # 双面渲染
 		if textures.size() == 6 and i < textures.size() and textures[i] != null:
 			var img: Image = textures[i]
 			if img.get_size() != Vector2i(16, 16):
