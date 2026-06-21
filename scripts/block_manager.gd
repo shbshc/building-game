@@ -56,7 +56,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 
 	var mat := StandardMaterial3D.new()
 	if textures.size() == 6 and textures[0] != null:
-		var img := textures[2]  # Front face as base
+		var img: Image = textures[2]  # Front face as base
 		if img.get_size() != Vector2i(16, 16):
 			img = img.duplicate()
 			img.resize(16, 16, Image.INTERPOLATE_NEAREST)

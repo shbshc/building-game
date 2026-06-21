@@ -26,11 +26,13 @@ const FACE_NAMES := ["Top", "Bottom", "Front", "Back", "Left", "Right"]
 
 var _palette_colors := [
     Color.BLACK, Color.WHITE,
-    Color.RED, Color(1,0.5,0), Color.YELLOW,
+    Color.RED, Color(1,0.3,0), Color.YELLOW,
     Color.GREEN, Color.CYAN, Color.BLUE,
-    Color.MAGENTA, Color(0.5,0.5,0.5), Color(0.3,0.3,0.3),
-    Color(0.545,0.27,0.075), Color(0.298,0.647,0.314), Color(0.957,0.816,0.247),
-    Color(0.753,0.224,0.169),
+    Color.MAGENTA, Color.PINK, Color.PURPLE,
+    Color(0.5,0.5,0.5), Color(0.3,0.3,0.3), Color(0.7,0.7,0.7),
+    Color(0.55,0.27,0.07), Color(0.3,0.65,0.31), Color(0.96,0.82,0.25),
+    Color(0.75,0.22,0.17), Color(0.84,0.86,0.86), Color.BROWN,
+    Color.ORANGE_RED, Color.SPRING_GREEN, Color.DEEP_SKY_BLUE,
 ]
 
 
@@ -58,6 +60,8 @@ func _ready():
     
     # 调色盘
     var pal := HBoxContainer.new()
+    pal.name = "Palette"
+    # 标准颜色方块 + 自定义取色按钮
     for c in _palette_colors:
         var r := ColorRect.new()
         r.color = c
@@ -220,4 +224,4 @@ func _on_load():
 
 func _on_apply():
     texture_applied.emit(face_data)
-    hide()
+    _show_select()

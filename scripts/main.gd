@@ -182,7 +182,12 @@ func open_color_picker(index: int):
 func open_paint_panel_for_item(item_id: int):
 	_paint_is_item = true
 	_paint_item_id = item_id
-	paint_panel._init_faces()
+	# 自动加载已有贴图
+	var loaded = _load_item_textures(item_id)
+	if loaded.size() == 6:
+		paint_panel._init_faces_from(loaded)
+	else:
+		paint_panel._init_faces()
 	paint_panel.texture_applied.connect(_on_item_texture_applied, CONNECT_ONE_SHOT)
 	paint_panel.popup_centered()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -193,17 +198,39 @@ var _paint_item_id := -1
 func _on_item_texture_applied(face_data: Array):
 	if _paint_is_item:
 		_item_textures[_paint_item_id] = face_data.duplicate()
+		# 保存到文件
+		_save_item_textures(_paint_item_id, face_data)
 		_paint_is_item = false
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	# 关闭背包
-	if backpack_panel != null:
-		backpack_panel.visible = false
-	paint_panel.hide()
+	# 不关背包，面板自己处理
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 
 func get_item_textures(item_id: int) -> Array:
 	return _item_textures.get(item_id, [])
+
+
+func _save_item_textures(item_id: int, textures: Array):
+	DirAccess.make_dir_absolute("user://textures")
+	for i in range(6):
+		if i < textures.size() and textures[i] != null:
+			var path = "user://textures/item_%d_face_%d.png" % [item_id, i]
+			textures[i].save_png(path)
+
+
+func _load_item_textures(item_id: int) -> Array:
+	var result: Array = []
+	for i in range(6):
+		var path = "user://textures/item_%d_face_%d.png" % [item_id, i]
+		if FileAccess.file_exists(path):
+			var img := Image.load_from_file(path)
+			if img != null:
+				img.resize(16, 16, Image.INTERPOLATE_NEAREST)
+				result.append(img)
+				continue
+		result.append(null)
+	return result
+
 
 func _get_color_picker_popup():
 	return color_picker_popup
