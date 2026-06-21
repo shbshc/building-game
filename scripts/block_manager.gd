@@ -52,10 +52,27 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		if t:
 			color = t.color
 
-	# 创建 6-Surface 自定义立方体
+	# 电路方块：简单 BoxMesh + material_override（支持发光切换）
+	var is_circuit = (func_type == func_types.FuncType.POWER or func_type == func_types.FuncType.SWITCH
+	                  or func_type == func_types.FuncType.WIRE or func_type == func_types.FuncType.LAMP)
+	
 	var mesh := MeshInstance3D.new()
-	mesh.mesh = _build_cube_mesh(textures, color)
+	if is_circuit:
+		if func_type == func_types.FuncType.WIRE:
+			mesh.mesh = _build_wire_mesh(grid_pos)
+		else:
+			mesh.mesh = BoxMesh.new()
+	else:
+		mesh.mesh = _build_cube_mesh(textures, color)
 	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
+
+	var mat := StandardMaterial3D.new()
+	if is_circuit:
+		mat.albedo_color = color
+		mesh.material_override = mat
+	elif textures.size() != 6 or textures[0] == null:
+		mat.albedo_color = color
+		mesh.material_override = mat
 
 	if func_type > 0:
 		_add_direction_indicator(mesh, direction)
@@ -128,6 +145,64 @@ func _build_cube_mesh(textures: Array, default_color: Color) -> ArrayMesh:
 		st.set_material(mat)
 		st.commit(arr_mesh)
 	return arr_mesh
+
+
+# 导线 mesh：中心小方块 + 到相邻导线的连接线
+func _build_wire_mesh(grid_pos: Vector3i) -> ArrayMesh:
+	var arr_mesh := ArrayMesh.new()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	
+	# 中心小方块 (0.2×0.2×0.2)
+	var s := 0.1
+	var verts := [
+		Vector3(-s, -s, -s), Vector3(s, -s, -s), Vector3(s, s, -s), Vector3(-s, s, -s),
+		Vector3(-s, -s, s), Vector3(s, -s, s), Vector3(s, s, s), Vector3(-s, s, s),
+	]
+	_add_box_faces(st, verts)
+	
+	# 检查6个邻居，有导线就连线 (0.05粗的梁)
+	for i in range(6):
+		var d = func_types.DIRECTION_VECTORS[i]
+		var npos = grid_pos + d
+		var nb = blocks.get(npos, null)
+		if nb != null and nb.func_type == func_types.FuncType.WIRE:
+			var beam_s := 0.05
+			var bv := [
+				Vector3(-beam_s, -beam_s, 0), Vector3(beam_s, -beam_s, 0),
+				Vector3(beam_s, beam_s, 0), Vector3(-beam_s, beam_s, 0),
+				Vector3(-beam_s, -beam_s, 0.5), Vector3(beam_s, -beam_s, 0.5),
+				Vector3(beam_s, beam_s, 0.5), Vector3(-beam_s, beam_s, 0.5),
+			]
+			# 旋转 beam 到正确方向
+			var rot := Basis()
+			if abs(d.x) == 1: rot = Basis(Vector3(0,0,1), PI/2 * d.x) if d.x > 0 else Basis(Vector3(0,0,-1), PI/2)
+			elif abs(d.y) == 1: rot = Basis(Vector3(1,0,0), -PI/2 * d.y) if d.y > 0 else Basis(Vector3(1,0,0), PI/2)
+			elif abs(d.z) == 1: rot = Basis()
+			var rv: Array[Vector3] = []
+			for v in bv:
+				rv.append(rot * v)
+			_add_box_faces(st, rv)
+	
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = func_types.get_func_type_color(func_types.FuncType.WIRE)
+	st.set_material(mat)
+	st.commit(arr_mesh)
+	return arr_mesh
+
+
+func _add_box_faces(st: SurfaceTool, v: Array):
+	# 6 faces: order same as cube (front,back,left,right,top,bottom)
+	var faces := [[0,1,2,3], [5,4,7,6], [4,0,3,7], [1,5,6,2], [3,2,6,7], [4,5,1,0]]
+	for f in faces:
+		var a:=v[f[0]]; var b:=v[f[1]]; var c:=v[f[2]]; var d:=v[f[3]]
+		var n := (b-a).cross(d-a).normalized()
+		st.set_normal(n); st.set_uv(Vector2(0,0)); st.add_vertex(a)
+		st.set_normal(n); st.set_uv(Vector2(1,0)); st.add_vertex(b)
+		st.set_normal(n); st.set_uv(Vector2(1,1)); st.add_vertex(c)
+		st.set_normal(n); st.set_uv(Vector2(0,0)); st.add_vertex(a)
+		st.set_normal(n); st.set_uv(Vector2(1,1)); st.add_vertex(c)
+		st.set_normal(n); st.set_uv(Vector2(0,1)); st.add_vertex(d)
 
 
 # 将6张16×16贴图合并为 Atlas (3列×2行, 48×32)
