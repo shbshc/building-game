@@ -120,8 +120,12 @@ func _try_break():
 
 # 从碰撞体找到方块的网格坐标
 func _get_grid_from_collider(collider: Node) -> Vector3i:
-	var node = collider.get_parent()  # 跳过 CollisionShape3D
-	node = node.get_parent()  # 跳过 StaticBody3D → 到 MeshInstance3D
+	var node = collider.get_parent()
+	if node is StaticBody3D:
+		node = node.get_parent()  # 到 MeshInstance3D
+	if node is MeshInstance3D:
+		var pos = node.position
+		return Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
 	if node is Node3D:
 		var pos = node.position
 		return Vector3i(int(pos.x - 0.5), int(pos.y - 0.5), int(pos.z - 0.5))
