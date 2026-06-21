@@ -74,7 +74,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		mat.albedo_color = color
 		mesh.material_override = mat
 
-	if func_type > 0:
+	if func_type > 0 and func_type < func_types.FuncType.POWER:
 		_add_direction_indicator(mesh, direction)
 
 	var body := StaticBody3D.new()
@@ -95,6 +95,11 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 	if textures.size() == 6:
 		bd.face_textures = textures.duplicate()
 	blocks[grid_pos] = bd
+	
+	# 刷新相邻导线连接
+	if func_type == func_types.FuncType.WIRE:
+		_refresh_adjacent_wires(grid_pos)
+	
 	return true
 
 
@@ -205,6 +210,15 @@ func _add_box_faces(st: SurfaceTool, v: Array):
 		st.set_normal(n); st.set_uv(Vector2(0,1)); st.add_vertex(d)
 
 
+func _refresh_adjacent_wires(grid_pos: Vector3i):
+	for d in func_types.DIRECTION_VECTORS:
+		var n = grid_pos + d
+		var nb = blocks.get(n, null)
+		if nb != null and nb.func_type == func_types.FuncType.WIRE:
+			nb.node.mesh = _build_wire_mesh(n)
+			nb.node.material_override.albedo_color = func_types.get_func_type_color(func_types.FuncType.WIRE)
+
+
 # 将6张16×16贴图合并为 Atlas (3列×2行, 48×32)
 func _make_atlas(textures: Array) -> Image:
 	var atlas := Image.create(48, 32, false, Image.FORMAT_RGBA8)
@@ -257,8 +271,11 @@ func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
 func remove_block(grid_pos: Vector3i) -> bool:
 	if not blocks.has(grid_pos):
 		return false
+	var was_wire = blocks[grid_pos].func_type == func_types.FuncType.WIRE
 	blocks[grid_pos].node.queue_free()
 	blocks.erase(grid_pos)
+	if was_wire:
+		_refresh_adjacent_wires(grid_pos)
 	return true
 
 
