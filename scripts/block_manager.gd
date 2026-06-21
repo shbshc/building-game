@@ -98,6 +98,10 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		bd.face_textures = textures.duplicate()
 	blocks[grid_pos] = bd
 	
+	# 开关默认开启
+	if func_type == func_types.FuncType.SWITCH:
+		bd.switch_on = true
+	
 	# 刷新相邻导线连接
 	if func_type == func_types.FuncType.WIRE:
 		_refresh_adjacent_wires(grid_pos)

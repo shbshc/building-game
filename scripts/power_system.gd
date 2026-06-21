@@ -35,9 +35,6 @@ func update_power_network():
         if bd != null:
             bd.powered = true
         
-        if dist >= MAX_DISTANCE:
-            continue
-        
         for d in func_types.DIRECTION_VECTORS:
             var n = pos + d
             if visited.has(n):
