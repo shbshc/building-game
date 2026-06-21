@@ -235,12 +235,10 @@ func slide_chain(start_pos: Vector3i, dir: Vector3i) -> bool:
 			var n = p + d
 			if blocks.has(n) and not to_move.has(n):
 				var bd_n = blocks.get(n)
-				# 粘液方块连通任意邻居，功能方块连通功能方块
+				# 只有粘液方块连通邻居
 				var slime_link = (bd_p != null and bd_p.func_type == func_types.FuncType.SLIME) \
 							  or (bd_n != null and bd_n.func_type == func_types.FuncType.SLIME)
-				var func_link = (bd_p != null and bd_p.func_type > 0) \
-							 and (bd_n != null and bd_n.func_type > 0)
-				if slime_link or func_link:
+				if slime_link:
 					to_move[n] = bd_n
 					queue.append(n)
 	
