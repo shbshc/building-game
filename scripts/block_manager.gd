@@ -62,8 +62,10 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 			mesh.mesh = _build_wire_mesh(grid_pos)
 		else:
 			mesh.mesh = BoxMesh.new()
-	else:
+	elif textures.size() == 6 and textures[0] != null:
 		mesh.mesh = _build_cube_mesh(textures, color)
+	else:
+		mesh.mesh = BoxMesh.new()
 	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
 
 	var mat := StandardMaterial3D.new()
