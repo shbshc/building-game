@@ -54,7 +54,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 
 	# 电路方块：简单 BoxMesh + material_override（支持发光切换）
 	var is_circuit = (func_type == func_types.FuncType.POWER or func_type == func_types.FuncType.SWITCH
-	                  or func_type == func_types.FuncType.WIRE or func_type == func_types.FuncType.LAMP)
+					  or func_type == func_types.FuncType.WIRE or func_type == func_types.FuncType.LAMP)
 	
 	var mesh := MeshInstance3D.new()
 	if is_circuit:
@@ -195,8 +195,8 @@ func _add_box_faces(st: SurfaceTool, v: Array):
 	# 6 faces: order same as cube (front,back,left,right,top,bottom)
 	var faces := [[0,1,2,3], [5,4,7,6], [4,0,3,7], [1,5,6,2], [3,2,6,7], [4,5,1,0]]
 	for f in faces:
-		var a:=v[f[0]]; var b:=v[f[1]]; var c:=v[f[2]]; var d:=v[f[3]]
-		var n := (b-a).cross(d-a).normalized()
+		var a: Vector3 = v[f[0]]; var b: Vector3 = v[f[1]]; var c: Vector3 = v[f[2]]; var d: Vector3 = v[f[3]]
+		var n: Vector3 = (b-a).cross(d-a).normalized()
 		st.set_normal(n); st.set_uv(Vector2(0,0)); st.add_vertex(a)
 		st.set_normal(n); st.set_uv(Vector2(1,0)); st.add_vertex(b)
 		st.set_normal(n); st.set_uv(Vector2(1,1)); st.add_vertex(c)
