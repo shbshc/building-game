@@ -57,6 +57,7 @@ func _ready():
     $EditView/EditTools/SaveBtn.pressed.connect(_on_save)
     $EditView/EditTools/LoadBtn.pressed.connect(_on_load)
     $EditView/EditTools/ApplyBtn.pressed.connect(_on_apply)
+    $EditView/EditTools/ResetBtn.pressed.connect(_on_reset)
     
     # 调色盘
     var pal := HBoxContainer.new()
@@ -199,6 +200,13 @@ func _on_clear():
     _draw_face_btn(_edit_face)
 
 
+func _on_reset():
+    # Restore current face to default gray
+    face_data[_edit_face].fill(Color(0.5, 0.5, 0.5))
+    edit_canvas.queue_redraw()
+    _draw_face_btn(_edit_face)
+
+
 func _on_fill():
     face_data[_edit_face].fill(brush_color)
     edit_canvas.queue_redraw()
@@ -208,7 +216,12 @@ func _on_fill():
 func _on_save():
     DirAccess.make_dir_absolute("user://textures")
     for i in range(6):
-        face_data[i].save_png("user://textures/face_%d.png" % i)
+        var path = "user://textures/face_%d.png" % i
+        # Backup old file if exists
+        if FileAccess.file_exists(path):
+            var backup_path = "user://textures/face_%d_backup.png" % i
+            DirAccess.copy_absolute(path, backup_path)
+        face_data[i].save_png(path)
 
 
 func _on_load():
@@ -223,5 +236,12 @@ func _on_load():
 
 
 func _on_apply():
+    # Push each face to TextureAtlas for instant global update
+    var atlas = get_node("/root/TextureAtlas")
+    var face_names := ["top", "bottom", "front", "back", "right", "left"]
+    for i in range(6):
+        var key = "custom_face_" + face_names[i]
+        atlas.update_slot(key, face_data[i])
+
     texture_applied.emit(face_data)
     _show_select()

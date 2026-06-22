@@ -1,4 +1,4 @@
-extends Node3D
+﻿extends Node3D
 
 @onready var block_manager = $Blocks
 @onready var inventory_bar = $UI/UIContainer/InventoryBar
@@ -231,8 +231,12 @@ func open_color_picker(index: int):
 func open_paint_panel_for_item(item_id: int):
 	_paint_is_item = true
 	_paint_item_id = item_id
-	# 自动加载已有贴图
-	var loaded = _load_item_textures(item_id)
+	# Resolve model_id for loading existing textures
+	var model_id = "stone"
+	var t = $ItemTypes.get_type(item_id)
+	if t:
+		model_id = t.model_id
+	var loaded = _load_item_textures(model_id)
 	if loaded.size() == 6:
 		paint_panel._init_faces_from(loaded)
 	else:
@@ -245,12 +249,20 @@ var _paint_is_item := false
 var _paint_item_id := -1
 
 func _on_item_texture_applied(face_data: Array):
-	if _paint_is_item:
-		_item_textures[_paint_item_id] = face_data.duplicate()
-		# 保存到文件
-		_save_item_textures(_paint_item_id, face_data)
-		_paint_is_item = false
-	# 不关背包，面板自己处理
+	var atlas = get_node("/root/TextureAtlas")
+	var face_names := ["top", "bottom", "front", "back", "right", "left"]
+	var model_id = "stone"
+	if _paint_item_id >= 0:
+		var t = $ItemTypes.get_type(_paint_item_id)
+		if t:
+			model_id = t.model_id
+
+	for i in range(6):
+		var key = "custom_" + model_id + "_" + face_names[i]
+		atlas.update_slot(key, face_data[i])
+		_save_item_texture(model_id, i, face_data[i])
+
+	_paint_is_item = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
@@ -259,18 +271,20 @@ func get_item_textures(item_id: int) -> Array:
 	return _item_textures.get(item_id, [])
 
 
-func _save_item_textures(item_id: int, textures: Array):
+func _save_item_texture(model_id: String, face: int, img: Image):
 	DirAccess.make_dir_absolute("user://textures")
-	for i in range(6):
-		if i < textures.size() and textures[i] != null:
-			var path = "user://textures/item_%d_face_%d.png" % [item_id, i]
-			textures[i].save_png(path)
+	var path = "user://textures/%s_face_%d.png" % [model_id, face]
+	# Backup old file if exists
+	if FileAccess.file_exists(path):
+		var bak = path.replace(".png", "_backup.png")
+		DirAccess.copy_absolute(path, bak)
+	img.save_png(path)
 
 
-func _load_item_textures(item_id: int) -> Array:
+func _load_item_textures(model_id: String) -> Array:
 	var result: Array = []
 	for i in range(6):
-		var path = "user://textures/item_%d_face_%d.png" % [item_id, i]
+		var path = "user://textures/%s_face_%d.png" % [model_id, i]
 		if FileAccess.file_exists(path):
 			var img := Image.load_from_file(path)
 			if img != null:
