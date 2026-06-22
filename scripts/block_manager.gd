@@ -40,7 +40,7 @@ func can_place_at(grid_pos: Vector3i) -> bool:
 	return false
 
 
-func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, func_type: int = 0, direction: int = 2) -> bool:
+func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, func_type: int = 0, direction: int = 2, textures: Array = []) -> bool:
 	if not can_place_at(grid_pos):
 		return false
 
@@ -75,7 +75,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		else:
 			mesh.mesh = BoxMesh.new()
 	else:
-		mesh.mesh = _build_cube_mesh_from_atlas(face_keys, tint_faces, color, has_overlay, overlay_keys, [])
+		mesh.mesh = _build_cube_mesh_from_atlas(face_keys, tint_faces, color, has_overlay, overlay_keys, textures)
 	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
 
 	var mat := StandardMaterial3D.new()
@@ -102,6 +102,8 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 	bd.func_type = func_type
 	bd.direction = direction
 	bd.model_id = model_id
+	if textures.size() == 6:
+		bd.custom_textures = textures.duplicate()
 	blocks[grid_pos] = bd
 	
 	# 开关默认开启
@@ -233,6 +235,7 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = atlas_tex
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	mat.albedo_color = base_color
 	st.set_material(mat)
 
 	for i in range(6):
@@ -263,7 +266,6 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
 		st.set_normal(n); st.set_uv(uvs[3]); st.add_vertex(face_verts[i][3])
 
-	st.generate_normals()
 	st.commit(arr_mesh)
 
 	# Surface 1: overlay faces (if any)
@@ -298,7 +300,6 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 			st2.set_normal(n); st2.set_uv(uvs[2]); st2.add_vertex(face_verts[i][2])
 			st2.set_normal(n); st2.set_uv(uvs[3]); st2.add_vertex(face_verts[i][3])
 
-		st2.generate_normals()
 		st2.commit(arr_mesh)
 
 	return arr_mesh
