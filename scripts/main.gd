@@ -18,7 +18,49 @@ var _move_tick_timer := 0.0
 var _item_textures: Dictionary = {}
 const MOVE_TICK_INTERVAL := 1.0
 
+func _register_builtin_textures():
+	var atlas = get_node("/root/TextureAtlas")
+	var texture_keys := {
+		"stone": Color(0.5, 0.5, 0.5),
+		"wood": Color(0.545, 0.27, 0.075),
+		"grass_side": Color(0.298, 0.647, 0.314),
+		"sand": Color(0.957, 0.816, 0.247),
+		"glass": Color(0.835, 0.859, 0.859, 0.5),
+		"brick": Color(0.753, 0.224, 0.169),
+		"marble": Color(0.9, 0.9, 0.85),
+		"obsidian": Color(0.1, 0.05, 0.15),
+		"metal": Color(0.65, 0.65, 0.7),
+		"dirt": Color(0.4, 0.3, 0.2),
+		"move": Color(0.2, 0.6, 1.0),
+		"turn": Color(0.3, 0.9, 0.3),
+		"generator": Color(0.7, 0.3, 1.0),
+		"push": Color(1.0, 0.6, 0.1),
+		"consume": Color(0.9, 0.2, 0.2),
+		"slime": Color(0.2, 1.0, 0.3),
+		"power": Color(1.0, 0.2, 0.1),
+		"switch": Color(0.4, 0.4, 0.4),
+		"wire": Color(0.6, 0.5, 0.3),
+		"lamp": Color(0.9, 0.9, 0.8),
+	}
+
+	for key in texture_keys:
+		var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+		img.fill(texture_keys[key])
+		# Draw a 1px darker border for visual definition
+		var border_color = texture_keys[key].darkened(0.2)
+		for x in range(16):
+			img.set_pixel(x, 0, border_color)
+			img.set_pixel(x, 15, border_color)
+		for y in range(16):
+			img.set_pixel(0, y, border_color)
+			img.set_pixel(15, y, border_color)
+		atlas.register_image(key, img)
+
+	print("Registered ", texture_keys.size(), " built-in textures into atlas")
+
+
 func _ready():
+	_register_builtin_textures()
 	print("=== Game started ===")
 	_setup_ui()
 	_create_crosshair()
