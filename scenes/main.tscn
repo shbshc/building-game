@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/inventory_manager.gd" id="9_inventory_manager"]
 [ext_resource type="Script" path="res://scripts/functional_types.gd" id="10_functional_types"]
 [ext_resource type="Script" path="res://scripts/power_system.gd" id="11_power_system"]
+[ext_resource type="Script" path="res://scripts/block_model.gd" id="12_block_model"]
 
 [sub_resource type="CapsuleShape3D" id="player_shape"]
 radius = 0.4
@@ -68,6 +69,9 @@ script = ExtResource("10_functional_types")
 
 [node name="PowerSystem" type="Node" parent="."]
 script = ExtResource("11_power_system")
+
+[node name="BlockModel" type="Node" parent="."]
+script = ExtResource("12_block_model")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
