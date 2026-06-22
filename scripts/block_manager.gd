@@ -2,6 +2,7 @@ extends Node3D
 
 @onready var item_types_node = $"../ItemTypes"
 @onready var func_types = $"../FunctionalTypes"
+@onready var block_model = $"../BlockModel"
 
 var blocks := {}  # Dictionary: Vector3i -> BlockData
 var _is_moving: Dictionary = {}  # 正在动画中的方块
@@ -12,9 +13,10 @@ class BlockData:
 	var node: MeshInstance3D = null
 	var func_type: int = 0
 	var direction: int = 2
-	var face_textures: Array = []
 	var powered: bool = false
 	var switch_on: bool = false
+	var model_id: String = ""
+	var custom_textures: Array = []
 
 var selected_color := Color.RED
 
@@ -38,9 +40,19 @@ func can_place_at(grid_pos: Vector3i) -> bool:
 	return false
 
 
-func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, func_type: int = 0, direction: int = 2, textures: Array = []) -> bool:
+func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, func_type: int = 0, direction: int = 2) -> bool:
 	if not can_place_at(grid_pos):
 		return false
+
+	var model_id := ""
+	if item_id >= 0 and item_types_node:
+		model_id = item_types_node.get_model_id(item_id)
+	
+	var resolved = block_model.resolve(model_id)
+	var face_keys: Dictionary = resolved.get("faces", {})
+	var tint_faces: Array = resolved.get("tint_faces", [])
+	var overlay_keys: Dictionary = resolved.get("overlay_faces", {})
+	var has_overlay = not overlay_keys.is_empty()
 
 	var color := selected_color
 	if custom_color != null:
@@ -62,17 +74,12 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 			mesh.mesh = _build_wire_mesh(grid_pos)
 		else:
 			mesh.mesh = BoxMesh.new()
-	elif textures.size() == 6 and textures[0] != null:
-		mesh.mesh = _build_cube_mesh(textures, color)
 	else:
-		mesh.mesh = BoxMesh.new()
+		mesh.mesh = _build_cube_mesh_from_atlas(face_keys, tint_faces, color, has_overlay, overlay_keys, [])
 	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
 
 	var mat := StandardMaterial3D.new()
 	if is_circuit:
-		mat.albedo_color = color
-		mesh.material_override = mat
-	elif textures.size() != 6 or textures[0] == null:
 		mat.albedo_color = color
 		mesh.material_override = mat
 
@@ -94,8 +101,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 	bd.node = mesh
 	bd.func_type = func_type
 	bd.direction = direction
-	if textures.size() == 6:
-		bd.face_textures = textures.duplicate()
+	bd.model_id = model_id
 	blocks[grid_pos] = bd
 	
 	# 开关默认开启
@@ -107,54 +113,6 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		_refresh_adjacent_wires(grid_pos)
 	
 	return true
-
-
-# 6 面独立材质的立方体
-func _build_cube_mesh(textures: Array, default_color: Color) -> ArrayMesh:
-	var arr_mesh := ArrayMesh.new()
-	# 每面 4 顶点 2 三角形
-	var face_verts := [
-		# +Y Top (0)
-		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5)],
-		# -Y Bottom (1)
-		[Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],
-		# +Z Front (2)
-		[Vector3(-0.5, -0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],
-		# -Z Back (3)
-		[Vector3(0.5, -0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5)],
-		# +X Right (4)
-		[Vector3(0.5, -0.5, 0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5)],
-		# -X Left (5)
-		[Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, 0.5, -0.5)],
-	]
-	var uvs := [Vector2(1, 0), Vector2(0, 0), Vector2(0, 1), Vector2(1, 1)]
-
-	for i in range(6):
-		var st := SurfaceTool.new()
-		st.begin(Mesh.PRIMITIVE_TRIANGLES)
-		var n: Vector3 = (face_verts[i][1] - face_verts[i][0]).cross(face_verts[i][3] - face_verts[i][0]).normalized()
-		# Tri 1: v0, v1, v2
-		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
-		st.set_normal(n); st.set_uv(uvs[1]); st.add_vertex(face_verts[i][1])
-		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
-		# Tri 2: v0, v2, v3
-		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
-		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
-		st.set_normal(n); st.set_uv(uvs[3]); st.add_vertex(face_verts[i][3])
-		st.generate_normals()
-		var mat := StandardMaterial3D.new()
-		if textures.size() == 6 and i < textures.size() and textures[i] != null:
-			var img: Image = textures[i]
-			if img.get_size() != Vector2i(16, 16):
-				img = img.duplicate()
-				img.resize(16, 16, Image.INTERPOLATE_NEAREST)
-			mat.albedo_texture = ImageTexture.create_from_image(img)
-			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		else:
-			mat.albedo_color = default_color
-		st.set_material(mat)
-		st.commit(arr_mesh)
-	return arr_mesh
 
 
 # 导线 mesh：中心小方块 + 到相邻导线的连接线
@@ -228,30 +186,6 @@ func _refresh_adjacent_wires(grid_pos: Vector3i):
 			nb.node.material_override.albedo_color = func_types.get_func_type_color(func_types.FuncType.WIRE)
 
 
-# 将6张16×16贴图合并为 Atlas (3列×2行, 48×32)
-func _make_atlas(textures: Array) -> Image:
-	var atlas := Image.create(48, 32, false, Image.FORMAT_RGBA8)
-	atlas.fill(Color.GRAY)
-	# 布局: (0,0)=Top (16,0)=Bottom (32,0)=Front
-	#        (0,16)=Back (16,16)=Left (32,16)=Right
-	var layout := [
-		[0, 0], [16, 0], [32, 0],
-		[0, 16], [16, 16], [32, 16],
-	]
-	for i in range(6):
-		if i < textures.size() and textures[i] != null:
-			var img: Image = textures[i]
-			if img.get_size() != Vector2i(16, 16):
-				img = img.duplicate()
-				img.resize(16, 16)
-			var dst_x = layout[i][0]
-			var dst_y = layout[i][1]
-			for x in range(16):
-				for y in range(16):
-					atlas.set_pixel(dst_x + x, dst_y + y, img.get_pixel(x, y))
-	return atlas
-
-
 func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
 	var indicator := MeshInstance3D.new()
 	indicator.mesh = BoxMesh.new()
@@ -275,6 +209,99 @@ func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
 	ind_mat.emission_energy_multiplier = 0.5
 	indicator.material_override = ind_mat
 	mesh.add_child(indicator)
+
+
+
+func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_color: Color,
+								  has_overlay: bool, overlay_keys: Dictionary, custom_textures: Array) -> ArrayMesh:
+	var arr_mesh := ArrayMesh.new()
+	var atlas_tex = TextureAtlas.get_atlas_texture()
+
+	var face_verts := [
+		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5)],
+		[Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],
+		[Vector3(-0.5, -0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],
+		[Vector3(0.5, -0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5)],
+		[Vector3(0.5, -0.5, 0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5)],
+		[Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, 0.5, -0.5)],
+	]
+	var face_names := ["top", "bottom", "front", "back", "right", "left"]
+
+	# Surface 0: base faces
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = atlas_tex
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	st.set_material(mat)
+
+	for i in range(6):
+		var fname = face_names[i]
+		var tex_key = face_keys.get(fname, "stone")
+
+		# Check for custom texture override
+		if custom_textures.size() == 6 and i < custom_textures.size() and custom_textures[i] != null:
+			tex_key = "custom_" + face_keys.get(fname, "stone") + "_" + fname
+			if TextureAtlas.get_uv(tex_key) == Rect2():
+				TextureAtlas.register_image(tex_key, custom_textures[i])
+
+		var uv_rect = TextureAtlas.get_uv(tex_key)
+		if uv_rect == Rect2():
+			uv_rect = Rect2(0, 0, float(TextureAtlas.TEX_SIZE) / TextureAtlas.ATLAS_SIZE, float(TextureAtlas.TEX_SIZE) / TextureAtlas.ATLAS_SIZE)
+
+		var uvs := [
+			Vector2(uv_rect.end.x, uv_rect.position.y),
+			Vector2(uv_rect.position.x, uv_rect.position.y),
+			Vector2(uv_rect.position.x, uv_rect.end.y),
+			Vector2(uv_rect.end.x, uv_rect.end.y),
+		]
+		var n: Vector3 = (face_verts[i][1] - face_verts[i][0]).cross(face_verts[i][3] - face_verts[i][0]).normalized()
+		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
+		st.set_normal(n); st.set_uv(uvs[1]); st.add_vertex(face_verts[i][1])
+		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
+		st.set_normal(n); st.set_uv(uvs[0]); st.add_vertex(face_verts[i][0])
+		st.set_normal(n); st.set_uv(uvs[2]); st.add_vertex(face_verts[i][2])
+		st.set_normal(n); st.set_uv(uvs[3]); st.add_vertex(face_verts[i][3])
+
+	st.generate_normals()
+	st.commit(arr_mesh)
+
+	# Surface 1: overlay faces (if any)
+	if has_overlay and not overlay_keys.is_empty():
+		var st2 := SurfaceTool.new()
+		st2.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var mat2 := StandardMaterial3D.new()
+		mat2.albedo_texture = atlas_tex
+		mat2.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat2.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		st2.set_material(mat2)
+
+		for i in range(6):
+			var fname = face_names[i]
+			if not overlay_keys.has(fname):
+				continue
+			var tex_key = overlay_keys[fname]
+			var uv_rect = TextureAtlas.get_uv(tex_key)
+			if uv_rect == Rect2():
+				continue
+			var uvs := [
+				Vector2(uv_rect.end.x, uv_rect.position.y),
+				Vector2(uv_rect.position.x, uv_rect.position.y),
+				Vector2(uv_rect.position.x, uv_rect.end.y),
+				Vector2(uv_rect.end.x, uv_rect.end.y),
+			]
+			var n: Vector3 = (face_verts[i][1] - face_verts[i][0]).cross(face_verts[i][3] - face_verts[i][0]).normalized()
+			st2.set_normal(n); st2.set_uv(uvs[0]); st2.add_vertex(face_verts[i][0])
+			st2.set_normal(n); st2.set_uv(uvs[1]); st2.add_vertex(face_verts[i][1])
+			st2.set_normal(n); st2.set_uv(uvs[2]); st2.add_vertex(face_verts[i][2])
+			st2.set_normal(n); st2.set_uv(uvs[0]); st2.add_vertex(face_verts[i][0])
+			st2.set_normal(n); st2.set_uv(uvs[2]); st2.add_vertex(face_verts[i][2])
+			st2.set_normal(n); st2.set_uv(uvs[3]); st2.add_vertex(face_verts[i][3])
+
+		st2.generate_normals()
+		st2.commit(arr_mesh)
+
+	return arr_mesh
 
 
 func remove_block(grid_pos: Vector3i) -> bool:
