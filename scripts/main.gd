@@ -7,6 +7,8 @@
 @onready var camera_rig = $CameraRig
 var backpack_panel: Panel = null
 var paint_panel: PopupPanel = null
+var save_panel: PopupPanel
+var load_panel: PopupPanel
 
 var ground_color_popup: PopupPanel
 var color_picker_popup: PopupPanel
@@ -64,6 +66,8 @@ func _register_builtin_textures():
 					img.set_pixel(gx, gy, dot_color)
 			atlas.register_image(face_key, img)
 
+	# Export for visual inspection
+	atlas.export_atlas_png()
 	print("Registered ", texture_keys.size() * 6, " per-face textures into atlas")
 
 
@@ -78,6 +82,11 @@ func _ready():
 	paint_panel = preload("res://scenes/ui/paint_panel.tscn").instantiate()
 	$UI/UIContainer.add_child(paint_panel)
 	paint_panel.hide()
+	save_panel = preload("res://scenes/ui/save_panel.tscn").instantiate()
+	$UI/UIContainer.add_child(save_panel)
+	load_panel = preload("res://scenes/ui/load_panel.tscn").instantiate()
+	$UI/UIContainer.add_child(load_panel)
+	save_manager.migrate_old_save()
 	get_tree().root.size_changed.connect(_on_window_resize)
 
 func _process(delta):
@@ -312,13 +321,10 @@ func _on_color_confirmed(color: Color):
 	$InventoryManager.slot_colors[$InventoryManager.selected_slot] = color
 
 func _on_save_pressed():
-	print("SAVE")
-	DirAccess.make_dir_absolute("user://")
-	print(save_manager.save(block_manager, $InventoryManager, ground))
+	save_panel.open_panel(block_manager, $InventoryManager, ground, camera_rig, save_manager)
 
 func _on_load_pressed():
-	print("LOAD")
-	print(save_manager.load(block_manager, $InventoryManager, ground))
+	load_panel.open_panel(block_manager, $InventoryManager, ground, camera_rig, self, save_manager)
 
 func is_backpack_open() -> bool:
 	return backpack_panel != null and backpack_panel.visible
