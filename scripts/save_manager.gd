@@ -21,11 +21,11 @@ func save(block_manager, inventory_manager, ground_node) -> bool:
             "model_id": b.model_id
         })
         # 保存贴图 PNG
-        if b.face_textures.size() == 6 and b.face_textures[0] != null:
+        if b.custom_textures.size() == 6 and b.custom_textures[0] != null:
             DirAccess.make_dir_absolute("user://textures")
             for i in range(6):
                 var path = "user://textures/%s_face_%d.png" % [b.model_id, i]
-                b.face_textures[i].save_png(path)
+                b.custom_textures[i].save_png(path)
     for slot in inventory_manager.hotbar:
         data["inventory"].append({
             "item_id": slot.item_id,
@@ -59,7 +59,12 @@ func load(block_manager, inventory_manager, ground_node) -> bool:
         var func_type = b.get("func_type", 0)
         var direction = b.get("direction", 2)
         var model_id = b.get("model_id", "stone")
-        # Load custom textures for this model_id
+        # Load custom textures for this model_id and push to atlas
+        var face_names := ["top", "bottom", "front", "back", "right", "left"]
+        var model = get_node("/root/Main/BlockModel")
+        var resolved = model.resolve(model_id)
+        var face_keys = resolved.get("faces", {})
+        var atlas = get_node("/root/TextureAtlas")
         var textures: Array = []
         for face_idx in range(6):
             var path = "user://textures/%s_face_%d.png" % [model_id, face_idx]
@@ -68,6 +73,9 @@ func load(block_manager, inventory_manager, ground_node) -> bool:
                 if img:
                     img.resize(16, 16, Image.INTERPOLATE_NEAREST)
                     textures.append(img)
+                    # Push to atlas at the model's face key
+                    var tex_key = face_keys.get(face_names[face_idx], "stone")
+                    atlas.update_slot(tex_key, img)
                 else:
                     textures.append(null)
             else:

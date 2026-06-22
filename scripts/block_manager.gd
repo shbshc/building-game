@@ -75,7 +75,7 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		else:
 			mesh.mesh = BoxMesh.new()
 	else:
-		mesh.mesh = _build_cube_mesh_from_atlas(face_keys, tint_faces, color, has_overlay, overlay_keys, textures)
+		mesh.mesh = _build_cube_mesh_from_atlas(face_keys, tint_faces, color, has_overlay, overlay_keys, model_id, textures)
 	mesh.position = Vector3(grid_pos) + Vector3(0.5, 0.5, 0.5)
 
 	var mat := StandardMaterial3D.new()
@@ -215,17 +215,17 @@ func _add_direction_indicator(mesh: MeshInstance3D, dir_idx: int):
 
 
 func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_color: Color,
-								  has_overlay: bool, overlay_keys: Dictionary, custom_textures: Array) -> ArrayMesh:
+								  has_overlay: bool, overlay_keys: Dictionary, model_id: String, custom_textures: Array) -> ArrayMesh:
 	var arr_mesh := ArrayMesh.new()
 	var atlas_tex = TextureAtlas.get_atlas_texture()
 
 	var face_verts := [
-		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5)],
-		[Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],
-		[Vector3(-0.5, -0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],
-		[Vector3(0.5, -0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5)],
-		[Vector3(0.5, -0.5, 0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5)],
-		[Vector3(-0.5, -0.5, -0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, 0.5, -0.5)],
+		[Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],  # +Y Top (flipped for Godot)
+		[Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],  # -Y Bottom
+		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],  # +Z Front
+		[Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5)],  # -Z Back
+		[Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5)],  # +X Right
+		[Vector3(-0.5, 0.5, -0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, -0.5, -0.5)],  # -X Left
 	]
 	var face_names := ["top", "bottom", "front", "back", "right", "left"]
 
@@ -235,18 +235,12 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = atlas_tex
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	mat.albedo_color = base_color
+	mat.albedo_color = Color.WHITE  # texture has its own color, don't tint
 	st.set_material(mat)
 
 	for i in range(6):
 		var fname = face_names[i]
 		var tex_key = face_keys.get(fname, "stone")
-
-		# Check for custom texture override
-		if custom_textures.size() == 6 and i < custom_textures.size() and custom_textures[i] != null:
-			tex_key = "custom_" + face_keys.get(fname, "stone") + "_" + fname
-			if TextureAtlas.get_uv(tex_key) == Rect2():
-				TextureAtlas.register_image(tex_key, custom_textures[i])
 
 		var uv_rect = TextureAtlas.get_uv(tex_key)
 		if uv_rect == Rect2():

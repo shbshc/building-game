@@ -6,9 +6,9 @@ extends Node
 const PARENT_MODELS := {
     "cube_all": {
         "faces": {
-            "top": "#all", "bottom": "#all",
-            "front": "#all", "back": "#all",
-            "left": "#all", "right": "#all"
+            "top": "#top", "bottom": "#bottom",
+            "front": "#front", "back": "#back",
+            "right": "#right", "left": "#left"
         }
     },
     "cube_bottom_top": {
@@ -78,6 +78,15 @@ func resolve(model_id: String) -> Dictionary:
     var parent_key = def.get("parent", "cube_all")
     var parent = PARENT_MODELS.get(parent_key, PARENT_MODELS["cube_all"])
     var textures: Dictionary = def.get("textures", {})
+
+    # Auto-expand "all" → per-face keys (so paint panel has 6 independent faces)
+    if textures.has("all"):
+        var base: String = textures["all"]
+        textures = {
+            "top": base + "_top", "bottom": base + "_bottom",
+            "front": base + "_front", "back": base + "_back",
+            "right": base + "_right", "left": base + "_left"
+        }
 
     # Resolve faces: replace #var with actual texture key
     var resolved_faces := {}

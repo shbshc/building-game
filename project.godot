@@ -33,6 +33,10 @@ run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+TextureAtlas="*res://scripts/texture_atlas.gd"
+
 [display]
 
 window/size/viewport_width=1280
@@ -93,8 +97,3 @@ backpack={
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 anti_aliasing/quality/msaa_3d=2
-
-[autoload]
-
-TextureAtlas="*res://scripts/texture_atlas.gd"
-

@@ -3,56 +3,27 @@
 [ext_resource type="Script" path="res://scripts/paint_panel.gd" id="1_pp"]
 
 [node name="PaintPanel" type="PopupPanel"]
-size = Vector2i(600, 460)
+size = Vector2i(680, 560)
 script = ExtResource("1_pp")
 
 [node name="SelectView" type="VBoxContainer" parent="."]
-layout_mode = 1
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 584.0
-offset_bottom = 444.0
-
-[node name="SelectLabel" type="Label" parent="SelectView"]
-text = "Click a face to edit"
-
-[node name="FaceGrid" type="GridContainer" parent="SelectView"]
-columns = 3
-
-[node name="TopBtn" type="Button" parent="SelectView/FaceGrid"]
-custom_minimum_size = Vector2(160, 160)
-
-[node name="BottomBtn" type="Button" parent="SelectView/FaceGrid"]
-custom_minimum_size = Vector2(160, 160)
-
-[node name="FrontBtn" type="Button" parent="SelectView/FaceGrid"]
-custom_minimum_size = Vector2(160, 160)
-
-[node name="BackBtn" type="Button" parent="SelectView/FaceGrid"]
-custom_minimum_size = Vector2(160, 160)
-
-[node name="LeftBtn" type="Button" parent="SelectView/FaceGrid"]
-custom_minimum_size = Vector2(160, 160)
-
-[node name="RightBtn" type="Button" parent="SelectView/FaceGrid"]
-custom_minimum_size = Vector2(160, 160)
-
-[node name="EditView" type="VBoxContainer" parent="."]
 visible = false
 layout_mode = 1
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 584.0
-offset_bottom = 444.0
+
+[node name="EditView" type="VBoxContainer" parent="."]
+visible = true
+layout_mode = 1
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 670.0
+offset_bottom = 554.0
 
 [node name="EditTop" type="HBoxContainer" parent="EditView"]
-[node name="BackBtn" type="Button" parent="EditView/EditTop"]
-text = "< Back"
 [node name="EditLabel" type="Label" parent="EditView/EditTop"]
-text = "Editing: Top"
+text = "Cube Net Editor"
 
 [node name="EditCanvas" type="Control" parent="EditView"]
-custom_minimum_size = Vector2(320, 320)
+custom_minimum_size = Vector2(512, 384)
 mouse_filter = 1
 
 [node name="EditTools" type="HBoxContainer" parent="EditView"]
@@ -94,3 +65,6 @@ text = "Load"
 
 [node name="ApplyBtn" type="Button" parent="EditView/EditTools"]
 text = "Apply"
+
+[node name="ResetBtn" type="Button" parent="EditView/EditTools"]
+text = "Reset"

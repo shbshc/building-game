@@ -43,19 +43,28 @@ func _register_builtin_textures():
 	}
 
 	for key in texture_keys:
-		var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
-		img.fill(texture_keys[key])
-		# Draw a 1px darker border for visual definition
-		var border_color = texture_keys[key].darkened(0.2)
-		for x in range(16):
-			img.set_pixel(x, 0, border_color)
-			img.set_pixel(x, 15, border_color)
-		for y in range(16):
-			img.set_pixel(0, y, border_color)
-			img.set_pixel(15, y, border_color)
-		atlas.register_image(key, img)
+		# Register 6 per-face variants (e.g., "stone_top", "stone_bottom", ...)
+		var faces := ["top", "bottom", "front", "back", "right", "left"]
+		for face in faces:
+			var face_key = key + "_" + face
+			var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			img.fill(texture_keys[key])
+			# Draw a 1px darker border + subtle crosshatch for visual definition
+			var border_color = texture_keys[key].darkened(0.2)
+			for x in range(16):
+				img.set_pixel(x, 0, border_color)
+				img.set_pixel(x, 15, border_color)
+			for y in range(16):
+				img.set_pixel(0, y, border_color)
+				img.set_pixel(15, y, border_color)
+			# Subtle 2px dot grid so white faces aren't just blank
+			var dot_color = texture_keys[key].darkened(0.08)
+			for gx in range(2, 15, 4):
+				for gy in range(2, 15, 4):
+					img.set_pixel(gx, gy, dot_color)
+			atlas.register_image(face_key, img)
 
-	print("Registered ", texture_keys.size(), " built-in textures into atlas")
+	print("Registered ", texture_keys.size() * 6, " per-face textures into atlas")
 
 
 func _ready():
@@ -235,6 +244,8 @@ func open_paint_panel_for_item(item_id: int):
 	var t = $ItemTypes.get_type(item_id)
 	if t:
 		model_id = t.model_id
+	# Tell paint panel which model we're editing (for atlas key)
+	paint_panel._model_id = model_id
 	var loaded = _load_item_textures(model_id)
 	if loaded.size() == 6:
 		paint_panel._init_faces_from(loaded)
@@ -256,9 +267,13 @@ func _on_item_texture_applied(face_data: Array):
 		if t:
 			model_id = t.model_id
 
+	# Push to the model's own atlas slots (same keys as the mesh builder reads)
+	var resolved = $BlockModel.resolve(model_id)
+	var face_keys = resolved.get("faces", {})
+
 	for i in range(6):
-		var key = "custom_" + model_id + "_" + face_names[i]
-		atlas.update_slot(key, face_data[i])
+		var tex_key = face_keys.get(face_names[i], "stone")
+		atlas.update_slot(tex_key, face_data[i])
 		_save_item_texture(model_id, i, face_data[i])
 
 	_paint_is_item = false
