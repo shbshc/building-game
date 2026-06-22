@@ -15,7 +15,6 @@ var load_btn: Button
 var ground_btn: Button
 var crosshair: ColorRect
 var _move_tick_timer := 0.0
-var _item_textures: Dictionary = {}
 const MOVE_TICK_INTERVAL := 1.0
 
 func _register_builtin_textures():
@@ -265,10 +264,6 @@ func _on_item_texture_applied(face_data: Array):
 	_paint_is_item = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
-
-
-func get_item_textures(item_id: int) -> Array:
-	return _item_textures.get(item_id, [])
 
 
 func _save_item_texture(model_id: String, face: int, img: Image):

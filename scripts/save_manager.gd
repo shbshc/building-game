@@ -18,13 +18,13 @@ func save(block_manager, inventory_manager, ground_node) -> bool:
             "item_id": b.item_id,
             "func_type": b.func_type,
             "direction": b.direction,
-            "has_texture": b.face_textures.size() == 6 and b.face_textures[0] != null
+            "model_id": b.model_id
         })
         # 保存贴图 PNG
         if b.face_textures.size() == 6 and b.face_textures[0] != null:
             DirAccess.make_dir_absolute("user://textures")
             for i in range(6):
-                var path = "user://textures/b_%d_%d_%d_f%d.png" % [pos.x, pos.y, pos.z, i]
+                var path = "user://textures/%s_face_%d.png" % [b.model_id, i]
                 b.face_textures[i].save_png(path)
     for slot in inventory_manager.hotbar:
         data["inventory"].append({
@@ -58,28 +58,29 @@ func load(block_manager, inventory_manager, ground_node) -> bool:
         var item_id = b.get("item_id", -1)
         var func_type = b.get("func_type", 0)
         var direction = b.get("direction", 2)
+        var model_id = b.get("model_id", "stone")
+        # Load custom textures for this model_id
+        var textures: Array = []
+        for face_idx in range(6):
+            var path = "user://textures/%s_face_%d.png" % [model_id, face_idx]
+            if FileAccess.file_exists(path):
+                var img = Image.load_from_file(path)
+                if img:
+                    img.resize(16, 16, Image.INTERPOLATE_NEAREST)
+                    textures.append(img)
+                else:
+                    textures.append(null)
+            else:
+                textures.append(null)
+
         block_manager.place_block(
             Vector3i(b["x"], b["y"], b["z"]),
             item_id,
             null,
             func_type,
-            direction
+            direction,
+            textures
         )
-        # 恢复贴图
-        if b.get("has_texture", false):
-            var textures: Array = []
-            for i in range(6):
-                var path = "user://textures/b_%d_%d_%d_f%d.png" % [b["x"], b["y"], b["z"], i]
-                if FileAccess.file_exists(path):
-                    var img := Image.load_from_file(path)
-                    if img != null:
-                        textures.append(img)
-                        continue
-                textures.append(null)
-            # 重新放置（带贴图）
-            var gpos = Vector3i(b["x"], b["y"], b["z"])
-            block_manager.remove_block(gpos)
-            block_manager.place_block(gpos, item_id, null, func_type, direction, textures)
     var inv = data.get("inventory", [])
     for i in min(inv.size(), inventory_manager.HOTBAR_SIZE):
         var slot_data = inv[i]
