@@ -62,6 +62,7 @@ var block_models := {
     "switch":    { "parent": "cube_all", "textures": {"all": "switch"} },
     "wire":      { "parent": "cube_all", "textures": {"all": "wire"} },
     "lamp":      { "parent": "cube_all", "textures": {"all": "lamp"} },
+    "not_gate":  { "parent": "cube_all", "textures": {"all": "not_gate"} },
 }
 
 

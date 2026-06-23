@@ -8,33 +8,59 @@ const MAX_DISTANCE := 15
 
 
 func update_power_network():
-    # 1. 清除所有带电状态
     _clear_all_power()
     
-    # 2. 收集电源 + 打开的开关 → BFS 队列
-    var queue: Array = []  # [Vector3i, distance]
+    var queue: Array = []
     var visited: Dictionary = {}
     
+    # Collect Power blocks
     for pos in block_manager.blocks:
         var bd = block_manager.blocks[pos]
         if bd.func_type == func_types.FuncType.POWER:
-            queue.append([pos, 0])
+            queue.append([pos, 0, false])  # [pos, dist, is_not_gate]
             visited[pos] = true
-        elif bd.func_type == func_types.FuncType.SWITCH:
-            # 开关不发电，只导电——由 BFS 蔓延时通过导线连通
-            pass
     
-    # 3. BFS 蔓延
+    # BFS pass 1: from Power blocks (skip NOT_GATEs)
+    _bfs_spread(queue, visited, false)
+    
+    # Pass 2: unpowered NOT_GATEs become directional sources
+    for pos in block_manager.blocks:
+        var bd = block_manager.blocks[pos]
+        if bd.func_type != func_types.FuncType.NOT_GATE:
+            continue
+        if bd.powered:
+            continue  # got power from pass 1, stays off
+        # Check input face (opposite of arrow)
+        var dir_vec = func_types.DIRECTION_VECTORS[bd.direction]
+        var input_pos = pos - dir_vec
+        var input_bd = block_manager.blocks.get(input_pos, null)
+        if input_bd != null and input_bd.powered:
+            continue  # input side has power → NOT stays off
+        # No input power → NOT acts as directional source
+        queue.append([pos, 0, true])
+        visited[pos] = true
+    
+    _bfs_spread(queue, visited, true)
+    _update_powered_visuals()
+
+
+func _bfs_spread(queue: Array, visited: Dictionary, is_not_pass: bool):
     while not queue.is_empty():
         var item = queue.pop_front()
         var pos: Vector3i = item[0]
         var dist: int = item[1]
+        var from_not: bool = item[2] if item.size() > 2 else false
         
         var bd = block_manager.blocks.get(pos, null)
         if bd != null:
             bd.powered = true
         
-        for d in func_types.DIRECTION_VECTORS:
+        # NOT_GATE only outputs in arrow direction
+        var dirs = func_types.DIRECTION_VECTORS
+        if from_not and bd != null and bd.func_type == func_types.FuncType.NOT_GATE:
+            dirs = [func_types.DIRECTION_VECTORS[bd.direction]]
+        
+        for d in dirs:
             var n = pos + d
             if visited.has(n):
                 continue
@@ -47,10 +73,7 @@ func update_power_network():
                 can_conduct = true
             if can_conduct:
                 visited[n] = true
-                queue.append([n, dist + 1])
-    
-    # 4. 更新方块视觉
-    _update_powered_visuals()
+                queue.append([n, dist + 1, false])
 
 
 func _clear_all_power():
@@ -83,6 +106,11 @@ func _update_powered_visuals():
                     mat.emission_enabled = true
                     mat.emission = Color(1.0, 1.0, 0.8)
                     mat.emission_energy_multiplier = 1.5
+                func_types.FuncType.NOT_GATE:
+                    mat.albedo_color = Color(1.0, 0.4, 0.6)   # 亮粉
+                    mat.emission_enabled = true
+                    mat.emission = Color(1.0, 0.2, 0.4)
+                    mat.emission_energy_multiplier = 0.6
         else:
             mat.emission_enabled = false
             match bd.func_type:
@@ -92,3 +120,5 @@ func _update_powered_visuals():
                     mat.albedo_color = func_types.get_func_type_color(func_types.FuncType.SWITCH)
                 func_types.FuncType.LAMP:
                     mat.albedo_color = func_types.get_func_type_color(func_types.FuncType.LAMP)
+                func_types.FuncType.NOT_GATE:
+                    mat.albedo_color = func_types.get_func_type_color(func_types.FuncType.NOT_GATE)

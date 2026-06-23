@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cit3yyt050hx2"]
+[gd_scene load_steps=17 format=3 uid="uid://cit3yyt050hx2"]
 
 [ext_resource type="Script" uid="uid://cwsw6taqcfhbf" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://b7ocvk4pw23lj" path="res://scripts/ground.gd" id="2_ground"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://3c4ouiu02lud" path="res://scripts/block_model.gd" id="12_block_model"]
 [ext_resource type="Script" uid="uid://g2t0vsnpbwpd" path="res://scripts/color_provider.gd" id="13_color_provider"]
 [ext_resource type="Script" uid="uid://dv5gt8be1pqwf" path="res://scripts/blueprint_data.gd" id="14_blueprint_data"]
+[ext_resource type="Script" uid="uid://dbptoolscrpt01" path="res://scripts/blueprint_tool.gd" id="15_blueprint_tool"]
 
 [sub_resource type="Environment" id="env_default"]
 background_mode = 1
@@ -88,6 +89,9 @@ script = ExtResource("13_color_provider")
 
 [node name="BlueprintData" type="Node" parent="."]
 script = ExtResource("14_blueprint_data")
+
+[node name="BlueprintTool" type="Node3D" parent="."]
+script = ExtResource("15_blueprint_tool")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1047691035]
 

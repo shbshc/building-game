@@ -5,6 +5,7 @@
 @onready var save_manager = $SaveManager
 @onready var ground = $Ground
 @onready var camera_rig = $CameraRig
+@onready var blueprint_tool = $BlueprintTool
 var backpack_panel: Panel = null
 var paint_panel: PopupPanel = null
 var save_panel: PopupPanel
@@ -42,6 +43,7 @@ func _register_builtin_textures():
 		"switch": Color(0.4, 0.4, 0.4),
 		"wire": Color(0.6, 0.5, 0.3),
 		"lamp": Color(0.9, 0.9, 0.8),
+		"not_gate": Color(0.9, 0.3, 0.5),
 	}
 
 	for key in texture_keys:
@@ -343,6 +345,13 @@ func _input(event):
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			else:
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		elif event.keycode == KEY_B and blueprint_tool != null and not is_backpack_open():
+			if blueprint_tool._active:
+				blueprint_tool.deactivate()
+				print("Blueprint tool deactivated")
+			else:
+				blueprint_tool.activate()
+				print("Blueprint tool activated")
 		elif event.keycode == KEY_ESCAPE and backpack_panel != null and backpack_panel.visible:
 			backpack_panel.visible = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

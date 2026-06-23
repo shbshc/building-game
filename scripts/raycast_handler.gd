@@ -45,6 +45,10 @@ func _input(event):
 		if not cam_rig.mouse_captured:
 			highlight.visible = false
 		return
+	if $"../BlueprintTool".is_active():
+		if $"../BlueprintTool"._placing_mode or event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+			highlight.visible = false
+			return  # blueprint tool captures these
 	
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:

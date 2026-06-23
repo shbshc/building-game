@@ -66,7 +66,8 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 
 	# 电路方块：简单 BoxMesh + material_override（支持发光切换）
 	var is_circuit = (func_type == func_types.FuncType.POWER or func_type == func_types.FuncType.SWITCH
-					  or func_type == func_types.FuncType.WIRE or func_type == func_types.FuncType.LAMP)
+					  or func_type == func_types.FuncType.WIRE or func_type == func_types.FuncType.LAMP
+					  or func_type == func_types.FuncType.NOT_GATE)
 	
 	var mesh := MeshInstance3D.new()
 	if is_circuit:
@@ -83,8 +84,14 @@ func place_block(grid_pos: Vector3i, item_id: int = -1, custom_color = null, fun
 		mat.albedo_color = color
 		mesh.material_override = mat
 
-	if func_type > 0 and func_type < func_types.FuncType.POWER:
+	if func_type > 0 and (func_type < func_types.FuncType.POWER or func_type == func_types.FuncType.NOT_GATE):
 		_add_direction_indicator(mesh, direction)
+		# NOT_GATE: blue arrow (output side), body stays pink (input side)
+		if func_type == func_types.FuncType.NOT_GATE:
+			var last = mesh.get_child(mesh.get_child_count() - 1)
+			if last.has_meta("is_direction_indicator"):
+				last.material_override.albedo_color = Color(0.2, 0.5, 1.0)
+				last.material_override.emission = Color(0.2, 0.5, 1.0)
 
 	var body := StaticBody3D.new()
 	var col := CollisionShape3D.new()
@@ -220,12 +227,12 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 	var atlas_tex = TextureAtlas.get_atlas_texture()
 
 	var face_verts := [
-		[Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],  # +Y Top (flipped for Godot)
-		[Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],  # -Y Bottom
-		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],  # +Z Front
-		[Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5)],  # -Z Back
-		[Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5)],  # +X Right
-		[Vector3(-0.5, 0.5, -0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, -0.5, -0.5)],  # -X Left
+		[Vector3(-0.5, 0.5, -0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, 0.5, 0.5), Vector3(-0.5, 0.5, 0.5)],
+		[Vector3(-0.5, -0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(0.5, -0.5, -0.5), Vector3(-0.5, -0.5, -0.5)],
+		[Vector3(-0.5, 0.5, 0.5), Vector3(0.5, 0.5, 0.5), Vector3(0.5, -0.5, 0.5), Vector3(-0.5, -0.5, 0.5)],
+		[Vector3(0.5, 0.5, -0.5), Vector3(-0.5, 0.5, -0.5), Vector3(-0.5, -0.5, -0.5), Vector3(0.5, -0.5, -0.5)],
+		[Vector3(0.5, 0.5, 0.5), Vector3(0.5, 0.5, -0.5), Vector3(0.5, -0.5, -0.5), Vector3(0.5, -0.5, 0.5)],
+		[Vector3(-0.5, 0.5, -0.5), Vector3(-0.5, 0.5, 0.5), Vector3(-0.5, -0.5, 0.5), Vector3(-0.5, -0.5, -0.5)],
 	]
 	var face_names := ["top", "bottom", "front", "back", "right", "left"]
 
@@ -235,7 +242,9 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = atlas_tex
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	mat.albedo_color = Color.WHITE  # texture has its own color, don't tint
+	mat.albedo_color = Color.WHITE
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	st.set_material(mat)
 
 	for i in range(6):
@@ -270,6 +279,7 @@ func _build_cube_mesh_from_atlas(face_keys: Dictionary, tint_faces: Array, base_
 		mat2.albedo_texture = atlas_tex
 		mat2.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mat2.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat2.cull_mode = BaseMaterial3D.CULL_DISABLED
 		st2.set_material(mat2)
 
 		for i in range(6):

@@ -104,6 +104,8 @@ func _init_defaults():
 		ItemType.new(32, "Switch", Color(0.4, 0.4, 0.4), 64, 8, 0, "switch"),
 		ItemType.new(33, "Wire", Color(0.6, 0.5, 0.3), 64, 9, 0, "wire"),
 		ItemType.new(34, "Lamp", Color(0.9, 0.9, 0.8), 64, 10, 0, "lamp"),
+		# 反转器 (id 35)
+		ItemType.new(35, "NOT Gate", Color(0.9, 0.3, 0.5), 64, 11, 0, "not_gate"),
 	]
 	print("Item types loaded: ", item_types.size())
 

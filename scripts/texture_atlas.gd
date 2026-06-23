@@ -76,6 +76,11 @@ func get_atlas_texture() -> ImageTexture:
 	return atlas_texture
 
 
+# Export atlas to user:// for visual inspection
+func export_atlas_png():
+	atlas_image.save_png("user://atlas_debug.png")
+
+
 # -- Internal --
 
 func _pack(key: String, img: Image) -> Rect2:

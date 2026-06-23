@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/save_panel.gd" id="1_sp"]
+
+[node name="SavePanel" type="PopupPanel"]
+size = Vector2i(400, 420)
+script = ExtResource("1_sp")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 388.0
+offset_bottom = 412.0
+
+[node name="TitleBar" type="HBoxContainer" parent="VBox"]
+[node name="Title" type="Label" parent="VBox/TitleBar"]
+text = "Save Game"
+[node name="CloseBtn" type="Button" parent="VBox/TitleBar"]
+text = "X"
+custom_minimum_size = Vector2(32, 28)
+
+[node name="NameRow" type="HBoxContainer" parent="VBox"]
+[node name="NameLabel" type="Label" parent="VBox/NameRow"]
+text = "Name:"
+[node name="NameInput" type="LineEdit" parent="VBox/NameRow"]
+custom_minimum_size = Vector2(260, 28)
+
+[node name="Scroll" type="ScrollContainer" parent="VBox"]
+custom_minimum_size = Vector2(0, 260)
+
+[node name="SlotList" type="VBoxContainer" parent="VBox/Scroll"]
+
+[node name="NewBtn" type="Button" parent="VBox"]
+text = "New Save"
+custom_minimum_size = Vector2(0, 34)

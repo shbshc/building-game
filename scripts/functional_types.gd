@@ -14,6 +14,7 @@ enum FuncType {
 	SWITCH = 8,   # 开关
 	WIRE = 9,     # 导线
 	LAMP = 10,    # 灯泡
+	NOT_GATE = 11,# 反转器（无输入=电源，有输入=断开）
 
 }
 
@@ -75,6 +76,8 @@ static func get_func_type_color(ft: int) -> Color:
 			return Color(0.6, 0.5, 0.3)   # 铜色
 		FuncType.LAMP:
 			return Color(0.9, 0.9, 0.8)   # 米白
+		FuncType.NOT_GATE:
+			return Color(0.9, 0.3, 0.5)   # 粉红
 		FuncType.CONSUME:
 			return Color(0.9, 0.2, 0.2)   # 红色
 		_:

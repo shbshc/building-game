@@ -63,6 +63,7 @@ func _ready():
 	backpack[32].add(32, 1, 64)   # Switch
 	backpack[33].add(33, 1, 64)   # Wire
 	backpack[34].add(34, 1, 64)   # Lamp
+	backpack[35].add(35, 1, 64)   # NOT Gate
 
 func get_selected_slot():
 	return hotbar[selected_slot]
