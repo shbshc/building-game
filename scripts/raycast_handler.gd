@@ -67,7 +67,7 @@ func _input(event):
 								bd.switch_on = !bd.switch_on
 								$"../PowerSystem".update_power_network()
 								interacted = true
-							elif bd.func_type > 0 and bd.func_type < $"../FunctionalTypes".FuncType.POWER:
+							elif bd.func_type > 0 and (bd.func_type < ft.FuncType.POWER or bd.func_type == ft.FuncType.NOT_GATE):
 								var new_dir = ft.next_direction_index(bd.direction)
 								block_manager.set_block_direction(grid_pos, new_dir)
 								interacted = true
@@ -84,6 +84,19 @@ func _input(event):
 func _try_place():
 	var selected_id = inv_mgr.get_selected_type()
 	if selected_id < 0:
+		return
+	# Blueprint item: expand or place miniature
+	if selected_id >= 1000:
+		var bp_id = selected_id - 1000
+		var result = _raycast()
+		if result:
+			var grid_pos = _world_to_grid(result.position, result.normal)
+			if grid_pos != null:
+				# Shift+click = place miniature, normal click = expand
+				if Input.is_key_pressed(KEY_SHIFT):
+					$"../BlueprintTool".place_miniature(bp_id, grid_pos)
+				else:
+					$"../BlueprintTool".expand_blueprint(bp_id, grid_pos)
 		return
 	var result = _raycast()
 	if result:
