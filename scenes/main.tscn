@@ -1,94 +1,108 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=16 format=3 uid="uid://cit3yyt050hx2"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
-[ext_resource type="Script" path="res://scripts/ground.gd" id="2_ground"]
-[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="3_camera_rig"]
-[ext_resource type="Script" path="res://scripts/block_manager.gd" id="4_block_manager"]
-[ext_resource type="Script" path="res://scripts/raycast_handler.gd" id="5_raycast"]
-[ext_resource type="Script" path="res://scripts/inventory.gd" id="6_inventory"]
-[ext_resource type="Script" path="res://scripts/save_manager.gd" id="7_save_manager"]
-[ext_resource type="Script" path="res://scripts/item_types.gd" id="8_item_types"]
-[ext_resource type="Script" path="res://scripts/inventory_manager.gd" id="9_inventory_manager"]
-[ext_resource type="Script" path="res://scripts/functional_types.gd" id="10_functional_types"]
-[ext_resource type="Script" path="res://scripts/power_system.gd" id="11_power_system"]
-[ext_resource type="Script" path="res://scripts/block_model.gd" id="12_block_model"]
-[ext_resource type="Script" path="res://scripts/color_provider.gd" id="13_color_provider"]
+[ext_resource type="Script" uid="uid://cwsw6taqcfhbf" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://b7ocvk4pw23lj" path="res://scripts/ground.gd" id="2_ground"]
+[ext_resource type="Script" uid="uid://c2xg4vker76jg" path="res://scripts/camera_rig.gd" id="3_camera_rig"]
+[ext_resource type="Script" uid="uid://bjt5k5xc64mjt" path="res://scripts/block_manager.gd" id="4_block_manager"]
+[ext_resource type="Script" uid="uid://r76lst4to1px" path="res://scripts/raycast_handler.gd" id="5_raycast"]
+[ext_resource type="Script" uid="uid://d0h6q7i2ci423" path="res://scripts/inventory.gd" id="6_inventory"]
+[ext_resource type="Script" uid="uid://cdjjeitbvxthf" path="res://scripts/save_manager.gd" id="7_save_manager"]
+[ext_resource type="Script" uid="uid://b6smpmrhtr3av" path="res://scripts/item_types.gd" id="8_item_types"]
+[ext_resource type="Script" uid="uid://v478p6hyjj7q" path="res://scripts/inventory_manager.gd" id="9_inventory_manager"]
+[ext_resource type="Script" uid="uid://bh0sw6fonb1db" path="res://scripts/functional_types.gd" id="10_functional_types"]
+[ext_resource type="Script" uid="uid://bns0xrwm76lbv" path="res://scripts/power_system.gd" id="11_power_system"]
+[ext_resource type="Script" uid="uid://3c4ouiu02lud" path="res://scripts/block_model.gd" id="12_block_model"]
+[ext_resource type="Script" uid="uid://g2t0vsnpbwpd" path="res://scripts/color_provider.gd" id="13_color_provider"]
+[ext_resource type="Script" uid="uid://dv5gt8be1pqwf" path="res://scripts/blueprint_data.gd" id="14_blueprint_data"]
+
+[sub_resource type="Environment" id="env_default"]
+background_mode = 1
+background_color = Color(0.529412, 0.807843, 0.921569, 1)
+ambient_light_color = Color(0.5, 0.5, 0.55, 1)
+ambient_light_energy = 0.7
 
 [sub_resource type="CapsuleShape3D" id="player_shape"]
 radius = 0.4
 height = 1.8
 
-[sub_resource type="Environment" id="env_default"]
-background_mode = 1
-background_color = Color(0.529412, 0.807843, 0.921569, 1)
-ambient_light_color = Color(0.25098, 0.25098, 0.25098, 1)
-ambient_light_energy = 0.3
-
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node3D" unique_id=1843693484]
 script = ExtResource("1_main")
 
-[node name="Ground" type="MeshInstance3D" parent="."]
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=58170557]
 script = ExtResource("2_ground")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-rotation = Vector3(-0.785398, -0.785398, 0)
-light_energy = 0.8
-light_color = Color(1, 1, 1, 1)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1624010211]
+transform = Transform3D(0.9944155, -0.059590083, 0.087102585, 0, 0.8253356, 0.5646425, -0.105535954, -0.5614892, 0.8207266, 87.186, 99, -99999)
+light_energy = 0.3
+light_indirect_energy = 0.989
+light_specular = 0.0
+directional_shadow_split_1 = 0.499
+directional_shadow_split_2 = 0.397
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="Sun" type="OmniLight3D" parent="." unique_id=1654842247]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+light_color = Color(1, 1, 0.95, 1)
+light_energy = 16.0
+omni_range = 300.0
+omni_attenuation = 0.5
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=115013571]
 environment = SubResource("env_default")
 
-[node name="CameraRig" type="CharacterBody3D" parent="."]
+[node name="CameraRig" type="CharacterBody3D" parent="." unique_id=129163963]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 20, 50)
 script = ExtResource("3_camera_rig")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraRig"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraRig" unique_id=164035096]
 shape = SubResource("player_shape")
 
-[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=1678755079]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-fov = 75.0
-fov = 75.0
 
-[node name="Blocks" type="Node3D" parent="."]
+[node name="Blocks" type="Node3D" parent="." unique_id=1234498456]
 script = ExtResource("4_block_manager")
 
-[node name="RayCastHandler" type="Node3D" parent="."]
+[node name="RayCastHandler" type="Node3D" parent="." unique_id=197370688]
 script = ExtResource("5_raycast")
 
-[node name="SaveManager" type="Node" parent="."]
+[node name="SaveManager" type="Node" parent="." unique_id=171391935]
 script = ExtResource("7_save_manager")
 
-[node name="ItemTypes" type="Node" parent="."]
+[node name="ItemTypes" type="Node" parent="." unique_id=1655346301]
 script = ExtResource("8_item_types")
 
-[node name="InventoryManager" type="Node" parent="."]
+[node name="InventoryManager" type="Node" parent="." unique_id=216583865]
 script = ExtResource("9_inventory_manager")
 
-[node name="FunctionalTypes" type="Node" parent="."]
+[node name="FunctionalTypes" type="Node" parent="." unique_id=346044333]
 script = ExtResource("10_functional_types")
 
-[node name="PowerSystem" type="Node" parent="."]
+[node name="PowerSystem" type="Node" parent="." unique_id=1481296013]
 script = ExtResource("11_power_system")
 
-[node name="BlockModel" type="Node" parent="."]
+[node name="BlockModel" type="Node" parent="." unique_id=18332977]
 script = ExtResource("12_block_model")
 
-[node name="ColorProvider" type="Node" parent="."]
+[node name="ColorProvider" type="Node" parent="." unique_id=2121894221]
 script = ExtResource("13_color_provider")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="BlueprintData" type="Node" parent="."]
+script = ExtResource("14_blueprint_data")
 
-[node name="UIContainer" type="Control" parent="UI"]
-layout_mode = 1
+[node name="UI" type="CanvasLayer" parent="." unique_id=1047691035]
+
+[node name="UIContainer" type="Control" parent="UI" unique_id=1036842197]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 1
 
-[node name="InventoryBar" type="Control" parent="UI/UIContainer"]
+[node name="InventoryBar" type="Control" parent="UI/UIContainer" unique_id=1616081959]
 layout_mode = 1
-anchors_preset = 12
+anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -96,4 +110,6 @@ anchor_bottom = 1.0
 offset_left = -260.0
 offset_top = -56.0
 offset_right = 260.0
+grow_horizontal = 2
+grow_vertical = 0
 script = ExtResource("6_inventory")
