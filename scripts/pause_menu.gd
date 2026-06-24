@@ -20,13 +20,14 @@ func setup(main_node, save_panel, load_panel, paint_panel, ground_color_popup, s
 
 
 func _ready():
-    # Apply yellow panel background
-    UITheme.style_panel(self)
+    UITheme.style_panel(self, "yellow")
 
-    # Style title
     var title: Label = $VBox/Title
-    title.add_theme_color_override("font_color", Color(1, 1, 0.85))
+    title.add_theme_color_override("font_color", Color(1, 1, 0.8))
     title.add_theme_font_size_override("font_size", 20)
+
+    # Replace default buttons with styled ones
+    _style_all_buttons()
 
     $VBox/ResumeBtn.pressed.connect(_on_resume)
     $VBox/SaveBtn.pressed.connect(_on_save)
@@ -34,6 +35,18 @@ func _ready():
     $VBox/PaintBtn.pressed.connect(_on_paint)
     $VBox/GroundBtn.pressed.connect(_on_ground)
     $VBox/QuitBtn.pressed.connect(_on_quit)
+
+
+func _style_all_buttons():
+    for child in $VBox.get_children():
+        if child is Button:
+            var sb = UITheme._styleboxes.get("btn_orange")
+            if sb:
+                child.add_theme_stylebox_override("normal", sb)
+                child.add_theme_stylebox_override("hover", sb)
+                child.add_theme_stylebox_override("pressed", sb)
+            child.add_theme_color_override("font_color", Color(1, 1, 1))
+            child.add_theme_color_override("font_hover_color", Color(1, 1, 0.6))
 
 
 func open_menu():
