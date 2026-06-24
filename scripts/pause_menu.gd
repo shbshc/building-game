@@ -20,6 +20,14 @@ func setup(main_node, save_panel, load_panel, paint_panel, ground_color_popup, s
 
 
 func _ready():
+    # Apply yellow panel background
+    UITheme.style_panel(self)
+
+    # Style title
+    var title: Label = $VBox/Title
+    title.add_theme_color_override("font_color", Color(1, 1, 0.85))
+    title.add_theme_font_size_override("font_size", 20)
+
     $VBox/ResumeBtn.pressed.connect(_on_resume)
     $VBox/SaveBtn.pressed.connect(_on_save)
     $VBox/LoadBtn.pressed.connect(_on_load)
@@ -67,10 +75,9 @@ func _on_load():
 
 func _on_paint():
     hide()
-    # Open paint panel for the currently selected hotbar item
     var inv_mgr = _main_node.get_node("InventoryManager")
     var item_id = inv_mgr.get_selected_type()
-    if item_id >= 0 and item_id < 1000:  # not a blueprint
+    if item_id >= 0 and item_id < 1000:
         _main_node.open_paint_panel_for_item(item_id)
 
 

@@ -37,6 +37,8 @@ config/icon="res://icon.svg"
 
 TextureAtlas="*res://scripts/texture_atlas.gd"
 
+UITheme="*res://scripts/ui_theme.gd"
+
 [display]
 
 window/size/viewport_width=1280

@@ -63,4 +63,5 @@ func _on_delete(sid: int):
 
 
 func _ready():
+	UITheme.style_panel(self)
 	$VBox/TitleBar/CloseBtn.pressed.connect(func(): hide())

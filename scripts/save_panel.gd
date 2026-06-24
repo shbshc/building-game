@@ -87,5 +87,6 @@ func _on_delete(sid: int):
 
 
 func _ready():
+    UITheme.style_panel(self)
     $VBox/TitleBar/CloseBtn.pressed.connect(func(): hide())
     $VBox/NewBtn.pressed.connect(_on_slot_clicked.bind(-1))
