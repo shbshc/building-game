@@ -10,6 +10,7 @@ var backpack_panel: Panel = null
 var paint_panel: PopupPanel = null
 var save_panel: PopupPanel
 var load_panel: PopupPanel
+var pause_menu: PopupPanel
 
 var ground_color_popup: PopupPanel
 var color_picker_popup: PopupPanel
@@ -88,6 +89,9 @@ func _ready():
 	$UI/UIContainer.add_child(save_panel)
 	load_panel = preload("res://scenes/ui/load_panel.tscn").instantiate()
 	$UI/UIContainer.add_child(load_panel)
+	pause_menu = preload("res://scenes/ui/pause_menu.tscn").instantiate()
+	$UI/UIContainer.add_child(pause_menu)
+	pause_menu.setup(self, save_panel, load_panel, paint_panel, ground_color_popup, save_manager, camera_rig)
 	save_manager.migrate_old_save()
 	get_tree().root.size_changed.connect(_on_window_resize)
 
@@ -352,6 +356,11 @@ func _input(event):
 			else:
 				blueprint_tool.activate()
 				print("Blueprint tool activated")
-		elif event.keycode == KEY_ESCAPE and backpack_panel != null and backpack_panel.visible:
-			backpack_panel.visible = false
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		elif event.keycode == KEY_ESCAPE:
+			if pause_menu != null and pause_menu.visible:
+				pause_menu.close_menu()
+			elif backpack_panel != null and backpack_panel.visible:
+				backpack_panel.visible = false
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			elif not is_backpack_open():
+				pause_menu.open_menu()
