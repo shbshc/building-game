@@ -66,6 +66,10 @@ var _styleboxes := {}
 var _icon_textures := {}
 
 
+# Current active panel color — change to "red","purple","orange","blue" to switch
+var panel_color := "yellow"
+
+
 func _ready():
     for key in PANELS:
         _styleboxes[key] = _build_nine_slice(PANELS[key])
@@ -80,7 +84,9 @@ func _ready():
 
 # ── Public API ──
 
-func style_panel(ctrl, color := "yellow"):
+func style_panel(ctrl, color := ""):
+    if color == "":
+        color = panel_color
     var sb = _styleboxes.get(color)
     if sb:
         ctrl.add_theme_stylebox_override("panel", sb)
@@ -132,6 +138,8 @@ func _build_three_slice(tiles: Array) -> StyleBoxTexture:
     _blit_tile(atlas, tiles[2], TILE_SIZE*2, 0)
     var sb := StyleBoxTexture.new()
     sb.texture = ImageTexture.create_from_image(atlas)
+    sb.texture_margin_left = TILE_SIZE
+    sb.texture_margin_right = TILE_SIZE
     sb.patch_margin_left = TILE_SIZE
     sb.patch_margin_right = TILE_SIZE
     return sb
@@ -140,6 +148,10 @@ func _build_three_slice(tiles: Array) -> StyleBoxTexture:
 func _make_stylebox(atlas: Image, margin: int) -> StyleBoxTexture:
     var sb := StyleBoxTexture.new()
     sb.texture = ImageTexture.create_from_image(atlas)
+    sb.texture_margin_left = margin
+    sb.texture_margin_right = margin
+    sb.texture_margin_top = margin
+    sb.texture_margin_bottom = margin
     sb.patch_margin_left = margin
     sb.patch_margin_right = margin
     sb.patch_margin_top = margin
